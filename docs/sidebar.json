@@ -1,6 +1,7 @@
 {
   "kirby": {
     "Overview": "/",
-    "Knowledge Base Accessor": "knowledge_base_accessor.html"
+    "Knowledge Base Accessor": "knowledge_base_accessor.html",
+    "Knowledge Base Dataset Builder": "knowledge_base_dataset_builder.html"
   }
 }

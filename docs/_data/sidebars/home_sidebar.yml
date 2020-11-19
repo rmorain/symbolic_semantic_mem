@@ -12,6 +12,9 @@ entries:
     - output: web,pdf
       title: Knowledge Base Accessor
       url: knowledge_base_accessor.html
+    - output: web,pdf
+      title: Knowledge Base Dataset Builder
+      url: knowledge_base_dataset_builder.html
     output: web
     title: kirby
   output: web
