@@ -13,8 +13,17 @@ entries:
       title: Knowledge Base Accessor
       url: knowledge_base_accessor.html
     - output: web,pdf
-      title: Knowledge Base Dataset Builder
-      url: knowledge_base_dataset_builder.html
+      title: Kirby Database Builder
+      url: kirby_database_builder.html
+    - output: web,pdf
+      title: Statement Classifier
+      url: statement_classifer.html
+    - output: web,pdf
+      title: Query Generator
+      url: query_generator.html
+    - output: web,pdf
+      title: Experiment
+      url: experiment.html
     output: web
     title: kirby
   output: web
