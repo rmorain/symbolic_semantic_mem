@@ -1,1 +1,7 @@
 .DS_Store
+.vscode/
+.pyc
+kirby.egg-info/
+__pycache__
+build
+dist
