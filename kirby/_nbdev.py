@@ -2,17 +2,21 @@
 
 __all__ = ["index", "modules", "custom_doc_links", "git_url"]
 
-index = {"KnowledgeBaseAccessor": "00_knowledge_base_accessor.ipynb",
+index = {"Model": "06_basic_model.ipynb",
+         "KnowledgeBaseAccessor": "00_knowledge_base_accessor.ipynb",
          "kirby_database_builder": "01_kirby_database_builder.ipynb",
          "StatementClassifier": "02_statement_classifer.ipynb",
          "QueryGenerator": "03_query_generator.ipynb",
-         "Experiment": "04_experiment.ipynb"}
+         "Experiment": "04_experiment.ipynb",
+         "RunParams": "05_run_parameters.ipynb"}
 
-modules = ["knowledge_base_accessor.py",
+modules = ["basic_model.py",
+           "knowledge_base_accessor.py",
            "kirby_dataset_builder.py",
            "statement_classifier.py",
            "query_generator.py",
-           "experiment.py"]
+           "experiment.py",
+           "run_params.py"]
 
 doc_url = "https://rmorain.github.io/kirby/"
 
