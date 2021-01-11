@@ -5,7 +5,7 @@ __all__ = ['Experiment']
 # Cell
 class Experiment():
     def __init__(self, run_params):
-        self.model = model(run_params.model)
+        self.model = Model(run_params.model)
         self.run_params = run_params
 
     def run(self):
