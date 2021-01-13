@@ -8,7 +8,10 @@ index = {"KnowledgeBaseAccessor": "00_knowledge_base_accessor.ipynb",
          "QueryGenerator": "03_query_generator.ipynb",
          "Experiment": "04_experiment.ipynb",
          "RunParams": "05_run_parameters.ipynb",
-         "BasicModel": "06_basic_model.ipynb"}
+         "BasicModel": "06_basic_model.ipynb",
+         "prepare_data": "07_prepare_data.ipynb",
+         "tokenize": "07_prepare_data.ipynb",
+         "prepare_ds": "07_prepare_data.ipynb"}
 
 modules = ["knowledge_base_accessor.py",
            "kirby_dataset_builder.py",
@@ -16,7 +19,8 @@ modules = ["knowledge_base_accessor.py",
            "query_generator.py",
            "experiment.py",
            "run_params.py",
-           "basic_model.py"]
+           "basic_model.py",
+           "prepare_data.py"]
 
 doc_url = "https://rmorain.github.io/kirby/"
 

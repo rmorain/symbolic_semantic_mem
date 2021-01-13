@@ -6,7 +6,7 @@ __all__ = ['RunParams']
 class RunParams():
     def __init__(self,
                 model='gpt2',
-                data_dir = 'data',
+                data_dir = 'data/wikitext-103-raw/wikitext-103-raw/',
                 data_files = {'train': ['wiki.train.raw'], 'valid': ['wiki.valid.raw'], 'test': ['wiki.test.raw']},
                 max_epochs=1,
                 debug=True,
@@ -24,6 +24,7 @@ class RunParams():
             ):
 
         self.model = model
+        self.data_dir = data_dir
         self.data_files = data_files
         self.max_epochs = max_epochs
         self.debug = debug
