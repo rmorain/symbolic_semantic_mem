@@ -6,6 +6,7 @@ __all__ = ['prepare_data', 'tokenize', 'tokenize', 'prepare_ds']
 from datasets import load_dataset
 from transformers import GPT2Tokenizer
 from .run_params import RunParams
+import ipywidgets as widgets
 
 # Cell
 # Load, Tokenize, and Augment data
@@ -38,7 +39,7 @@ def prepare_ds(split):
     tokenizer = GPT2Tokenizer.from_pretrained(run_params['model_name'])
     tokenizer.pad_token = tokenizer.eos_token
     ds = load_dataset('text', data_files=run_params.data_files)
-    ds = ds.map(tokenize, batched=True)
+    ds = ds.map(tokenize, batched=True, fn_kwargs={'tokenizer':tokenizer})
     ds.set_format(type='torch', columns=['input_ids', 'attention_mask', 'statement_ids', 'statement_mask'])
 
     return ds
