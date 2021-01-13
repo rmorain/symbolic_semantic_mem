@@ -6,8 +6,8 @@ __all__ = ['RunParams']
 class RunParams():
     def __init__(self,
                 model='gpt2',
-                data_dir = 'data/wikitext-103-raw/wikitext-103-raw/',
-                data_files = {'train': ['wiki.train.raw'], 'valid': ['wiki.valid.raw'], 'test': ['wiki.test.raw']},
+                data_dir = 'data/',
+                data_files = {'train': ['data/wiki.train.raw'], 'valid': ['data/wiki.valid.raw'], 'test': ['data/wiki.test.raw']},
                 max_epochs=1,
                 debug=True,
                 batch_size=8,
