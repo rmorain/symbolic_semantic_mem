@@ -5,8 +5,8 @@ __all__ = ['Experiment']
 # Cell
 class Experiment():
     def __init__(self, run_params):
-        self.model = Model(run_params.model)
         self.run_params = run_params
+        self.model = BasicModel(run_params.model)
 
     def run(self):
         trainer = pl.Trainer(
@@ -14,7 +14,7 @@ class Experiment():
             gpus=(1 if torch.cuda.is_available() else 0),
             max_epochs=self.run_params.max_epochs,
             fast_dev_run=self.run_params.debug,
-            logger=WandbLogger(save_dir='logs/',
+            logger=TensorBoardLogger(save_dir='logs/',
                                 name=self.run_params.run_name,
                                 project=self.run_params.project_name),
         )
