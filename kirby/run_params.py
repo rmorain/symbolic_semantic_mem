@@ -17,10 +17,10 @@ class RunParams():
                 momentum=.9,
                 lr=1e-2,
                 repo='wikitext-103-raw-v1',
-                num_workers=2,
+                num_workers=multiprocessing.cpu_count(),
                 kb_statements_file=None,
                 run_name='test',
-                project_name='test-project'
+                project_name='kirby'
             ):
 
         self.model = model
@@ -37,3 +37,4 @@ class RunParams():
         self.repo = repo
         self.num_workers = num_workers
         self.kb_statements_file = kb_statements_file
+        self.run_name = run_name
