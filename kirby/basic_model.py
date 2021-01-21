@@ -3,35 +3,65 @@
 __all__ = ['BasicModel']
 
 # Cell
+import torch
 import pytorch_lightning as pl
+from pytorch_lightning.loggers import TensorBoardLogger
 from .run_params import RunParams
+from .data_manager import DataManager
 
 # Cell
 class BasicModel(pl.LightningModule):
     def __init__(self, run_params):
         super().__init__()
+        self.run_params = run_params
         pass
 
     def prepare_data(self):
-        pass
+        data_manager = DataManager(self.run_params)
+        self.train_ds, self.val_ds = data_manager.prepare_data()
+
 
     def forward(self, x):
-        pass
+        import pdb; pdb.set_trace()
+        loss = self.model(x['input_ids'], attention_mask=x['attention_mask'], labels=x['input_ids'])[0]
+        return loss
 
     def training_step(self, batch, batch_idx):
-        pass
+        loss = self.forward(batch)
+        return {'loss': loss, 'log': {'train_loss': loss}}
 
     def validation_step(self, batch, batch_idx):
-        pass
+        loss = self.forward(batch)
+        return {'loss': loss, 'log': {'val_loss': loss}}
 
     def validation_epoch_end(self, outputs):
-        pass
+        loss = torch.cat([o['loss'].unsqueeze(0) for o in outputs], 0).mean()
+        out = {'val_loss': loss}
+        return {**out, 'log': out}
 
     def train_dataloader(self):
-        pass
+        return torch.utils.data.DataLoader(
+                self.train_ds,
+                batch_size=self.run_params.batch_size,
+                drop_last=True,
+                shuffle=True,
+                num_workers=self.run_params.num_workers,
+                pin_memory=True
+                )
 
     def val_dataloader(self):
-        pass
+        return torch.utils.data.DataLoader(
+                self.val_ds,
+                batch_size=self.run_params.batch_size,
+                drop_last=True,
+                shuffle=False,
+                num_workers=self.run_params.num_workers,
+                pin_memory=True
+                )
 
-    def configure_optimizer(self):
-        pass
+    def configure_optimizers(self):
+        return torch.optim.SGD(
+            self.parameters(),
+            lr=self.run_params.lr,
+            momentum=self.run_params.momentum,
+        )
