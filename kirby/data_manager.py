@@ -31,5 +31,5 @@ class DataManager():
             x['text'],
             max_length=self.run_params.seq_length,
             truncation=True,
-            padding=False)
+            padding=True)
         return tokens
