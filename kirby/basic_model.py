@@ -6,6 +6,7 @@ __all__ = ['BasicModel']
 import torch
 import pytorch_lightning as pl
 from pytorch_lightning.loggers import TensorBoardLogger
+from transformers import GPT2Config, GPT2LMHeadModel
 from .run_params import RunParams
 from .data_manager import DataManager
 
@@ -14,6 +15,9 @@ class BasicModel(pl.LightningModule):
     def __init__(self, run_params):
         super().__init__()
         self.run_params = run_params
+        config = GPT2Config()
+        self.model = GPT2LMHeadModel(config)
+        self.loss = torch.nn.CrossEntropyLoss(reduction='none')
         pass
 
     def prepare_data(self):
@@ -22,22 +26,22 @@ class BasicModel(pl.LightningModule):
 
 
     def forward(self, x):
-        import pdb; pdb.set_trace()
         loss = self.model(x['input_ids'], attention_mask=x['attention_mask'], labels=x['input_ids'])[0]
         return loss
 
     def training_step(self, batch, batch_idx):
         loss = self.forward(batch)
-        return {'loss': loss, 'log': {'train_loss': loss}}
+        self.log('train_loss', loss)
+        return loss
 
     def validation_step(self, batch, batch_idx):
         loss = self.forward(batch)
-        return {'loss': loss, 'log': {'val_loss': loss}}
+        self.log('val_loss', loss)
+        return loss
 
-    def validation_epoch_end(self, outputs):
-        loss = torch.cat([o['loss'].unsqueeze(0) for o in outputs], 0).mean()
-        out = {'val_loss': loss}
-        return {**out, 'log': out}
+    def validation_epoch_end(self, losses):
+        loss = torch.cat([loss.unsqueeze(0) for loss in losses], 0).mean()
+        self.log('val_loss', loss)
 
     def train_dataloader(self):
         return torch.utils.data.DataLoader(

@@ -3,6 +3,9 @@
 __all__ = ['RunParams']
 
 # Cell
+import multiprocessing
+
+# Cell
 class RunParams():
     def __init__(self,
                 model='gpt2',
