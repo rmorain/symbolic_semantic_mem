@@ -9,6 +9,9 @@ index = {"KnowledgeBaseAccessor": "00_knowledge_base_accessor.ipynb",
          "Experiment": "04_experiment.ipynb",
          "RunParams": "05_run_parameters.ipynb",
          "BasicModel": "06_basic_model.ipynb",
+         "basic_model": "06_basic_model.ipynb",
+         "run_params": "06_basic_model.ipynb",
+         "trainer": "06_basic_model.ipynb",
          "DataManager": "07_data_manager.ipynb"}
 
 modules = ["knowledge_base_accessor.py",
