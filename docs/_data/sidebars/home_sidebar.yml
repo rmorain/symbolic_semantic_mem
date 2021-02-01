@@ -24,6 +24,15 @@ entries:
     - output: web,pdf
       title: Experiment
       url: experiment.html
+    - output: web,pdf
+      title: RunParams
+      url: run_parameters.html
+    - output: web,pdf
+      title: Basic Model
+      url: basic_model.html
+    - output: web,pdf
+      title: Data Manager
+      url: data_manager.html
     output: web
     title: kirby
   output: web
