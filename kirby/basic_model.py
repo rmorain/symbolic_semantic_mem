@@ -31,7 +31,6 @@ class BasicModel(pl.LightningModule):
 
     def training_step(self, batch, batch_idx):
         loss = self.forward(batch)
-        import pdb; pdb.set_trace()
         self.log('train_loss', loss)
         return loss
 
@@ -77,7 +76,7 @@ basic_model = BasicModel(RunParams())
 assert isinstance(basic_model, BasicModel)
 
 # Cell
-run_params = RunParams(debug=False)
+run_params = RunParams(debug=True)
 basic_model = BasicModel(run_params)
 trainer = pl.Trainer(
     default_root_dir='logs',
