@@ -4,6 +4,8 @@ __all__ = ['DataManager']
 
 # Cell
 from datasets import load_dataset
+import numpy as np
+import torch
 from transformers import GPT2Tokenizer
 from .run_params import RunParams
 

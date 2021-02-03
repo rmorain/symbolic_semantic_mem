@@ -5,6 +5,9 @@
     "Kirby Database Builder": "kirby_database_builder.html",
     "Statement Classifier": "statement_classifer.html",
     "Query Generator": "query_generator.html",
-    "Experiment": "experiment.html"
+    "Experiment": "experiment.html",
+    "RunParams": "run_parameters.html",
+    "Basic Model": "basic_model.html",
+    "Data Manager": "data_manager.html"
   }
 }
