@@ -19,7 +19,7 @@ It's a KBy Transformer (pronounced Kirby)
 
 Query the knowledge base.
 
-```python
+```
 kba = KnowledgeBaseAccessor()
 kba.query('a < c')
 ```
@@ -30,3 +30,7 @@ kba.query('a < c')
     'Performing query a < c'
 
 
+
+## Setup
+
+Run `./bin/download_data` to download data in project directory
