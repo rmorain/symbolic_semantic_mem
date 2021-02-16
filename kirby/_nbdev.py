@@ -2,8 +2,7 @@
 
 __all__ = ["index", "modules", "custom_doc_links", "git_url"]
 
-index = {"KnowledgeBaseAccessor": "00_knowledge_base_accessor.ipynb",
-         "DatasetBuilder": "01_dataset_builder.ipynb",
+index = {"DatasetBuilder": "01_dataset_builder.ipynb",
          "StatementClassifier": "02_statement_classifer.ipynb",
          "QueryGenerator": "03_query_generator.ipynb",
          "Experiment": "04_experiment.ipynb",
@@ -14,8 +13,7 @@ index = {"KnowledgeBaseAccessor": "00_knowledge_base_accessor.ipynb",
          "trainer": "06_basic_model.ipynb",
          "DataManager": "07_data_manager.ipynb"}
 
-modules = ["knowledge_base_accessor.py",
-           "dataset_builder.py",
+modules = ["dataset_builder.py",
            "statement_classifier.py",
            "query_generator.py",
            "experiment.py",
