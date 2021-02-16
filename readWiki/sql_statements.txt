@@ -1,0 +1,27 @@
+DROP TABLE IF EXISTS Entities;
+DROP TABLE IF EXISTS Properties_relations;
+DROP TABLE IF EXISTS Aliases;
+DROP TABLE IF EXISTS Properties;
+
+ 
+CREATE TABLE IF NOT EXISTS Entities(
+	entity_id VARCHAR(255) NOT NULL PRIMARY KEY, 
+	label VARCHAR(255) NOT NULL, 
+	description VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS Properties_relations(
+	entity_id VARCHAR(255) NOT NULL, 
+	property_id VARCHAR(255) NOT NULL, 
+	related_entity_id VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS Aliases(
+	entity_id VARCHAR(255), 
+	alias VARCHAR(255)
+);
+
+CREATE TABLE IF NOT EXISTS Properties(
+	property_id VARCHAR(255) NOT NULL PRIMARY KEY, 
+	label VARCHAR(255) NOT NULL
+);
