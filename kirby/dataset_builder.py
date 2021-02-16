@@ -4,22 +4,41 @@ __all__ = ['DatasetBuilder']
 
 # Cell
 from rake_nltk import Rake
+from .knowledge_base_accessor import KnowledgeBaseAccessor
+import json
 
 # Cell
 class DatasetBuilder():
     def __init__(self):
         self.rake = Rake()
+        self.kba = KnowledgeBaseAccessor()
+        self.database =
         pass
 
     def build(self, ds):
         "Build a database based a given dataset"
-        ds.map(self.add_relations, batched=True)
+        ds.map(self.write_json, batched=False)
         pass
 
-    def add_relations(self, x):
+    def write_json(self, x):
         # Identify keyword
-        self.rake.extract_keywords_from_text(x['text'])
+        ranked_phrases = self.get_ranked_phrases()
         # Get entity from keyword
-        # Get relations from entity
-        # Write to
+        e = self.entity(ranked_phrases)
+        for relation in e['relations']:
+
         pass
+
+    def get_ranked_phrases(self, x):
+        self.rake.extract_keywords_from_text(x)
+        return self.rake.get_ranked_phrases()
+
+    def entity(self, ranked_phrases):
+        "Queries the knowledge base to find the entity and it's relations"
+        for phrase in ranked_phrases:
+            entity = self.kba.get_entity(phrase)
+            if entity is not None:
+                return entity
+        return entity
+
+
