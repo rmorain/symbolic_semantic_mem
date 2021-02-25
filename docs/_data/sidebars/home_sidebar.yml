@@ -10,7 +10,7 @@ entries:
       title: Overview
       url: /
     - output: web,pdf
-      title: Title
+      title: Database Proxy
       url: database_proxy.html
     - output: web,pdf
       title: Dataset Builder
