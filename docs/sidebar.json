@@ -1,7 +1,6 @@
 {
   "kirby": {
     "Overview": "/",
-    "Database Proxy": "database_proxy.html",
     "Dataset Builder": "dataset_builder.html",
     "Statement Classifier": "statement_classifer.html",
     "Query Generator": "query_generator.html",
