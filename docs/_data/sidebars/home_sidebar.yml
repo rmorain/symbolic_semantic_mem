@@ -10,9 +10,6 @@ entries:
       title: Overview
       url: /
     - output: web,pdf
-      title: Knowledge Base Accessor
-      url: knowledge_base_accessor.html
-    - output: web,pdf
       title: Kirby Database Builder
       url: kirby_database_builder.html
     - output: web,pdf

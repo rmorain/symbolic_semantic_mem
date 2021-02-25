@@ -1,7 +1,6 @@
 {
   "kirby": {
     "Overview": "/",
-    "Knowledge Base Accessor": "knowledge_base_accessor.html",
     "Kirby Database Builder": "kirby_database_builder.html",
     "Statement Classifier": "statement_classifer.html",
     "Query Generator": "query_generator.html",
