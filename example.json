@@ -1,0 +1,21 @@
+{
+    'group':{
+        "text":"Steph Curry is my favorite player",
+        "knowledge":{
+            "label":"Stephen Curry",
+            "relations":[
+                {
+                    "relation_type":"description",
+                    "description":"American Basketball Player",
+                    "relevance_score": .9
+                },
+                {
+                    "relation_type":"alias",
+                    "alias":"Baby faced assassin",
+                    "relevance_score": .6
+                }
+                
+            ]
+        }
+    }
+}
