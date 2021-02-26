@@ -1,7 +1,11 @@
 {
   "kirby": {
     "Overview": "/",
+<<<<<<< HEAD
+    "Kirby Database Builder": "kirby_database_builder.html",
+=======
     "Dataset Builder": "dataset_builder.html",
+>>>>>>> main
     "Statement Classifier": "statement_classifer.html",
     "Query Generator": "query_generator.html",
     "Experiment": "experiment.html",

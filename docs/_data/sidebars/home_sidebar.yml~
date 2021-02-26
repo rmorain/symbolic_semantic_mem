@@ -10,8 +10,13 @@ entries:
       title: Overview
       url: /
     - output: web,pdf
+<<<<<<< HEAD
+      title: Kirby Database Builder
+      url: kirby_database_builder.html
+=======
       title: Dataset Builder
       url: dataset_builder.html
+>>>>>>> main
     - output: web,pdf
       title: Statement Classifier
       url: statement_classifer.html
