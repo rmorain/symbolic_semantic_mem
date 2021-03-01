@@ -16,9 +16,6 @@ entries:
       title: Statement Classifier
       url: statement_classifer.html
     - output: web,pdf
-      title: Query Generator
-      url: query_generator.html
-    - output: web,pdf
       title: Experiment
       url: experiment.html
     - output: web,pdf
@@ -30,6 +27,18 @@ entries:
     - output: web,pdf
       title: Data Manager
       url: data_manager.html
+    - output: web,pdf
+      title: Property Scorer
+      url: property_scorer.html
+    - output: web,pdf
+      title: Database Proxy
+      url: database_proxy.html
+    - output: web,pdf
+      title: Title
+      url: read_wiki_data.html
+    - output: web,pdf
+      title: Properties
+      url: properties.html
     output: web
     title: kirby
   output: web

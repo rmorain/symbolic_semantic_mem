@@ -4,7 +4,7 @@ __all__ = ['DatasetBuilder']
 
 # Cell
 from rake_nltk import Rake
-from .knowledge_base_accessor import KnowledgeBaseAccessor
+from readWiki.database_proxy
 import json
 
 # Cell
