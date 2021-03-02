@@ -9,9 +9,10 @@ services:
       options:
         max-size: 50m
     stdin_open: true
-    tty: true
+      #    tty: true
     volumes:
       - .:/data/
+      - /Users/robertmorain/mind.cs.byu.edu:/data/db
       
   notebook:
     <<: *fastai
@@ -24,6 +25,8 @@ services:
     command: watchmedo shell-command --command nbdev_build_docs --pattern *.ipynb --recursive --drop
     network_mode: host # for GitHub Codespaces https://github.com/features/codespaces/
     
+    
+
 #   jekyll:
 #     <<: *fastai
 #     ports:
