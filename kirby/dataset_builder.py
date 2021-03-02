@@ -4,30 +4,33 @@ __all__ = ['DatasetBuilder']
 
 # Cell
 from rake_nltk import Rake
-from readWiki.database_proxy
+from .database_proxy import WikiDatabase
 import json
 
 # Cell
 class DatasetBuilder():
     def __init__(self):
         self.rake = Rake()
-        self.kba = KnowledgeBaseAccessor()
-        self.database =
+        self.db = WikiDatabase()
         pass
 
-    def build(self, ds):
+    def build(self, ds, dataset_type='random'):
         "Build a database based a given dataset"
-        ds.map(self.write_json, batched=False)
-        pass
+        if dataset_type == 'random':
+            ds.map(self.random, batched=False)
+        elif dataset_type == 'description':
+            pass
+        elif dataset_type == 'relevant':
+            pass
 
-    def write_json(self, x):
-        # Identify keyword
-        ranked_phrases = self.get_ranked_phrases()
-        # Get entity from keyword
-        e = self.entity(ranked_phrases)
-        for relation in e['relations']:
+    def keyword(self, x):
+        ranked_phrases = self.get_ranked_phrases(x)
+        return ranked_phrases[0]
 
-        pass
+    def random(self, x):
+        keyword = self.keyword(x)
+        e = self.db.get_entity_by_label(keyword)
+        return e
 
     def get_ranked_phrases(self, x):
         self.rake.extract_keywords_from_text(x)
@@ -40,5 +43,3 @@ class DatasetBuilder():
             if entity is not None:
                 return entity
         return entity
-
-

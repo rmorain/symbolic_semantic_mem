@@ -14,7 +14,7 @@ class WikiDatabase:
 
     def __init__(self):
         try:
-            self.conn = sqlite3.connect('wiki_data.db')
+            self.conn = sqlite3.connect('/data/db/wiki_data.db')
         except Exception as e:
             print(e)
             exit(-1)
