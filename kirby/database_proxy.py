@@ -9,12 +9,14 @@ import time
 from .properties import properties
 
 # Cell
+
+
 class WikiDatabase:
     conn = None
 
     def __init__(self):
         try:
-            self.conn = sqlite3.connect('/data/db/wiki_data.db')
+            self.conn = sqlite3.connect('wiki_data.db')
         except Exception as e:
             print(e)
             exit(-1)
@@ -46,6 +48,7 @@ class WikiDatabase:
         """
         relations = []
         relation_row = []
+        # print(relations_string)
         for idx, relation in enumerate(relations_string.split(',')):
             if idx & 1 == 1:
                 relation_row.append(relation[1:-1])
@@ -53,9 +56,9 @@ class WikiDatabase:
                 relation_row.append(relation[1:])
             if len(relation_row) == 2:
                 relations.append(relation_row + [])
-                print(relation_row)
+                # print(relation_row)
                 relation_row.clear()
-        print(relations)
+        # print(relations)
         return relations
 
     @staticmethod
@@ -67,6 +70,20 @@ class WikiDatabase:
             :rtype:
         """
         return property_dict[relations_id]
+
+    @staticmethod
+    def remove_quotations(label):
+        index = 0
+        while index < len(label):
+            if label[index] == '\'':
+                label = label[:index] + '\'' + label[index:]
+                index += 1
+            elif label[index] == "\"":
+                label = label[:index - 1] + '\'' + '\'' + label[index:]
+                index += 1
+            index += 1
+
+        return label
 
     # TODO: Test the return value
     # TODO: change to check in the entities table
@@ -83,7 +100,28 @@ class WikiDatabase:
         entities_id = None
         try:
             entities_id = pd.read_sql_query(
-                "SELECT * FROM Entities WHERE label  LIKE \"%{}%\";".format(label),
+                "SELECT * FROM Entities WHERE label  LIKE \"%{}%\";".format(self.remove_quotations(label)),
+                self.conn)
+        except Exception as e:
+            print(e)
+            self.exit_procedure()
+        return entities_id.values.tolist()
+
+    def get_entities_by_label_extensive(self, label):
+        """
+        Returns a list of entities id where the label matches the entity_label name
+        :param self:
+        :type self:
+        :param label:
+        :type label:
+        :return: list of all the entities id and label where the label matched
+        :rtype: Array containing all similar entities
+        """
+        table_name = self.get_table_name(label)
+        entities_id = None
+        try:
+            entities_id = pd.read_sql_query(
+                "SELECT * FROM Entities_{} WHERE label  LIKE \"{}%\";".format(table_name, self.remove_quotations(label)),
                 self.conn)
         except Exception as e:
             print(e)
@@ -102,12 +140,12 @@ class WikiDatabase:
         table_name = self.get_table_name(label)
         try:
             entity_id = pd.read_sql_query(
-                "SELECT * FROM Entities_{} WHERE label = \"{}\";".format(table_name, label),
+                "SELECT * FROM Entities_{} WHERE label =  \"{}\";".format(table_name, self.remove_quotations(label)),
                 self.conn)
         except Exception as e:
             print(e)
             self.exit_procedure()
-        return entity_id.iloc[[0]]
+        return entity_id.values.tolist()
 
     def get_entity_properties(self, entity_id):
         """
@@ -126,6 +164,8 @@ class WikiDatabase:
         except Exception as e:
             print(e)
             self.exit_procedure()
+        if entity_properties.empty:
+            return None
         return self.clean_relations(entity_properties['relations'].values[0])
 
     def get_entity_by_id(self, entity_id):
@@ -157,10 +197,12 @@ class WikiDatabase:
         try:
             # entity_label = get_entity_label(entity_id)
             related_entity_label = self.get_entity_by_id(related_entity_id)
-            property_name = get_property_label(property_id).iloc[0]
+            property_name = property_dict[property_id]
         except Exception as e:
             print(e)
             self.exit_procedure()
         if entity_label is None or related_entity_label is None or property_name is None:
             return None
         return "{}: {}".format(property_name, related_entity_label)
+
+
