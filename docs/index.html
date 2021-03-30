@@ -31,15 +31,54 @@ nb_path: "index.ipynb"
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Setup">Setup<a class="anchor-link" href="#Setup"> </a></h2><p>Run <code>./bin/download_data</code> to download data in project directory</p>
+<h1 id="Database">Database<a class="anchor-link" href="#Database"> </a></h1><p>I mount the database from mind.cs.byu to my local machine.</p>
+<p><a href="https://www.macissues.com/2014/10/13/how-to-mount-a-remote-system-as-a-drive-using-ssh-in-os-x/">SSH File Drive</a></p>
+<p><code>sshfs robert@mind.cs.byu.edu:/home/data /Users/robertmorain/mind.cs.byu.edu -ovolname=MIND</code></p>
+<p>In order for your docker container to see these files, you need to modify the <code>docker-compose.yml</code> at <code>services &gt; fastai &gt; volumes</code> <code>/Users/robertmorain/mind.cs.byu.edu</code> to match your local mounted folder.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Database-Volume">Database Volume<a class="anchor-link" href="#Database-Volume"> </a></h1><p><a href="https://www.macissues.com/2014/10/13/how-to-mount-a-remote-system-as-a-drive-using-ssh-in-os-x/">SSH File Drive</a></p>
-<p><code>sshfs robert@mind.cs.byu.edu:/home/data /Users/robertmorain/mind.cs.byu.edu -ovolname=MIND</code></p>
+<h1 id="Docker">Docker<a class="anchor-link" href="#Docker"> </a></h1><p>Start the docker container by running</p>
+<p><code>docker-compose up</code></p>
+<p>in the kirby project folder.</p>
+<p>Go to <a href="http://127.0.0.1:8080/lab">http://127.0.0.1:8080/lab</a> to open a jupyter lab instance to work in.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Download-data">Download data<a class="anchor-link" href="#Download-data"> </a></h2><p>In order for the data download script to work you need to install <code>unzip</code></p>
+<p>Open a terminal in Jupyter lab and run:</p>
+<p><code>apt update &amp;&amp; apt install unzip</code></p>
+<p>Run <code>./bin/download_data</code> to download data in project directory</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Run-Tests">Run Tests<a class="anchor-link" href="#Run-Tests"> </a></h2><p>To make sure everything is working, run tests in your Jupyter lab terminal</p>
+<p><code>nbdev_test_nbs</code></p>
+<p>It's a good idea to run this before submitting any pull requests to the <a href="/kirby/read_wiki_data.html#main"><code>main</code></a> branch</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="nbdev">nbdev<a class="anchor-link" href="#nbdev"> </a></h2><p>If you are unfamiliar with nbdev, please refer to the <a href="https://nbdev.fast.ai/tutorial.html">tutorial</a></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Git">Git<a class="anchor-link" href="#Git"> </a></h2><p>Before you make changes, create a branch.</p>
+<p>I make commits outside of the Jupyter lab terminal to avoid errors with configuring my email address.</p>
 
 </div>
 </div>
