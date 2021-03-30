@@ -10,3 +10,4 @@ data/
 logs/
 LOG_FILE
 db/
+*.db
