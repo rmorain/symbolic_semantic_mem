@@ -31,9 +31,12 @@ nb_path: "index.ipynb"
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Database">Database<a class="anchor-link" href="#Database"> </a></h1><p>I mount the database from mind.cs.byu to my local machine.</p>
+<h2 id="Database">Database<a class="anchor-link" href="#Database"> </a></h2><p>I mount the database from mind.cs.byu to my local machine.</p>
 <p><a href="https://www.macissues.com/2014/10/13/how-to-mount-a-remote-system-as-a-drive-using-ssh-in-os-x/">SSH File Drive</a></p>
+<p>For Mac:</p>
 <p><code>sshfs robert@mind.cs.byu.edu:/home/data /Users/robertmorain/mind.cs.byu.edu -ovolname=MIND</code></p>
+<p>For Linux:</p>
+<p><code>sshfs robert@mind.cs.byu.edu:/home/data /home/rob/mind.cs.byu.edu -o allow_other</code></p>
 <p>In order for your docker container to see these files, you need to modify the <code>docker-compose.yml</code> at <code>services &gt; fastai &gt; volumes</code> <code>/Users/robertmorain/mind.cs.byu.edu</code> to match your local mounted folder.</p>
 
 </div>
@@ -41,7 +44,7 @@ nb_path: "index.ipynb"
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Docker">Docker<a class="anchor-link" href="#Docker"> </a></h1><p>Start the docker container by running</p>
+<h2 id="Docker">Docker<a class="anchor-link" href="#Docker"> </a></h2><p>Start the docker container by running</p>
 <p><code>docker-compose up</code></p>
 <p>in the kirby project folder.</p>
 <p>Go to <a href="http://127.0.0.1:8080/lab">http://127.0.0.1:8080/lab</a> to open a jupyter lab instance to work in.</p>
