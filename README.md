@@ -8,7 +8,11 @@ I mount the database from mind.cs.byu to my local machine.
 
 [SSH File Drive](https://www.macissues.com/2014/10/13/how-to-mount-a-remote-system-as-a-drive-using-ssh-in-os-x/)
 
+For Mac:
+
 `sshfs robert@mind.cs.byu.edu:/home/data /Users/robertmorain/mind.cs.byu.edu -ovolname=MIND`
+
+For Linux:
 
 `sshfs robert@mind.cs.byu.edu:/home/data /home/rob/mind.cs.byu.edu -o allow_other`
 
