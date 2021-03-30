@@ -10,6 +10,8 @@ I mount the database from mind.cs.byu to my local machine.
 
 `sshfs robert@mind.cs.byu.edu:/home/data /Users/robertmorain/mind.cs.byu.edu -ovolname=MIND`
 
+`sshfs robert@mind.cs.byu.edu:/home/data /home/rob/mind.cs.byu.edu -o allow_other`
+
 In order for your docker container to see these files, you need to modify the `docker-compose.yml` at `services > fastai > volumes` `/Users/robertmorain/mind.cs.byu.edu` to match your local mounted folder.
 
 
