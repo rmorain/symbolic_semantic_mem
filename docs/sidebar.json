@@ -1,0 +1,15 @@
+{
+  "kirby": {
+    "Overview": "/",
+    "Dataset Builder": "dataset_builder.html",
+    "Statement Classifier": "statement_classifer.html",
+    "Experiment": "experiment.html",
+    "RunParams": "run_parameters.html",
+    "Basic Model": "basic_model.html",
+    "Data Manager": "data_manager.html",
+    "Property Scorer": "property_scorer.html",
+    "Database Proxy": "database_proxy.html",
+    "Title": "read_wiki_data.html",
+    "Properties": "properties.html"
+  }
+}

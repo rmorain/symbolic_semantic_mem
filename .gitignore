@@ -9,3 +9,4 @@ dist
 data/
 logs/
 LOG_FILE
+db/
