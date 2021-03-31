@@ -11,19 +11,23 @@ from .properties import properties
 # Cell
 
 
+#export
 class WikiDatabase:
     conn = None
-
     def __init__(self):
         try:
-            self.conn = sqlite3.connect('wiki_data.db')
+            self.properties_dict = properties()
+            self.conn = sqlite3.connect(r"C:\Users\Kenneth\Desktop\Kenneth\BYU2020Fall\CS497\Kirby\kirby\data\db\wiki_data.db")
+            print(self.conn)
         except Exception as e:
             print(e)
             exit(-1)
 
     def exit_procedure(self):
-        self.conn.close()
-        exit(-1)
+        pass
+#         self.conn.close()
+#         exit(-1)
+        
 
     @staticmethod
     def get_table_name(entity_label):
@@ -99,6 +103,7 @@ class WikiDatabase:
         """
         entities_id = None
         try:
+            print('I love me!')
             entities_id = pd.read_sql_query(
                 "SELECT * FROM Entities WHERE label  LIKE \"%{}%\";".format(self.remove_quotations(label)),
                 self.conn)
@@ -182,7 +187,7 @@ class WikiDatabase:
             return None
         return relation_label.iloc[0]["label"]
 
-    def get_relation_string(self, property_id, related_entity_id):
+    def get_property_string(self, property_id, related_entity_id):
         """
         :param property_id:
         :type property_id: string
@@ -197,12 +202,11 @@ class WikiDatabase:
         try:
             # entity_label = get_entity_label(entity_id)
             related_entity_label = self.get_entity_by_id(related_entity_id)
-            property_name = property_dict[property_id]
+            property_name = self.properties_dict[property_id]
+            print(related_entity_label, property_name)
         except Exception as e:
             print(e)
             self.exit_procedure()
-        if entity_label is None or related_entity_label is None or property_name is None:
+        if related_entity_label is None or property_name is None:
             return None
-        return "{}: {}".format(property_name, related_entity_label)
-
-
+        return property_name, related_entity_label
