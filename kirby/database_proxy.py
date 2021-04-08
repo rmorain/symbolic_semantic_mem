@@ -9,21 +9,21 @@ import time
 from .properties import properties
 
 # Cell
-
-
 class WikiDatabase:
     conn = None
-
     def __init__(self):
         try:
-            self.conn = sqlite3.connect('wiki_data.db')
+            self.conn = sqlite3.connect('./data/db/wiki_data.db')
+            print(self.conn)
         except Exception as e:
             print(e)
             exit(-1)
 
     def exit_procedure(self):
-        self.conn.close()
-        exit(-1)
+        pass
+#         self.conn.close()
+#         exit(-1)
+
 
     @staticmethod
     def get_table_name(entity_label):
@@ -99,6 +99,7 @@ class WikiDatabase:
         """
         entities_id = None
         try:
+            print('I love me!')
             entities_id = pd.read_sql_query(
                 "SELECT * FROM Entities WHERE label  LIKE \"%{}%\";".format(self.remove_quotations(label)),
                 self.conn)
@@ -204,5 +205,3 @@ class WikiDatabase:
         if entity_label is None or related_entity_label is None or property_name is None:
             return None
         return "{}: {}".format(property_name, related_entity_label)
-
-

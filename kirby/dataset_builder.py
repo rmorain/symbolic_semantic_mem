@@ -3,9 +3,11 @@
 __all__ = ['DatasetBuilder']
 
 # Cell
+import random
 from rake_nltk import Rake
 from .database_proxy import WikiDatabase
 import json
+import importlib
 
 # Cell
 class DatasetBuilder():
@@ -28,8 +30,24 @@ class DatasetBuilder():
         return ranked_phrases[0]
 
     def random(self, x):
-        keyword = self.keyword(x)
-        e = self.db.get_entity_by_label(keyword)
+        accepted_entities = []
+        ds_builder.rake.extract_keywords_from_text(x)
+        ranked_phrases = ds_builder.rake.get_ranked_phrases()
+        print(ranked_phrases)
+        keywords = self.keyword(x)
+        print(keywords)
+        print(self.db.get_entities_by_label_extensive('cristiano ronaldo'))
+        for entity in keywords:
+            print(entity)
+#             query_result = self.db.get_entity_by_label(entity)
+#             if len(query_result) == 0:
+#                 continue
+#             if len(query_result) > 1:
+#                 second_result = db.get_entities_by_label_extensive(entity)
+#                 rand_index = random.randint(0, len(second_result) - 1)
+#                 accepted_entities.append(second_result[rand_index])
+#             else:
+#                 accepted_entities.append(query_result[0])
         return e
 
     def get_ranked_phrases(self, x):
