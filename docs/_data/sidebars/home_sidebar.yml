@@ -37,6 +37,9 @@ entries:
       title: Title
       url: read_wiki_data.html
     - output: web,pdf
+      title: Insert To Database
+      url: insert_to_database.html
+    - output: web,pdf
       title: Properties
       url: properties.html
     output: web
