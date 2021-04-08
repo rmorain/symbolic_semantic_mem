@@ -23,10 +23,11 @@ class BasicModel(pl.LightningModule):
     def prepare_data(self):
         data_manager = DataManager(self.run_params)
         self.train_ds, self.val_ds = data_manager.prepare_data()
+        import pdb; pdb.set_trace()
 
 
     def forward(self, x):
-        loss = self.model(x['input_ids'], attention_mask=x['attention_mask'], labels=x['input_ids'])[0]
+        loss = self.model(x['input_ids'], attention_mask=x['attention_mask'], labels=x['labels'])[0]
         return loss
 
     def training_step(self, batch, batch_idx):
