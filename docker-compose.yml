@@ -12,7 +12,7 @@ services:
       #    tty: true
     volumes:
       - .:/data/
-      - /Users/robertmorain/mind.cs.byu.edu:/data/db
+      - /home/kenneth/mind.cs.byu.edu:/data/db
       
   notebook:
     <<: *fastai
