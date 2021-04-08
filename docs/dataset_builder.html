@@ -47,7 +47,7 @@ nb_path: "01_dataset_builder.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="DatasetBuilder" class="doc_header"><code>class</code> <code>DatasetBuilder</code><a href="https://github.com/rmorain/kirby/tree/master/kirby/dataset_builder.py#L9" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>DatasetBuilder</code>()</p>
+<h2 id="DatasetBuilder" class="doc_header"><code>class</code> <code>DatasetBuilder</code><a href="https://github.com/rmorain/kirby/tree/master/kirby/dataset_builder.py#L11" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>DatasetBuilder</code>()</p>
 </blockquote>
 
 </div>
@@ -63,24 +63,6 @@ nb_path: "01_dataset_builder.ipynb"
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-<div class="output_subarea output_text output_error">
-<pre>
-<span class="ansi-cyan-fg">  File </span><span class="ansi-green-fg">&#34;&lt;ipython-input-8-0a8252ac7c6a&gt;&#34;</span><span class="ansi-cyan-fg">, line </span><span class="ansi-green-fg">28</span>
-<span class="ansi-red-fg">    </span>
-    ^
-<span class="ansi-red-fg">SyntaxError</span><span class="ansi-red-fg">:</span> unexpected EOF while parsing
-</pre>
-</div>
-</div>
-
-</div>
-</div>
 
 </div>
     {% endraw %}
@@ -137,6 +119,209 @@ nb_path: "01_dataset_builder.ipynb"
 <pre>[&#39;favorite basketball player&#39;, &#39;stephen curry&#39;]</pre>
 </div>
 
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">ds_builder</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">conn</span><span class="p">)</span>
+<span class="n">ds_builder</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">get_similar_entities_label</span><span class="p">(</span><span class="s1">&#39;Cristiano Ronaldo&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>&lt;sqlite3.Connection object at 0x7fc0a2dd5120&gt;
+Execution failed on sql &#39;SELECT * FROM Entities WHERE label  LIKE &#34;%Cristiano Ronaldo%&#34;;&#39;: no such table: Entities
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_text output_error">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">OperationalError</span>                          Traceback (most recent call last)
+<span class="ansi-green-fg">/usr/local/lib/python3.8/dist-packages/pandas/io/sql.py</span> in <span class="ansi-cyan-fg">execute</span><span class="ansi-blue-fg">(self, *args, **kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1696</span>         <span class="ansi-green-fg">try</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-fg">-&gt; 1697</span><span class="ansi-red-fg">             </span>cur<span class="ansi-blue-fg">.</span>execute<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">*</span>args<span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">**</span>kwargs<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1698</span>             <span class="ansi-green-fg">return</span> cur
+
+<span class="ansi-red-fg">OperationalError</span>: no such table: Entities
+
+The above exception was the direct cause of the following exception:
+
+<span class="ansi-red-fg">DatabaseError</span>                             Traceback (most recent call last)
+<span class="ansi-green-fg">/data/kirby/database_proxy.py</span> in <span class="ansi-cyan-fg">get_similar_entities_label</span><span class="ansi-blue-fg">(self, label)</span>
+<span class="ansi-green-intense-fg ansi-bold">    101</span>         <span class="ansi-green-fg">try</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-fg">--&gt; 102</span><span class="ansi-red-fg">             entities_id = pd.read_sql_query(
+</span><span class="ansi-green-intense-fg ansi-bold">    103</span>                 <span class="ansi-blue-fg">&#34;SELECT * FROM Entities WHERE label  LIKE \&#34;%{}%\&#34;;&#34;</span><span class="ansi-blue-fg">.</span>format<span class="ansi-blue-fg">(</span>self<span class="ansi-blue-fg">.</span>remove_quotations<span class="ansi-blue-fg">(</span>label<span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">,</span>
+
+<span class="ansi-green-fg">/usr/local/lib/python3.8/dist-packages/pandas/io/sql.py</span> in <span class="ansi-cyan-fg">read_sql_query</span><span class="ansi-blue-fg">(sql, con, index_col, coerce_float, params, parse_dates, chunksize)</span>
+<span class="ansi-green-intense-fg ansi-bold">    376</span>     pandas_sql <span class="ansi-blue-fg">=</span> pandasSQL_builder<span class="ansi-blue-fg">(</span>con<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-fg">--&gt; 377</span><span class="ansi-red-fg">     return pandas_sql.read_query(
+</span><span class="ansi-green-intense-fg ansi-bold">    378</span>         sql<span class="ansi-blue-fg">,</span>
+
+<span class="ansi-green-fg">/usr/local/lib/python3.8/dist-packages/pandas/io/sql.py</span> in <span class="ansi-cyan-fg">read_query</span><span class="ansi-blue-fg">(self, sql, index_col, coerce_float, params, parse_dates, chunksize)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1742</span>         args <span class="ansi-blue-fg">=</span> _convert_params<span class="ansi-blue-fg">(</span>sql<span class="ansi-blue-fg">,</span> params<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-fg">-&gt; 1743</span><span class="ansi-red-fg">         </span>cursor <span class="ansi-blue-fg">=</span> self<span class="ansi-blue-fg">.</span>execute<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">*</span>args<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1744</span>         columns <span class="ansi-blue-fg">=</span> <span class="ansi-blue-fg">[</span>col_desc<span class="ansi-blue-fg">[</span><span class="ansi-cyan-fg">0</span><span class="ansi-blue-fg">]</span> <span class="ansi-green-fg">for</span> col_desc <span class="ansi-green-fg">in</span> cursor<span class="ansi-blue-fg">.</span>description<span class="ansi-blue-fg">]</span>
+
+<span class="ansi-green-fg">/usr/local/lib/python3.8/dist-packages/pandas/io/sql.py</span> in <span class="ansi-cyan-fg">execute</span><span class="ansi-blue-fg">(self, *args, **kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1708</span>             ex <span class="ansi-blue-fg">=</span> DatabaseError<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">f&#34;Execution failed on sql &#39;{args[0]}&#39;: {exc}&#34;</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-fg">-&gt; 1709</span><span class="ansi-red-fg">             </span><span class="ansi-green-fg">raise</span> ex <span class="ansi-green-fg">from</span> exc
+<span class="ansi-green-intense-fg ansi-bold">   1710</span> 
+
+<span class="ansi-red-fg">DatabaseError</span>: Execution failed on sql &#39;SELECT * FROM Entities WHERE label  LIKE &#34;%Cristiano Ronaldo%&#34;;&#39;: no such table: Entities
+
+During handling of the above exception, another exception occurred:
+
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-green-fg">&lt;ipython-input-12-5010d41b2a71&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span>
+<span class="ansi-green-intense-fg ansi-bold">      1</span> print<span class="ansi-blue-fg">(</span>ds_builder<span class="ansi-blue-fg">.</span>db<span class="ansi-blue-fg">.</span>conn<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-fg">----&gt; 2</span><span class="ansi-red-fg"> </span>ds_builder<span class="ansi-blue-fg">.</span>db<span class="ansi-blue-fg">.</span>get_similar_entities_label<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">&#39;Cristiano Ronaldo&#39;</span><span class="ansi-blue-fg">)</span>
+
+<span class="ansi-green-fg">/data/kirby/database_proxy.py</span> in <span class="ansi-cyan-fg">get_similar_entities_label</span><span class="ansi-blue-fg">(self, label)</span>
+<span class="ansi-green-intense-fg ansi-bold">    105</span>         <span class="ansi-green-fg">except</span> Exception <span class="ansi-green-fg">as</span> e<span class="ansi-blue-fg">:</span>
+<span class="ansi-green-intense-fg ansi-bold">    106</span>             print<span class="ansi-blue-fg">(</span>e<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-fg">--&gt; 107</span><span class="ansi-red-fg">             </span>self<span class="ansi-blue-fg">.</span>exit_procedure<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    108</span>         <span class="ansi-green-fg">return</span> entities_id<span class="ansi-blue-fg">.</span>values<span class="ansi-blue-fg">.</span>tolist<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    109</span> 
+
+<span class="ansi-green-fg">/data/kirby/database_proxy.py</span> in <span class="ansi-cyan-fg">exit_procedure</span><span class="ansi-blue-fg">(self)</span>
+<span class="ansi-green-intense-fg ansi-bold">     24</span>     <span class="ansi-green-fg">def</span> exit_procedure<span class="ansi-blue-fg">(</span>self<span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-intense-fg ansi-bold">     25</span>         self<span class="ansi-blue-fg">.</span>conn<span class="ansi-blue-fg">.</span>close<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-fg">---&gt; 26</span><span class="ansi-red-fg">         </span>exit<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">-</span><span class="ansi-cyan-fg">1</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">     27</span> 
+<span class="ansi-green-intense-fg ansi-bold">     28</span>     <span class="ansi-blue-fg">@</span>staticmethod
+
+<span class="ansi-red-fg">NameError</span>: name &#39;exit&#39; is not defined</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="s2">&quot;Cristiano ronaldo played for Real Madrid&quot;</span>
+<span class="n">random_association</span> <span class="o">=</span> <span class="n">ds_builder</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">random_association</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[&#39;cristiano ronaldo played&#39;, &#39;real madrid&#39;]
+cristiano ronaldo played
+Execution failed on sql &#39;SELECT * FROM Entities_c WHERE label  LIKE &#34;cristiano ronaldo%&#34;;&#39;: no such table: Entities_c
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_text output_error">
+<pre>
+<span class="ansi-red-intense-fg ansi-bold">---------------------------------------------------------------------------</span>
+<span class="ansi-red-intense-fg ansi-bold">OperationalError</span>                          Traceback (most recent call last)
+<span class="ansi-green-intense-fg ansi-bold">~\.conda\envs\kirby\lib\site-packages\pandas\io\sql.py</span> in <span class="ansi-cyan-fg">execute</span><span class="ansi-blue-intense-fg ansi-bold">(self, *args, **kwargs)</span>
+<span class="ansi-green-fg">   1696</span>         <span class="ansi-green-intense-fg ansi-bold">try</span><span class="ansi-yellow-intense-fg ansi-bold">:</span>
+<span class="ansi-green-intense-fg ansi-bold">-&gt; 1697</span><span class="ansi-yellow-intense-fg ansi-bold">             </span>cur<span class="ansi-yellow-intense-fg ansi-bold">.</span>execute<span class="ansi-yellow-intense-fg ansi-bold">(</span><span class="ansi-yellow-intense-fg ansi-bold">*</span>args<span class="ansi-yellow-intense-fg ansi-bold">,</span> <span class="ansi-yellow-intense-fg ansi-bold">**</span>kwargs<span class="ansi-yellow-intense-fg ansi-bold">)</span>
+<span class="ansi-green-fg">   1698</span>             <span class="ansi-green-intense-fg ansi-bold">return</span> cur
+
+<span class="ansi-red-intense-fg ansi-bold">OperationalError</span>: no such table: Entities_c
+
+The above exception was the direct cause of the following exception:
+
+<span class="ansi-red-intense-fg ansi-bold">DatabaseError</span>                             Traceback (most recent call last)
+<span class="ansi-green-intense-fg ansi-bold">~\Desktop\Kenneth\BYU2020Fall\CS497\Kirby\kirby\kirby\database_proxy.py</span> in <span class="ansi-cyan-fg">get_entities_by_label_extensive</span><span class="ansi-blue-intense-fg ansi-bold">(self, label)</span>
+<span class="ansi-green-fg">    122</span>         <span class="ansi-green-intense-fg ansi-bold">try</span><span class="ansi-yellow-intense-fg ansi-bold">:</span>
+<span class="ansi-green-intense-fg ansi-bold">--&gt; 123</span><span class="ansi-yellow-intense-fg ansi-bold">             entities_id = pd.read_sql_query(
+</span><span class="ansi-green-fg">    124</span>                 <span class="ansi-blue-intense-fg ansi-bold">&#34;SELECT * FROM Entities_{} WHERE label  LIKE \&#34;{}%\&#34;;&#34;</span><span class="ansi-yellow-intense-fg ansi-bold">.</span>format<span class="ansi-yellow-intense-fg ansi-bold">(</span>table_name<span class="ansi-yellow-intense-fg ansi-bold">,</span> self<span class="ansi-yellow-intense-fg ansi-bold">.</span>remove_quotations<span class="ansi-yellow-intense-fg ansi-bold">(</span>label<span class="ansi-yellow-intense-fg ansi-bold">)</span><span class="ansi-yellow-intense-fg ansi-bold">)</span><span class="ansi-yellow-intense-fg ansi-bold">,</span>
+
+<span class="ansi-green-intense-fg ansi-bold">~\.conda\envs\kirby\lib\site-packages\pandas\io\sql.py</span> in <span class="ansi-cyan-fg">read_sql_query</span><span class="ansi-blue-intense-fg ansi-bold">(sql, con, index_col, coerce_float, params, parse_dates, chunksize)</span>
+<span class="ansi-green-fg">    376</span>     pandas_sql <span class="ansi-yellow-intense-fg ansi-bold">=</span> pandasSQL_builder<span class="ansi-yellow-intense-fg ansi-bold">(</span>con<span class="ansi-yellow-intense-fg ansi-bold">)</span>
+<span class="ansi-green-intense-fg ansi-bold">--&gt; 377</span><span class="ansi-yellow-intense-fg ansi-bold">     return pandas_sql.read_query(
+</span><span class="ansi-green-fg">    378</span>         sql<span class="ansi-yellow-intense-fg ansi-bold">,</span>
+
+<span class="ansi-green-intense-fg ansi-bold">~\.conda\envs\kirby\lib\site-packages\pandas\io\sql.py</span> in <span class="ansi-cyan-fg">read_query</span><span class="ansi-blue-intense-fg ansi-bold">(self, sql, index_col, coerce_float, params, parse_dates, chunksize)</span>
+<span class="ansi-green-fg">   1742</span>         args <span class="ansi-yellow-intense-fg ansi-bold">=</span> _convert_params<span class="ansi-yellow-intense-fg ansi-bold">(</span>sql<span class="ansi-yellow-intense-fg ansi-bold">,</span> params<span class="ansi-yellow-intense-fg ansi-bold">)</span>
+<span class="ansi-green-intense-fg ansi-bold">-&gt; 1743</span><span class="ansi-yellow-intense-fg ansi-bold">         </span>cursor <span class="ansi-yellow-intense-fg ansi-bold">=</span> self<span class="ansi-yellow-intense-fg ansi-bold">.</span>execute<span class="ansi-yellow-intense-fg ansi-bold">(</span><span class="ansi-yellow-intense-fg ansi-bold">*</span>args<span class="ansi-yellow-intense-fg ansi-bold">)</span>
+<span class="ansi-green-fg">   1744</span>         columns <span class="ansi-yellow-intense-fg ansi-bold">=</span> <span class="ansi-yellow-intense-fg ansi-bold">[</span>col_desc<span class="ansi-yellow-intense-fg ansi-bold">[</span><span class="ansi-cyan-intense-fg ansi-bold">0</span><span class="ansi-yellow-intense-fg ansi-bold">]</span> <span class="ansi-green-intense-fg ansi-bold">for</span> col_desc <span class="ansi-green-intense-fg ansi-bold">in</span> cursor<span class="ansi-yellow-intense-fg ansi-bold">.</span>description<span class="ansi-yellow-intense-fg ansi-bold">]</span>
+
+<span class="ansi-green-intense-fg ansi-bold">~\.conda\envs\kirby\lib\site-packages\pandas\io\sql.py</span> in <span class="ansi-cyan-fg">execute</span><span class="ansi-blue-intense-fg ansi-bold">(self, *args, **kwargs)</span>
+<span class="ansi-green-fg">   1708</span>             ex <span class="ansi-yellow-intense-fg ansi-bold">=</span> DatabaseError<span class="ansi-yellow-intense-fg ansi-bold">(</span><span class="ansi-blue-intense-fg ansi-bold">f&#34;Execution failed on sql &#39;{args[0]}&#39;: {exc}&#34;</span><span class="ansi-yellow-intense-fg ansi-bold">)</span>
+<span class="ansi-green-intense-fg ansi-bold">-&gt; 1709</span><span class="ansi-yellow-intense-fg ansi-bold">             </span><span class="ansi-green-intense-fg ansi-bold">raise</span> ex <span class="ansi-green-intense-fg ansi-bold">from</span> exc
+<span class="ansi-green-fg">   1710</span> 
+
+<span class="ansi-red-intense-fg ansi-bold">DatabaseError</span>: Execution failed on sql &#39;SELECT * FROM Entities_c WHERE label  LIKE &#34;cristiano ronaldo%&#34;;&#39;: no such table: Entities_c
+
+During handling of the above exception, another exception occurred:
+
+<span class="ansi-red-intense-fg ansi-bold">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-green-intense-fg ansi-bold">&lt;ipython-input-46-fc5dcbf235af&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span>
+<span class="ansi-green-fg">      1</span> <span class="ansi-red-intense-fg ansi-bold"># Get random association</span>
+<span class="ansi-green-fg">      2</span> x <span class="ansi-yellow-intense-fg ansi-bold">=</span> <span class="ansi-blue-intense-fg ansi-bold">&#34;Cristiano ronaldo played for Real Madrid&#34;</span>
+<span class="ansi-green-intense-fg ansi-bold">----&gt; 3</span><span class="ansi-yellow-intense-fg ansi-bold"> </span>random_association <span class="ansi-yellow-intense-fg ansi-bold">=</span> ds_builder<span class="ansi-yellow-intense-fg ansi-bold">.</span>random<span class="ansi-yellow-intense-fg ansi-bold">(</span>x<span class="ansi-yellow-intense-fg ansi-bold">)</span>
+<span class="ansi-green-fg">      4</span> random_association
+
+<span class="ansi-green-intense-fg ansi-bold">&lt;ipython-input-40-e89e1beab9e0&gt;</span> in <span class="ansi-cyan-fg">random</span><span class="ansi-blue-intense-fg ansi-bold">(self, x)</span>
+<span class="ansi-green-fg">     26</span>         keywords <span class="ansi-yellow-intense-fg ansi-bold">=</span> self<span class="ansi-yellow-intense-fg ansi-bold">.</span>keyword<span class="ansi-yellow-intense-fg ansi-bold">(</span>x<span class="ansi-yellow-intense-fg ansi-bold">)</span>
+<span class="ansi-green-fg">     27</span>         print<span class="ansi-yellow-intense-fg ansi-bold">(</span>keywords<span class="ansi-yellow-intense-fg ansi-bold">)</span>
+<span class="ansi-green-intense-fg ansi-bold">---&gt; 28</span><span class="ansi-yellow-intense-fg ansi-bold">         </span>print<span class="ansi-yellow-intense-fg ansi-bold">(</span>self<span class="ansi-yellow-intense-fg ansi-bold">.</span>db<span class="ansi-yellow-intense-fg ansi-bold">.</span>get_entities_by_label_extensive<span class="ansi-yellow-intense-fg ansi-bold">(</span><span class="ansi-blue-intense-fg ansi-bold">&#39;cristiano ronaldo&#39;</span><span class="ansi-yellow-intense-fg ansi-bold">)</span><span class="ansi-yellow-intense-fg ansi-bold">)</span>
+<span class="ansi-green-fg">     29</span>         <span class="ansi-green-intense-fg ansi-bold">for</span> entity <span class="ansi-green-intense-fg ansi-bold">in</span> keywords<span class="ansi-yellow-intense-fg ansi-bold">:</span>
+<span class="ansi-green-fg">     30</span>             print<span class="ansi-yellow-intense-fg ansi-bold">(</span>entity<span class="ansi-yellow-intense-fg ansi-bold">)</span>
+
+<span class="ansi-green-intense-fg ansi-bold">~\Desktop\Kenneth\BYU2020Fall\CS497\Kirby\kirby\kirby\database_proxy.py</span> in <span class="ansi-cyan-fg">get_entities_by_label_extensive</span><span class="ansi-blue-intense-fg ansi-bold">(self, label)</span>
+<span class="ansi-green-fg">    126</span>         <span class="ansi-green-intense-fg ansi-bold">except</span> Exception <span class="ansi-green-intense-fg ansi-bold">as</span> e<span class="ansi-yellow-intense-fg ansi-bold">:</span>
+<span class="ansi-green-fg">    127</span>             print<span class="ansi-yellow-intense-fg ansi-bold">(</span>e<span class="ansi-yellow-intense-fg ansi-bold">)</span>
+<span class="ansi-green-intense-fg ansi-bold">--&gt; 128</span><span class="ansi-yellow-intense-fg ansi-bold">             </span>self<span class="ansi-yellow-intense-fg ansi-bold">.</span>exit_procedure<span class="ansi-yellow-intense-fg ansi-bold">(</span><span class="ansi-yellow-intense-fg ansi-bold">)</span>
+<span class="ansi-green-fg">    129</span>         <span class="ansi-green-intense-fg ansi-bold">return</span> entities_id<span class="ansi-yellow-intense-fg ansi-bold">.</span>values<span class="ansi-yellow-intense-fg ansi-bold">.</span>tolist<span class="ansi-yellow-intense-fg ansi-bold">(</span><span class="ansi-yellow-intense-fg ansi-bold">)</span>
+<span class="ansi-green-fg">    130</span> 
+
+<span class="ansi-green-intense-fg ansi-bold">~\Desktop\Kenneth\BYU2020Fall\CS497\Kirby\kirby\kirby\database_proxy.py</span> in <span class="ansi-cyan-fg">exit_procedure</span><span class="ansi-blue-intense-fg ansi-bold">(self)</span>
+<span class="ansi-green-fg">     24</span>     <span class="ansi-green-intense-fg ansi-bold">def</span> exit_procedure<span class="ansi-yellow-intense-fg ansi-bold">(</span>self<span class="ansi-yellow-intense-fg ansi-bold">)</span><span class="ansi-yellow-intense-fg ansi-bold">:</span>
+<span class="ansi-green-fg">     25</span>         self<span class="ansi-yellow-intense-fg ansi-bold">.</span>conn<span class="ansi-yellow-intense-fg ansi-bold">.</span>close<span class="ansi-yellow-intense-fg ansi-bold">(</span><span class="ansi-yellow-intense-fg ansi-bold">)</span>
+<span class="ansi-green-intense-fg ansi-bold">---&gt; 26</span><span class="ansi-yellow-intense-fg ansi-bold">         </span>exit<span class="ansi-yellow-intense-fg ansi-bold">(</span><span class="ansi-yellow-intense-fg ansi-bold">-</span><span class="ansi-cyan-intense-fg ansi-bold">1</span><span class="ansi-yellow-intense-fg ansi-bold">)</span>
+<span class="ansi-green-fg">     27</span> 
+<span class="ansi-green-fg">     28</span>     <span class="ansi-yellow-intense-fg ansi-bold">@</span>staticmethod
+
+<span class="ansi-red-intense-fg ansi-bold">NameError</span>: name &#39;exit&#39; is not defined</pre>
+</div>
 </div>
 
 </div>
