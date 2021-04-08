@@ -119,7 +119,8 @@ label:Description of the Property</p>
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Query tool : 0.006980180740356445
+<pre>&lt;sqlite3.Connection object at 0x7f8cc3ba1210&gt;
+Query tool : 0.022501468658447266
 &lt;class &#39;list&#39;&gt;
 [[&#39;Q5573861&#39;, &#39;Stephen Curry&#39;, &#39;Australian comedian and actor&#39;], [&#39;Q16167386&#39;, &#39;Stephen Curry&#39;, &#39;Wikimedia disambiguation page&#39;], [&#39;Q352159&#39;, &#39;Stephen Curry&#39;, &#39;American basketball player&#39;]]
 </pre>
@@ -140,7 +141,7 @@ label:Description of the Property</p>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">wiki</span> <span class="o">=</span> <span class="n">WikiDatabase</span><span class="p">()</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">wiki</span><span class="o">.</span><span class="n">get_entity_by_label</span><span class="p">(</span><span class="s1">&#39;Cristiano Ronaldo&#39;</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">wiki</span><span class="o">.</span><span class="n">get_entity_by_label</span><span class="p">(</span><span class="s1">&#39;Bill Gates&#39;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 </pre></div>
 
@@ -154,7 +155,70 @@ label:Description of the Property</p>
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>[[&#39;Q11571&#39;, &#39;Cristiano Ronaldo&#39;, &#39;Portuguese association football player&#39;]]
+<pre>&lt;sqlite3.Connection object at 0x7f8cc3ba1210&gt;
+[[&#39;Q4909106&#39;, &#39;Bill Gates&#39;, &#39;American frontiersman&#39;], [&#39;Q1181671&#39;, &#39;Bill Gates&#39;, &#39;Wikimedia disambiguation page&#39;], [&#39;Q5284&#39;, &#39;Bill Gates&#39;, &#39;American business magnate and philanthropist&#39;]]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">property_r</span> <span class="ow">in</span> <span class="n">wiki</span><span class="o">.</span><span class="n">get_entity_properties</span><span class="p">(</span><span class="s1">&#39;Q5284&#39;</span><span class="p">):</span> 
+    <span class="nb">print</span><span class="p">(</span><span class="n">wiki</span><span class="o">.</span><span class="n">get_property_string</span><span class="p">(</span><span class="n">property_r</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">property_r</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>(&#39;mother&#39;, &#39;Mary Maxwell Gates&#39;)
+(&#39;place of birth&#39;, &#39;Seattle&#39;)
+(&#39;spouse&#39;, &#39;Melinda Gates&#39;)
+(&#39;occupation&#39;, &#39;entrepreneur&#39;)
+(&#39;country of citizenship&#39;, &#39;United States of America&#39;)
+(&#39;employer&#39;, &#39;Bill &amp; Melinda Gates Foundation&#39;)
+(&#39;educated at&#39;, &#39;Lakeside School&#39;)
+(&#34;topic&#39;s main category&#34;, &#39;Category:Bill Gates&#39;)
+(&#39;instance of&#39;, &#39;human&#39;)
+(&#39;residence&#39;, &#39;Medina&#39;)
+(&#39;award received&#39;, &#39;Knight Commander of the Order of the British Empire&#39;)
+(&#39;described by source&#39;, &#39;Lentapedia (full versions)&#39;)
+(&#39;given name&#39;, &#39;William&#39;)
+(&#39;position held&#39;, &#39;chief executive officer&#39;)
+(&#39;family name&#39;, &#39;Gates&#39;)
+(&#39;child&#39;, &#39;Jennifer Katherine Gates&#39;)
+(&#39;ethnic group&#39;, &#39;Scotch-Irish Americans&#39;)
+(&#39;member of&#39;, &#39;American Academy of Arts and Sciences&#39;)
+(&#39;vehicle normally used&#39;, &#39;Porsche 959&#39;)
+(&#39;languages spoken, written or signed&#39;, &#39;English&#39;)
+(&#39;sex or gender&#39;, &#39;male&#39;)
+(&#39;owner of&#39;, &#39;Microsoft&#39;)
+(&#39;present in work&#39;, &#39;iSteve&#39;)
+(&#39;writing language&#39;, &#39;English&#39;)
+(&#39;sport&#39;, &#39;contract bridge&#39;)
+(&#39;handedness&#39;, &#39;left-handedness&#39;)
+(&#39;father&#39;, &#39;William H. Gates Jr.&#39;)
+None
+None
+(&#39;sibling&#39;, &#39;Kristianne Gates&#39;)
+(&#39;participant in&#39;, &#39;commencement at the Harvard University&#39;)
 </pre>
 </div>
 </div>
