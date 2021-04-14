@@ -18,6 +18,8 @@ class DatasetBuilder():
         self.rake = Rake()
         self.db = WikiDatabase()
         self.nlp = spacy.load('en_core_web_sm')
+        module_url = "https://tfhub.dev/google/universal-sentence-encoder/4" #@param ["https://tfhub.dev/google/universal-sentence-encoder/4", "https://tfhub.dev/google/universal-sentence-encoder-large/5"]
+        self.encoder = hub.load(module_url)
         pass
 
     def build(self, ds, dataset_type='random'):
@@ -49,7 +51,6 @@ class DatasetBuilder():
         accepted_entities = []
         print(self.nlp)
         doc = self.nlp(x)
-        print(doc)
         for entity in doc.ents:
             if entity.label_ == 'CARDINAL':
                 continue
@@ -62,15 +63,13 @@ class DatasetBuilder():
                 if len(accepted_sentence) == 0 or random_entities:
                     q_a_index = random.randint(0, len(result) - 1)
                 else:
-                    encoded_sentences = encoder(accepted_sentence)  # array of sentence vectors
+                    encoded_sentences = self.encoder(accepted_sentence)  # array of sentence vectors
 
                     proposed_sentences = []
                     for entity_w in result:
-                        # if entity_w[2] != '':
                         proposed_sentences.append(entity_w[2])
-                    encoded_proposed = encoder(proposed_sentences)
+                    encoded_proposed = self.encoder(proposed_sentences)
                     neigh = NearestNeighbors(n_neighbors=1)
-                    # print(proposed_sentences)
                     neigh.fit(encoded_proposed)
                     closest = neigh.kneighbors(encoded_sentences)
                     q_a_index = closest[1][0][0]
@@ -78,9 +77,9 @@ class DatasetBuilder():
                 accepted_entities.append(result[q_a_index])
 
             else:
-#                     print('Accepted:', result[0])
-                    self.add_to_accepted(accepted_sentence, result[0][2])
-                    accepted_entities.append(result[0])
+                # print('Accepted:', result[0])
+                self.add_to_accepted(accepted_sentence, result[0][2])
+                accepted_entities.append(result[0])
         return accepted_entities
 
     def entity(self, ranked_phrases):
@@ -91,7 +90,6 @@ class DatasetBuilder():
                 return entity
         return entity
     def get_entity_properties_strings(self, entity_id):
-        print(self.db.get_entity_properties(entity_id))
         entity_properties_dict = {}
         for entity_property in self.db.get_entity_properties(entity_id):
             property_name, related_entity_label = self.db.get_property_string(entity_property[0], entity_property[1])

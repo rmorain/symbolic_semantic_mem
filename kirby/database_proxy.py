@@ -200,7 +200,7 @@ class WikiDatabase:
             # entity_label = get_entity_label(entity_id)
             related_entity_label = self.get_entity_by_id(related_entity_id)
             property_name = self.properties_dict[property_id]
-            print(related_entity_label, property_name)
+            # print(related_entity_label, property_name)
         except Exception as e:
             print(e)
             self.exit_procedure()

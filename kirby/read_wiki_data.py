@@ -6,7 +6,7 @@ __all__ = ['fix_label', 'write_to_file', 'write_to_database', 'read_wiki_data', 
 from qwikidata.json_dump import WikidataJsonDump
 import sqlite3
 import pandas
-import CreateDatabase
+import kirby.create_database
 from .properties import properties
 
 # Cell
