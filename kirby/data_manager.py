@@ -13,14 +13,14 @@ from .run_params import RunParams
 class DataManager():
     def __init__(self, run_params):
         self.run_params = run_params
+        self.tokenizer = GPT2Tokenizer.from_pretrained(self.run_params.model)
+        self.tokenizer.pad_token = self.tokenizer.eos_token
     # Load, Tokenize, and Augment data
     def prepare_data(self):
         train_ds, val_ds = map(self.prepare_ds, ('train', 'valid'))
         return train_ds, val_ds
 
     def prepare_ds(self, split):
-        tokenizer = GPT2Tokenizer.from_pretrained(self.run_params.model)
-        tokenizer.pad_token = tokenizer.eos_token
         split = f'{split}[:{self.run_params.batch_size if self.run_params.debug else f"{self.run_params.data_set_percentage}%"}]'
         ds = load_dataset('text', data_files=self.run_params.data_files, split=split)
         ds = ds.map(self.tokenize, batched=True, fn_kwargs={'tokenizer':tokenizer})
@@ -29,7 +29,7 @@ class DataManager():
 
     # Tokenize a sequence
     def tokenize(self, x, tokenizer=None):
-        tokens = tokenizer(
+        tokens = self.tokenizer(
             x['text'],
             max_length=self.run_params.seq_length,
             truncation=True,
