@@ -18,18 +18,14 @@ index = {"DatasetBuilder": "01_dataset_builder.ipynb",
          "max_entities": "09_create_database_tables.ipynb",
          "property_list": "09_create_database_tables.ipynb",
          "aliases": "09_create_database_tables.ipynb",
-         "fix_label": "11_read_wiki_data.ipynb",
+         "fix_label": "09_create_database_tables.ipynb",
          "f": "09_create_database_tables.ipynb",
-         "count": "10_insert_to_database.ipynb",
-         "connection": "10_insert_to_database.ipynb",
-         "sql_query": "10_insert_to_database.ipynb",
-         "last_line": "10_insert_to_database.ipynb",
-         "crsr": "10_insert_to_database.ipynb",
-         "write_to_file": "11_read_wiki_data.ipynb",
-         "write_to_database": "11_read_wiki_data.ipynb",
-         "read_wiki_data": "11_read_wiki_data.ipynb",
-         "main": "11_read_wiki_data.ipynb",
-         "properties": "12_properties.ipynb"}
+         "count": "09_create_database_tables.ipynb",
+         "text_to_database": "10_insert_to_database.ipynb",
+         "main": "10_insert_to_database.ipynb",
+         "properties": "12_properties.ipynb",
+         "create_database": "14_create_database.ipynb",
+         "split_and_optimize": "14_create_database.ipynb"}
 
 modules = ["dataset_builder.py",
            "statement_classifier.py",
@@ -40,8 +36,8 @@ modules = ["dataset_builder.py",
            "database_proxy.py",
            "create_database_tables.py",
            "insert_to_database.py",
-           "read_wiki_data.py",
-           "properties.py"]
+           "properties.py",
+           "create_database.py"]
 
 doc_url = "https://rmorain.github.io/kirby/"
 
