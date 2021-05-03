@@ -23,7 +23,6 @@ class BasicModel(pl.LightningModule):
     def prepare_data(self):
         data_manager = DataManager(self.run_params)
         self.train_ds, self.val_ds = data_manager.prepare_data()
-        import pdb; pdb.set_trace()
 
 
     def forward(self, x):

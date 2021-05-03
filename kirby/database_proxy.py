@@ -13,7 +13,8 @@ class WikiDatabase:
     conn = None
     def __init__(self):
         try:
-            self.conn = sqlite3.connect('./data/db/wiki_data.db')
+            self.properties_dict = properties()
+            self.conn = sqlite3.connect("/data/db/wiki_data.db")
             print(self.conn)
         except Exception as e:
             print(e)
@@ -122,12 +123,13 @@ class WikiDatabase:
         entities_id = None
         try:
             entities_id = pd.read_sql_query(
-                "SELECT * FROM Entities_{} WHERE label  LIKE \"{}%\";".format(table_name, self.remove_quotations(label)),
-                self.conn)
+                "SELECT * FROM Entities_{} WHERE label  LIKE \"{}%\";"\
+                .format(table_name, self.remove_quotations(label)), self.conn)
+            return entities_id.values.tolist()
         except Exception as e:
             print(e)
             self.exit_procedure()
-        return entities_id.values.tolist()
+
 
     def get_entity_by_label(self, label):
         """
@@ -141,14 +143,16 @@ class WikiDatabase:
         table_name = self.get_table_name(label)
         try:
             entity_id = pd.read_sql_query(
-                "SELECT * FROM Entities_{} WHERE label =  \"{}\";".format(table_name, self.remove_quotations(label)),
-                self.conn)
+                "SELECT * FROM Entities_{} WHERE label =  \"{}\";"\
+                .format(table_name, self.remove_quotations(label)), self.conn)
+            entities = entity_id.values.tolist()
+            # Return the first entity
+            return entities[0]
         except Exception as e:
             print(e)
             self.exit_procedure()
-        return entity_id.values.tolist()
 
-    def get_entity_properties(self, entity_id):
+    def get_entity_associations(self, entity_id):
         """
         Search for all properties of the entity
         Return all the
@@ -183,7 +187,7 @@ class WikiDatabase:
             return None
         return relation_label.iloc[0]["label"]
 
-    def get_relation_string(self, property_id, related_entity_id):
+    def get_property_string(self, property_id, related_entity_id):
         """
         :param property_id:
         :type property_id: string
@@ -198,10 +202,9 @@ class WikiDatabase:
         try:
             # entity_label = get_entity_label(entity_id)
             related_entity_label = self.get_entity_by_id(related_entity_id)
-            property_name = property_dict[property_id]
+            property_name = self.properties_dict[property_id]
+            # print(related_entity_label, property_name)
         except Exception as e:
             print(e)
             self.exit_procedure()
-        if entity_label is None or related_entity_label is None or property_name is None:
-            return None
-        return "{}: {}".format(property_name, related_entity_label)
+        return property_name, related_entity_label
