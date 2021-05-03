@@ -67,7 +67,7 @@ label:Description of the Property</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="WikiDatabase" class="doc_header"><code>class</code> <code>WikiDatabase</code><a href="https://github.com/rmorain/kirby/tree/master/kirby/database_proxy.py#L14" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>WikiDatabase</code>()</p>
+<h2 id="WikiDatabase" class="doc_header"><code>class</code> <code>WikiDatabase</code><a href="https://github.com/rmorain/kirby/tree/master/kirby/database_proxy.py#L12" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>WikiDatabase</code>()</p>
 </blockquote>
 
 </div>
@@ -114,7 +114,7 @@ label:Description of the Property</p>
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>unable to open database file
+<pre>&lt;sqlite3.Connection object at 0x7f555ffd63f0&gt;
 </pre>
 </div>
 </div>
@@ -139,26 +139,6 @@ label:Description of the Property</p>
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-<div class="output_subarea output_text output_error">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">AssertionError</span>                            Traceback (most recent call last)
-<span class="ansi-green-fg">&lt;ipython-input-9-669ab5c3e1ac&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> <span class="ansi-red-fg"># Test Connection</span>
-<span class="ansi-green-fg">----&gt; 2</span><span class="ansi-red-fg"> </span><span class="ansi-green-fg">assert</span> db<span class="ansi-blue-fg">.</span>conn <span class="ansi-green-fg">is</span> <span class="ansi-green-fg">not</span> <span class="ansi-green-fg">None</span><span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">&#34;No DB connection&#34;</span>
-
-<span class="ansi-red-fg">AssertionError</span>: No DB connection</pre>
-</div>
-</div>
-
-</div>
-</div>
-
 </div>
     {% endraw %}
 
@@ -170,12 +150,9 @@ label:Description of the Property</p>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">wiki</span> <span class="o">=</span> <span class="n">WikiDatabase</span><span class="p">()</span>
-<span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">wiki</span><span class="o">.</span><span class="n">get_entity_by_label</span><span class="p">(</span><span class="s1">&#39;Stephen Curry&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Query tool : </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span> <span class="n">start_time</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">wiki</span><span class="o">.</span><span class="n">get_entity_by_label</span><span class="p">(</span><span class="s1">&#39;Bill Gates&#39;</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="p">[[</span><span class="s1">&#39;Q4909106&#39;</span><span class="p">,</span> <span class="s1">&#39;Bill Gates&#39;</span><span class="p">,</span> <span class="s1">&#39;American frontiersman&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;Q1181671&#39;</span><span class="p">,</span> <span class="s1">&#39;Bill Gates&#39;</span><span class="p">,</span> <span class="s1">&#39;Wikimedia disambiguation page&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;Q5284&#39;</span><span class="p">,</span> <span class="s1">&#39;Bill Gates&#39;</span><span class="p">,</span> <span class="s1">&#39;American business magnate and philanthropist&#39;</span><span class="p">]],</span> <span class="s1">&#39;Query failed&#39;</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-<span class="n">wiki</span><span class="o">.</span><span class="n">exit_procedure</span><span class="p">()</span>
 </pre></div>
 
     </div>
@@ -188,33 +165,9 @@ label:Description of the Property</p>
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>unable to open database file
-&#39;NoneType&#39; object has no attribute &#39;cursor&#39;
+<pre>&lt;sqlite3.Connection object at 0x7f555ffd64e0&gt;
+[[&#39;Q4909106&#39;, &#39;Bill Gates&#39;, &#39;American frontiersman&#39;], [&#39;Q1181671&#39;, &#39;Bill Gates&#39;, &#39;Wikimedia disambiguation page&#39;], [&#39;Q5284&#39;, &#39;Bill Gates&#39;, &#39;American business magnate and philanthropist&#39;]]
 </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-<div class="output_subarea output_text output_error">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">AttributeError</span>                            Traceback (most recent call last)
-<span class="ansi-green-fg">&lt;ipython-input-4-460e942800fe&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> wiki <span class="ansi-blue-fg">=</span> WikiDatabase<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">      2</span> start_time <span class="ansi-blue-fg">=</span> time<span class="ansi-blue-fg">.</span>time<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span>
-<span class="ansi-green-fg">----&gt; 3</span><span class="ansi-red-fg"> </span>result <span class="ansi-blue-fg">=</span> wiki<span class="ansi-blue-fg">.</span>get_entity_by_label<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">&#39;Stephen Curry&#39;</span><span class="ansi-blue-fg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">      4</span> print<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">&#39;Query tool : {}&#39;</span><span class="ansi-blue-fg">.</span>format<span class="ansi-blue-fg">(</span>time<span class="ansi-blue-fg">.</span>time<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">-</span> start_time<span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">      5</span> print<span class="ansi-blue-fg">(</span>type<span class="ansi-blue-fg">(</span>result<span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">)</span>
-
-<span class="ansi-green-fg">&lt;ipython-input-3-68ccf806aeab&gt;</span> in <span class="ansi-cyan-fg">get_entity_by_label</span><span class="ansi-blue-fg">(self, label)</span>
-<span class="ansi-green-intense-fg ansi-bold">    137</span>             print<span class="ansi-blue-fg">(</span>e<span class="ansi-blue-fg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    138</span>             self<span class="ansi-blue-fg">.</span>exit_procedure<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span>
-<span class="ansi-green-fg">--&gt; 139</span><span class="ansi-red-fg">         </span><span class="ansi-green-fg">return</span> entity_id<span class="ansi-blue-fg">.</span>values<span class="ansi-blue-fg">.</span>tolist<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    140</span> 
-<span class="ansi-green-intense-fg ansi-bold">    141</span>     <span class="ansi-green-fg">def</span> get_entity_properties<span class="ansi-blue-fg">(</span>self<span class="ansi-blue-fg">,</span> entity_id<span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
-
-<span class="ansi-red-fg">AttributeError</span>: &#39;NoneType&#39; object has no attribute &#39;values&#39;</pre>
 </div>
 </div>
 
@@ -231,12 +184,57 @@ label:Description of the Property</p>
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">wiki</span> <span class="o">=</span> <span class="n">WikiDatabase</span><span class="p">()</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">wiki</span><span class="o">.</span><span class="n">get_entity_by_label</span><span class="p">(</span><span class="s1">&#39;Cristiano Ronaldo&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">properties</span> <span class="o">=</span> <span class="n">wiki</span><span class="o">.</span><span class="n">get_entity_associations</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+<span class="k">assert</span> <span class="n">properties</span> <span class="o">==</span>  <span class="p">[[</span><span class="s1">&#39;P31&#39;</span><span class="p">,</span> <span class="s1">&#39;Q5&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P735&#39;</span><span class="p">,</span> <span class="s1">&#39;Q18245781&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P27&#39;</span><span class="p">,</span> <span class="s1">&#39;Q30&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P106&#39;</span><span class="p">,</span> <span class="s1">&#39;Q43845&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P734&#39;</span><span class="p">,</span> <span class="s1">&#39;Q16870134&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P21&#39;</span><span class="p">,</span> <span class="s1">&#39;Q6581097&#39;</span><span class="p">]],</span> <span class="s1">&#39;Properties failed&#39;</span>
+<span class="k">for</span> <span class="n">property_r</span> <span class="ow">in</span> <span class="n">wiki</span><span class="o">.</span><span class="n">get_entity_associations</span><span class="p">(</span><span class="s1">&#39;Q5284&#39;</span><span class="p">):</span> 
+    <span class="nb">print</span><span class="p">(</span><span class="n">wiki</span><span class="o">.</span><span class="n">get_property_string</span><span class="p">(</span><span class="n">property_r</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">property_r</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>(&#39;mother&#39;, &#39;Mary Maxwell Gates&#39;)
+(&#39;place of birth&#39;, &#39;Seattle&#39;)
+(&#39;spouse&#39;, &#39;Melinda Gates&#39;)
+(&#39;occupation&#39;, &#39;entrepreneur&#39;)
+(&#39;country of citizenship&#39;, &#39;United States of America&#39;)
+(&#39;employer&#39;, &#39;Bill &amp; Melinda Gates Foundation&#39;)
+(&#39;educated at&#39;, &#39;Lakeside School&#39;)
+(&#34;topic&#39;s main category&#34;, &#39;Category:Bill Gates&#39;)
+(&#39;instance of&#39;, &#39;human&#39;)
+(&#39;residence&#39;, &#39;Medina&#39;)
+(&#39;award received&#39;, &#39;Knight Commander of the Order of the British Empire&#39;)
+(&#39;described by source&#39;, &#39;Lentapedia (full versions)&#39;)
+(&#39;given name&#39;, &#39;William&#39;)
+(&#39;position held&#39;, &#39;chief executive officer&#39;)
+(&#39;family name&#39;, &#39;Gates&#39;)
+(&#39;child&#39;, &#39;Jennifer Katherine Gates&#39;)
+(&#39;ethnic group&#39;, &#39;Scotch-Irish Americans&#39;)
+(&#39;member of&#39;, &#39;American Academy of Arts and Sciences&#39;)
+(&#39;vehicle normally used&#39;, &#39;Porsche 959&#39;)
+(&#39;languages spoken, written or signed&#39;, &#39;English&#39;)
+(&#39;sex or gender&#39;, &#39;male&#39;)
+(&#39;owner of&#39;, &#39;Microsoft&#39;)
+(&#39;present in work&#39;, &#39;iSteve&#39;)
+(&#39;writing language&#39;, &#39;English&#39;)
+(&#39;sport&#39;, &#39;contract bridge&#39;)
+(&#39;handedness&#39;, &#39;left-handedness&#39;)
+(&#39;father&#39;, &#39;William H. Gates Jr.&#39;)
+None
+None
+(&#39;sibling&#39;, &#39;Kristianne Gates&#39;)
+(&#39;participant in&#39;, &#39;commencement at the Harvard University&#39;)
+</pre>
+</div>
+</div>
+
 </div>
 </div>
 
