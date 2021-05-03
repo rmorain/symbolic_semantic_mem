@@ -144,10 +144,11 @@ class WikiDatabase:
             entity_id = pd.read_sql_query(
                 "SELECT * FROM Entities_{} WHERE label =  \"{}\";".format(table_name, self.remove_quotations(label)),
                 self.conn)
+            entities = entity_id.values.tolist()
+            return entities
         except Exception as e:
             print(e)
             self.exit_procedure()
-        return entity_id.values.tolist()
 
     def get_entity_properties(self, entity_id):
         """
