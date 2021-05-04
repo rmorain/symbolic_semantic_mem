@@ -215,52 +215,12 @@ nb_path: "13_read_wiki_data.ipynb"
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">main</span><span class="p">()</span>
+    <span class="k">pass</span>
+    <span class="c1"># Commented out so this doesn&#39;t run unless we want it to</span>
+<span class="c1">#     main()</span>
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-<div class="output_subarea output_text output_error">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">KeyboardInterrupt</span>                         Traceback (most recent call last)
-<span class="ansi-green-fg">&lt;ipython-input-2-858418a3a979&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span>
-<span class="ansi-green-intense-fg ansi-bold">    158</span> 
-<span class="ansi-green-intense-fg ansi-bold">    159</span> <span class="ansi-green-fg">if</span> __name__ <span class="ansi-blue-fg">==</span> <span class="ansi-blue-fg">&#34;__main__&#34;</span><span class="ansi-blue-fg">:</span>
-<span class="ansi-green-fg">--&gt; 160</span><span class="ansi-red-fg">     </span>main<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span>
-
-<span class="ansi-green-fg">&lt;ipython-input-2-858418a3a979&gt;</span> in <span class="ansi-cyan-fg">main</span><span class="ansi-blue-fg">()</span>
-<span class="ansi-green-intense-fg ansi-bold">    141</span> 
-<span class="ansi-green-intense-fg ansi-bold">    142</span> <span class="ansi-green-fg">def</span> main<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
-<span class="ansi-green-fg">--&gt; 143</span><span class="ansi-red-fg">     </span>wjd_name <span class="ansi-blue-fg">=</span> input<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">&#34;Enter the JSON path: &#34;</span><span class="ansi-blue-fg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    144</span>     print<span class="ansi-blue-fg">(</span>wjd_name<span class="ansi-blue-fg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    145</span>     wiki_dump <span class="ansi-blue-fg">=</span> WikidataJsonDump<span class="ansi-blue-fg">(</span>wjd_name<span class="ansi-blue-fg">)</span>
-
-<span class="ansi-green-fg">/usr/local/lib/python3.8/dist-packages/ipykernel/kernelbase.py</span> in <span class="ansi-cyan-fg">raw_input</span><span class="ansi-blue-fg">(self, prompt)</span>
-<span class="ansi-green-intense-fg ansi-bold">    846</span>                 <span class="ansi-blue-fg">&#34;raw_input was called, but this frontend does not support input requests.&#34;</span>
-<span class="ansi-green-intense-fg ansi-bold">    847</span>             )
-<span class="ansi-green-fg">--&gt; 848</span><span class="ansi-red-fg">         return self._input_request(str(prompt),
-</span><span class="ansi-green-intense-fg ansi-bold">    849</span>             self<span class="ansi-blue-fg">.</span>_parent_ident<span class="ansi-blue-fg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    850</span>             self<span class="ansi-blue-fg">.</span>_parent_header<span class="ansi-blue-fg">,</span>
-
-<span class="ansi-green-fg">/usr/local/lib/python3.8/dist-packages/ipykernel/kernelbase.py</span> in <span class="ansi-cyan-fg">_input_request</span><span class="ansi-blue-fg">(self, prompt, ident, parent, password)</span>
-<span class="ansi-green-intense-fg ansi-bold">    890</span>             <span class="ansi-green-fg">except</span> KeyboardInterrupt<span class="ansi-blue-fg">:</span>
-<span class="ansi-green-intense-fg ansi-bold">    891</span>                 <span class="ansi-red-fg"># re-raise KeyboardInterrupt, to truncate traceback</span>
-<span class="ansi-green-fg">--&gt; 892</span><span class="ansi-red-fg">                 </span><span class="ansi-green-fg">raise</span> KeyboardInterrupt<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">&#34;Interrupted by user&#34;</span><span class="ansi-blue-fg">)</span> <span class="ansi-green-fg">from</span> <span class="ansi-green-fg">None</span>
-<span class="ansi-green-intense-fg ansi-bold">    893</span>             <span class="ansi-green-fg">except</span> Exception <span class="ansi-green-fg">as</span> e<span class="ansi-blue-fg">:</span>
-<span class="ansi-green-intense-fg ansi-bold">    894</span>                 self<span class="ansi-blue-fg">.</span>log<span class="ansi-blue-fg">.</span>warning<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">&#34;Invalid Message:&#34;</span><span class="ansi-blue-fg">,</span> exc_info<span class="ansi-blue-fg">=</span><span class="ansi-green-fg">True</span><span class="ansi-blue-fg">)</span>
-
-<span class="ansi-red-fg">KeyboardInterrupt</span>: Interrupted by user</pre>
-</div>
-</div>
-
 </div>
 </div>
 
