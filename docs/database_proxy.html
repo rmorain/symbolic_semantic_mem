@@ -114,7 +114,7 @@ label:Description of the Property</p>
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>&lt;sqlite3.Connection object at 0x7f555ffd63f0&gt;
+<pre>&lt;sqlite3.Connection object at 0x7f2e005976c0&gt;
 </pre>
 </div>
 </div>
@@ -149,10 +149,11 @@ label:Description of the Property</p>
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">wiki</span> <span class="o">=</span> <span class="n">WikiDatabase</span><span class="p">()</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">wiki</span><span class="o">.</span><span class="n">get_entity_by_label</span><span class="p">(</span><span class="s1">&#39;Bill Gates&#39;</span><span class="p">)</span>
-<span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="p">[[</span><span class="s1">&#39;Q4909106&#39;</span><span class="p">,</span> <span class="s1">&#39;Bill Gates&#39;</span><span class="p">,</span> <span class="s1">&#39;American frontiersman&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;Q1181671&#39;</span><span class="p">,</span> <span class="s1">&#39;Bill Gates&#39;</span><span class="p">,</span> <span class="s1">&#39;Wikimedia disambiguation page&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;Q5284&#39;</span><span class="p">,</span> <span class="s1">&#39;Bill Gates&#39;</span><span class="p">,</span> <span class="s1">&#39;American business magnate and philanthropist&#39;</span><span class="p">]],</span> <span class="s1">&#39;Query failed&#39;</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">entities</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;Q4909106&#39;</span><span class="p">,</span> <span class="s1">&#39;Bill Gates&#39;</span><span class="p">,</span> <span class="s1">&#39;American frontiersman&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;Q1181671&#39;</span><span class="p">,</span> <span class="s1">&#39;Bill Gates&#39;</span><span class="p">,</span> <span class="s1">&#39;Wikimedia disambiguation page&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;Q5284&#39;</span><span class="p">,</span> <span class="s1">&#39;Bill Gates&#39;</span><span class="p">,</span> <span class="s1">&#39;American business magnate and philanthropist&#39;</span><span class="p">]]</span>
+<span class="n">entities</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">_sort_entities</span><span class="p">(</span><span class="n">entities</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">entities</span> <span class="o">==</span> <span class="p">[[</span><span class="s1">&#39;Q5284&#39;</span><span class="p">,</span> <span class="s1">&#39;Bill Gates&#39;</span><span class="p">,</span> <span class="s1">&#39;American business magnate and philanthropist&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;Q1181671&#39;</span><span class="p">,</span> <span class="s1">&#39;Bill Gates&#39;</span><span class="p">,</span> <span class="s1">&#39;Wikimedia disambiguation page&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;Q4909106&#39;</span><span class="p">,</span> <span class="s1">&#39;Bill Gates&#39;</span><span class="p">,</span> <span class="s1">&#39;American frontiersman&#39;</span><span class="p">]],</span>\
+<span class="s1">&#39;Errorin `_sort_entities` function in `database_proxy` class&#39;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">entities</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -165,8 +166,7 @@ label:Description of the Property</p>
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>&lt;sqlite3.Connection object at 0x7f555ffd64e0&gt;
-[[&#39;Q4909106&#39;, &#39;Bill Gates&#39;, &#39;American frontiersman&#39;], [&#39;Q1181671&#39;, &#39;Bill Gates&#39;, &#39;Wikimedia disambiguation page&#39;], [&#39;Q5284&#39;, &#39;Bill Gates&#39;, &#39;American business magnate and philanthropist&#39;]]
+<pre>[[&#39;Q5284&#39;, &#39;Bill Gates&#39;, &#39;American business magnate and philanthropist&#39;], [&#39;Q1181671&#39;, &#39;Bill Gates&#39;, &#39;Wikimedia disambiguation page&#39;], [&#39;Q4909106&#39;, &#39;Bill Gates&#39;, &#39;American frontiersman&#39;]]
 </pre>
 </div>
 </div>
@@ -184,8 +184,43 @@ label:Description of the Property</p>
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">properties</span> <span class="o">=</span> <span class="n">wiki</span><span class="o">.</span><span class="n">get_entity_associations</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
-<span class="k">assert</span> <span class="n">properties</span> <span class="o">==</span>  <span class="p">[[</span><span class="s1">&#39;P31&#39;</span><span class="p">,</span> <span class="s1">&#39;Q5&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P735&#39;</span><span class="p">,</span> <span class="s1">&#39;Q18245781&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P27&#39;</span><span class="p">,</span> <span class="s1">&#39;Q30&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P106&#39;</span><span class="p">,</span> <span class="s1">&#39;Q43845&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P734&#39;</span><span class="p">,</span> <span class="s1">&#39;Q16870134&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P21&#39;</span><span class="p">,</span> <span class="s1">&#39;Q6581097&#39;</span><span class="p">]],</span> <span class="s1">&#39;Properties failed&#39;</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">wiki</span> <span class="o">=</span> <span class="n">WikiDatabase</span><span class="p">()</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">wiki</span><span class="o">.</span><span class="n">get_entity_by_label</span><span class="p">(</span><span class="s1">&#39;Bill Gates&#39;</span><span class="p">)</span>
+<span class="c1"># assert result == [[&#39;Q4909106&#39;, &#39;Bill Gates&#39;, &#39;American frontiersman&#39;], [&#39;Q1181671&#39;, &#39;Bill Gates&#39;, &#39;Wikimedia disambiguation page&#39;], [&#39;Q5284&#39;, &#39;Bill Gates&#39;, &#39;American business magnate and philanthropist&#39;]], &#39;Query failed&#39;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>&lt;sqlite3.Connection object at 0x7f2e00597300&gt;
+[&#39;Q5284&#39;, &#39;Bill Gates&#39;, &#39;American business magnate and philanthropist&#39;]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">properties</span> <span class="o">=</span> <span class="n">wiki</span><span class="o">.</span><span class="n">get_entity_associations</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="k">assert</span> <span class="n">properties</span> <span class="o">==</span>  <span class="p">[[</span><span class="s1">&#39;P25&#39;</span><span class="p">,</span> <span class="s1">&#39;Q454928&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P19&#39;</span><span class="p">,</span> <span class="s1">&#39;Q5083&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P26&#39;</span><span class="p">,</span> <span class="s1">&#39;Q463877&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P106&#39;</span><span class="p">,</span> <span class="s1">&#39;Q131524&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P27&#39;</span><span class="p">,</span> <span class="s1">&#39;Q30&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P108&#39;</span><span class="p">,</span> <span class="s1">&#39;Q655286&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P69&#39;</span><span class="p">,</span> <span class="s1">&#39;Q7879362&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P910&#39;</span><span class="p">,</span> <span class="s1">&#39;Q7112419&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P31&#39;</span><span class="p">,</span> <span class="s1">&#39;Q5&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P551&#39;</span><span class="p">,</span> <span class="s1">&#39;Q1506847&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P166&#39;</span><span class="p">,</span> <span class="s1">&#39;Q12201445&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P1343&#39;</span><span class="p">,</span> <span class="s1">&#39;Q17311605&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P735&#39;</span><span class="p">,</span> <span class="s1">&#39;Q12344159&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P39&#39;</span><span class="p">,</span> <span class="s1">&#39;Q484876&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P734&#39;</span><span class="p">,</span> <span class="s1">&#39;Q16870134&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P40&#39;</span><span class="p">,</span> <span class="s1">&#39;Q23011254&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P172&#39;</span><span class="p">,</span> <span class="s1">&#39;Q7435494&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P463&#39;</span><span class="p">,</span> <span class="s1">&#39;Q463303&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P3438&#39;</span><span class="p">,</span> <span class="s1">&#39;Q575937&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P1412&#39;</span><span class="p">,</span> <span class="s1">&#39;Q1860&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P21&#39;</span><span class="p">,</span> <span class="s1">&#39;Q6581097&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P1830&#39;</span><span class="p">,</span> <span class="s1">&#39;Q2283&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P1441&#39;</span><span class="p">,</span> <span class="s1">&#39;Q12125162&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P6886&#39;</span><span class="p">,</span> <span class="s1">&#39;Q1860&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P641&#39;</span><span class="p">,</span> <span class="s1">&#39;Q188966&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P552&#39;</span><span class="p">,</span> <span class="s1">&#39;Q789447&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P22&#39;</span><span class="p">,</span> <span class="s1">&#39;Q684014&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P8017&#39;</span><span class="p">,</span> <span class="s1">&#39;L19333-F1&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P6553&#39;</span><span class="p">,</span> <span class="s1">&#39;L485&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P3373&#39;</span><span class="p">,</span> <span class="s1">&#39;Q92466067&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;P1344&#39;</span><span class="p">,</span> <span class="s1">&#39;Q16972891&#39;</span><span class="p">]],</span> <span class="s1">&#39;Properties failed&#39;</span>
 <span class="k">for</span> <span class="n">property_r</span> <span class="ow">in</span> <span class="n">wiki</span><span class="o">.</span><span class="n">get_entity_associations</span><span class="p">(</span><span class="s1">&#39;Q5284&#39;</span><span class="p">):</span> 
     <span class="nb">print</span><span class="p">(</span><span class="n">wiki</span><span class="o">.</span><span class="n">get_property_string</span><span class="p">(</span><span class="n">property_r</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">property_r</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
 </pre></div>
@@ -227,8 +262,8 @@ label:Description of the Property</p>
 (&#39;sport&#39;, &#39;contract bridge&#39;)
 (&#39;handedness&#39;, &#39;left-handedness&#39;)
 (&#39;father&#39;, &#39;William H. Gates Jr.&#39;)
-None
-None
+(&#39;generational suffix&#39;, None)
+(&#39;personal pronoun&#39;, None)
 (&#39;sibling&#39;, &#39;Kristianne Gates&#39;)
 (&#39;participant in&#39;, &#39;commencement at the Harvard University&#39;)
 </pre>
