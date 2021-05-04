@@ -147,10 +147,23 @@ class WikiDatabase:
                 .format(table_name, self.remove_quotations(label)), self.conn)
             entities = entity_id.values.tolist()
             # Return the first entity
+            entities = self._sort_entities(entities)
             return entities[0]
         except Exception as e:
             print(e)
             self.exit_procedure()
+
+    def _sort_entities(self, entities):
+        """
+            Given a list of entities, sort the list where the lowest id number is first.
+
+            We are assuming that the most likely entity is the one with the lowest id number
+            in the knowledge base.
+        """
+        # Chops off the first letter Q and casts the string as a number
+        return sorted(entities, key=lambda x:int(x[0][1:]))
+
+
 
     def get_entity_associations(self, entity_id):
         """

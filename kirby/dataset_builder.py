@@ -55,36 +55,6 @@ class DatasetBuilder():
         for entity in spacy_entities:
             entity = self.db.get_entity_by_label(entity.text)
             entities.append(entity)
-
-
-#             if entity.label_ == 'CARDINAL':
-#                 continue
-#             print(entity.text, entity.label_)
-#             result = self.db.get_entity_by_label(entity.text)
-#             if len(result) == 0:
-#                 continue
-#             elif len(result) > 1:
-#                 result = self.db.get_entities_by_label_extensive(entity.text)
-#                 if len(accepted_sentence) == 0 or random_entities:
-#                     q_a_index = random.randint(0, len(result) - 1)
-#                 else:
-#                     encoded_sentences = self.encoder(accepted_sentence)  # array of sentence vectors
-
-#                     proposed_sentences = []
-#                     for entity_w in result:
-#                         proposed_sentences.append(entity_w[2])
-#                     encoded_proposed = self.encoder(proposed_sentences)
-#                     neigh = NearestNeighbors(n_neighbors=1)
-#                     neigh.fit(encoded_proposed)
-#                     closest = neigh.kneighbors(encoded_sentences)
-#                     q_a_index = closest[1][0][0]
-#                 self.add_to_accepted(accepted_sentence, result[q_a_index][2])
-#                 accepted_entities.append(result[q_a_index])
-
-#             else:
-#                 # print('Accepted:', result[0])
-#                 self.add_to_accepted(accepted_sentence, result[0][2])
-#                 accepted_entities.append(result[0])
         return entities
 
     def entity(self, ranked_phrases):
@@ -101,8 +71,7 @@ class DatasetBuilder():
         entity_associations_dict = {}
         # Remove all None values from list
         associations = self.db.get_entity_associations(entity_id)
-        import pdb; pdb.set_trace()
-        for property_name, related_entity_label in associations:
-            property_name, related_entity_label = self.db.get_property_string(property_name, related_entity_label)
+        for property_id, related_entity_id in associations:
+            property_name, related_entity_label = self.db.get_property_string(property_id, related_entity_id)
             entity_associations_dict[property_name] = related_entity_label
-        return entity_properties_dict
+        return entity_associations_dict
