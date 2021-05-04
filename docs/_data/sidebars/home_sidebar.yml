@@ -35,7 +35,7 @@ entries:
       url: database_proxy.html
     - output: web,pdf
       title: Title
-      url: read_wiki_data.html
+      url: create_database.html
     - output: web,pdf
       title: Insert To Database
       url: insert_to_database.html
