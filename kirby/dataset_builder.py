@@ -8,13 +8,20 @@ from rake_nltk import Rake
 from .database_proxy import WikiDatabase
 import json
 import importlib
+import spacy
+import en_core_web_sm
+import tensorflow_hub as hub
+from sklearn.neighbors import NearestNeighbors
 
 # Cell
 class DatasetBuilder():
+    "Build a dataset using `get_entities_in_text`"
     def __init__(self):
         self.rake = Rake()
         self.db = WikiDatabase()
-        pass
+        self.nlp = en_core_web_sm.load()
+        module_url = "https://tfhub.dev/google/universal-sentence-encoder/4" #@param ["https://tfhub.dev/google/universal-sentence-encoder/4", "https://tfhub.dev/google/universal-sentence-encoder-large/5"]
+        self.encoder = hub.load(module_url)
 
     def build(self, ds, dataset_type='random'):
         "Build a database based a given dataset"
@@ -29,30 +36,26 @@ class DatasetBuilder():
         ranked_phrases = self.get_ranked_phrases(x)
         return ranked_phrases[0]
 
-    def random(self, x):
-        accepted_entities = []
-        ds_builder.rake.extract_keywords_from_text(x)
-        ranked_phrases = ds_builder.rake.get_ranked_phrases()
-        print(ranked_phrases)
-        keywords = self.keyword(x)
-        print(keywords)
-        print(self.db.get_entities_by_label_extensive('cristiano ronaldo'))
-        for entity in keywords:
-            print(entity)
-#             query_result = self.db.get_entity_by_label(entity)
-#             if len(query_result) == 0:
-#                 continue
-#             if len(query_result) > 1:
-#                 second_result = db.get_entities_by_label_extensive(entity)
-#                 rand_index = random.randint(0, len(second_result) - 1)
-#                 accepted_entities.append(second_result[rand_index])
-#             else:
-#                 accepted_entities.append(query_result[0])
-        return e
-
     def get_ranked_phrases(self, x):
         self.rake.extract_keywords_from_text(x)
         return self.rake.get_ranked_phrases()
+
+    #staticmethod
+    def add_to_accepted(self, a_sentences, sentence):
+        if len(a_sentences) > 2:
+            a_sentences.pop(0)
+        a_sentences.append(sentence)
+
+
+    def get_entities_in_text(self, text):
+        "Returns entities found in the sentence `x`"
+        doc = self.nlp(x)
+        entities = []
+        spacy_entities = doc.ents
+        for entity in spacy_entities:
+            entity = self.db.get_entity_by_label(entity.text)
+            entities.append(entity)
+        return entities
 
     def entity(self, ranked_phrases):
         "Queries the knowledge base to find the entity and it's relations"
@@ -61,3 +64,14 @@ class DatasetBuilder():
             if entity is not None:
                 return entity
         return entity
+    def get_entity_associations(self, entity_id):
+        """
+        Given an `entity_id` return a dictionary containing all the associated properties.
+        """
+        entity_associations_dict = {}
+        # Remove all None values from list
+        associations = self.db.get_entity_associations(entity_id)
+        for property_id, related_entity_id in associations:
+            property_name, related_entity_label = self.db.get_property_string(property_id, related_entity_id)
+            entity_associations_dict[property_name] = related_entity_label
+        return entity_associations_dict
