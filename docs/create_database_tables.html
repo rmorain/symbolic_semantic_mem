@@ -84,93 +84,27 @@ nb_path: "09_create_database_tables.ipynb"
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
 
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Do Not Run Unless you need to recreate database</span>
-<span class="c1"># for ii, entity_dict in enumerate(wjd):</span>
-<span class="c1">#     if ii % 500 == 0 and ii != 0:</span>
-<span class="c1">#         count = 0</span>
-<span class="c1">#         for item in items_list:</span>
-<span class="c1">#             if count % 1000 == 0:</span>
-<span class="c1">#                 f.write(&quot;\n\n\n\nINSERT INTO Entities\n (entity_id, label, description)\n VALUES\n&quot;)</span>
-<span class="c1">#             count += 1</span>
-<span class="c1">#             if count == 1000 or item == items_list[-1]:</span>
-<span class="c1">#                 item = item[:-1] + &#39;;&#39;</span>
-<span class="c1">#             f.write(&#39;{}\n&#39;.format(item))</span>
-<span class="c1">#         items_list.clear()</span>
-<span class="c1">#         count = 0</span>
+<div class="output_wrapper">
+<div class="output">
 
-<span class="c1">#         for item in property_list:</span>
-<span class="c1">#             if count % 1000 == 0:</span>
-<span class="c1">#                 f.write(</span>
-<span class="c1">#                     &quot;\n\n\n\nINSERT INTO Properties_relations\n (entity_id, property_id, related_entity_id)\n VALUES\n&quot;)</span>
-<span class="c1">#             count += 1</span>
-<span class="c1">#             if count % 1000 == 0 or item == property_list[-1]:</span>
-<span class="c1">#                 item = item[:-1] + &#39;;&#39;</span>
-<span class="c1">#             f.write(&#39;{}\n&#39;.format(item))</span>
-<span class="c1">#         property_list.clear()</span>
-<span class="c1">#         count == 0</span>
-<span class="c1">#         for idx, item in enumerate(aliases):</span>
-<span class="c1">#             if count % 1000 == 0:</span>
-<span class="c1">#                 f.write(&quot;\n\n\n\nINSERT INTO Aliases\n (entity_id, alias)\n VALUES\n&quot;)</span>
-<span class="c1">#             count += 1</span>
-<span class="c1">#             if count % 1000 == 0 or count == len(aliases):</span>
-<span class="c1">#                 item = item[:-1] + &#39;;&#39;</span>
-<span class="c1">#             f.write(&#39;{}\n&#39;.format(item))</span>
+<div class="output_area">
 
-<span class="c1">#         aliases.clear()</span>
+<div class="output_subarea output_text output_error">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">AttributeError</span>                            Traceback (most recent call last)
+<span class="ansi-green-fg">&lt;ipython-input-7-6955178f2711&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span>
+<span class="ansi-green-intense-fg ansi-bold">     67</span>                     <span class="ansi-green-fg">and</span> isinstance<span class="ansi-blue-fg">(</span>entity_dict<span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">&#34;claims&#34;</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">[</span>inner_key<span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">[</span><span class="ansi-cyan-fg">0</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">&#39;mainsnak&#39;</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">&#39;datavalue&#39;</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">&#39;value&#39;</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">,</span> dict<span class="ansi-blue-fg">)</span><span class="ansi-red-fg"> </span><span class="ansi-red-fg">\</span>
+<span class="ansi-green-intense-fg ansi-bold">     68</span>                     <span class="ansi-green-fg">and</span> <span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">&#39;id&#39;</span> <span class="ansi-green-fg">in</span> entity_dict<span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">&#34;claims&#34;</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">[</span>inner_key<span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">[</span><span class="ansi-cyan-fg">0</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">&#39;mainsnak&#39;</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">&#39;datavalue&#39;</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">&#39;value&#39;</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-fg">---&gt; 69</span><span class="ansi-red-fg">                 </span>property_list<span class="ansi-blue-fg">.</span>append<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">&#39;(\&#39;{}\&#39;, \&#39;{}\&#39;, \&#39;{}\&#39;),&#39;</span><span class="ansi-blue-fg">.</span>format<span class="ansi-blue-fg">(</span>entity_id<span class="ansi-blue-fg">,</span> inner_key<span class="ansi-blue-fg">,</span> entity_dict<span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">&#34;claims&#34;</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">[</span>inner_key<span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">[</span><span class="ansi-cyan-fg">0</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">&#39;mainsnak&#39;</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">&#39;datavalue&#39;</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">&#39;value&#39;</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">&#39;id&#39;</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">     70</span> 
+<span class="ansi-green-intense-fg ansi-bold">     71</span> count <span class="ansi-blue-fg">=</span> <span class="ansi-cyan-fg">0</span>
 
-<span class="c1">#     entity_label = &#39;&#39;</span>
-<span class="c1">#     description = &#39;&#39;</span>
-<span class="c1">#     entity_properties = []</span>
-<span class="c1">#     # Store the id of the entity</span>
-<span class="c1">#     entity_id = entity_dict[&#39;id&#39;]</span>
-<span class="c1">#     index = 0</span>
+<span class="ansi-red-fg">AttributeError</span>: &#39;dict&#39; object has no attribute &#39;append&#39;</pre>
+</div>
+</div>
 
-<span class="c1">#     if &#39;descriptions&#39; in entity_dict and &#39;en&#39; in entity_dict[&#39;descriptions&#39;] and &#39;value&#39; in entity_dict[&#39;descriptions&#39;][&#39;en&#39;]:</span>
-<span class="c1">#         description = entity_dict[&#39;descriptions&#39;][&#39;en&#39;][&#39;value&#39;]</span>
-
-<span class="c1">#     # Just keep the entities that have a name in English</span>
-<span class="c1">#     if &#39;labels&#39; in entity_dict:</span>
-<span class="c1">#         if &#39;en&#39; in entity_dict[&#39;labels&#39;]:</span>
-<span class="c1">#             # temp = fix_label(entity_dict[&#39;labels&#39;][&#39;en&#39;][&#39;value&#39;])</span>
-<span class="c1">#             items_list.append(&#39;(\&#39;{}\&#39;, \&#39;{}\&#39;, \&#39;{}\&#39;),&#39;.format(entity_id, fix_label(entity_dict[&#39;labels&#39;][&#39;en&#39;][&#39;value&#39;]),</span>
-<span class="c1">#                                                                  fix_label(description)))</span>
-<span class="c1">#         else:</span>
-<span class="c1">#             continue</span>
-
-<span class="c1">#     if &#39;aliases&#39; in entity_dict:  # Create table</span>
-<span class="c1">#         if &#39;en-gb&#39; in entity_dict[&#39;aliases&#39;]:</span>
-<span class="c1">#             for element in entity_dict[&#39;aliases&#39;][&#39;en-gb&#39;]:</span>
-<span class="c1">#                 aliases.append(&#39;(\&#39;{}\&#39;, \&#39;{}\&#39;),&#39;.format(entity_id, fix_label(element[&#39;value&#39;])))</span>
-<span class="c1">#         if &#39;en&#39; in entity_dict[&#39;aliases&#39;]:</span>
-<span class="c1">#             for element in entity_dict[&#39;aliases&#39;][&#39;en&#39;]:</span>
-<span class="c1">#                 aliases.append(&#39;(\&#39;{}\&#39;, \&#39;{}\&#39;),&#39;.format(entity_id, fix_label(element[&#39;value&#39;])))</span>
-
-<span class="c1">#     if &quot;claims&quot; in entity_dict:</span>
-<span class="c1">#         for inner_key in entity_dict[&quot;claims&quot;].keys():</span>
-<span class="c1">#             if &#39;datavalue&#39; in entity_dict[&quot;claims&quot;][inner_key][0][&#39;mainsnak&#39;] \</span>
-<span class="c1">#                     and (&#39;value&#39; in entity_dict[&quot;claims&quot;][inner_key][0][&#39;mainsnak&#39;][&#39;datavalue&#39;]) \</span>
-<span class="c1">#                     and isinstance(entity_dict[&quot;claims&quot;][inner_key][0][&#39;mainsnak&#39;][&#39;datavalue&#39;][&#39;value&#39;], dict) \</span>
-<span class="c1">#                     and (&#39;id&#39; in entity_dict[&quot;claims&quot;][inner_key][0][&#39;mainsnak&#39;][&#39;datavalue&#39;][&#39;value&#39;]):</span>
-<span class="c1">#                 property_list.append(&#39;(\&#39;{}\&#39;, \&#39;{}\&#39;, \&#39;{}\&#39;),&#39;.format(entity_id, inner_key, entity_dict[&quot;claims&quot;][inner_key][0][&#39;mainsnak&#39;][&#39;datavalue&#39;][&#39;value&#39;][&#39;id&#39;]))</span>
-
-<span class="c1"># count = 0</span>
-<span class="c1"># for k in property_dict:</span>
-<span class="c1">#     if count % 1000 == 0:</span>
-<span class="c1">#         f.write(&quot;\n\n\n\nINSERT INTO Properties\n (property_id, label)\n VALUES\n&quot;)</span>
-<span class="c1">#     count += 1</span>
-<span class="c1">#     if count % 1000 == 0:</span>
-<span class="c1">#         f.write(&#39;(\&#39;{}\&#39;, \&#39;{}\&#39;);\n&#39;.format(k, fix_label(property_dict[k])))</span>
-<span class="c1">#     else:</span>
-<span class="c1">#         f.write(&#39;(\&#39;{}\&#39;, \&#39;{}\&#39;),\n&#39;.format(k, fix_label(property_dict[k])))</span>
-
-<span class="c1"># f.close()</span>
-</pre></div>
-
-    </div>
 </div>
 </div>
 

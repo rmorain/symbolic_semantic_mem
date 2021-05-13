@@ -5,7 +5,7 @@ __all__ = ['WikiDatabase']
 # Cell
 import pandas as pd
 import sqlite3
-import time
+# import timeList
 from .properties import properties
 
 # Cell
@@ -14,7 +14,7 @@ class WikiDatabase:
     def __init__(self):
         try:
             self.properties_dict = properties()
-            self.conn = sqlite3.connect("/data/db/wiki_data.db")
+            self.conn = sqlite3.connect("db/wikidata.db")
             print(self.conn)
         except Exception as e:
             print(e)
@@ -40,26 +40,15 @@ class WikiDatabase:
             return 'not_alpha'
 
     @staticmethod
-    def clean_relations(relations_string):
+    def clean_relations(relations_df):
         """
-        :param relations_string: List of all the relations returned by database
-        :type relations_string: string
+        :param relations_df: Pandas dataframe of all the relations returned by database
         :return: list of all relations
         :rtype: List
         """
         relations = []
-        relation_row = []
-        # print(relations_string)
-        for idx, relation in enumerate(relations_string.split(',')):
-            if idx & 1 == 1:
-                relation_row.append(relation[1:-1])
-            else:
-                relation_row.append(relation[1:])
-            if len(relation_row) == 2:
-                relations.append(relation_row + [])
-                # print(relation_row)
-                relation_row.clear()
-        # print(relations)
+        for index, row in relations_df.iterrows():
+            relations.append([row['property_id'], row['related_entity_id']])
         return relations
 
     @staticmethod
@@ -184,7 +173,7 @@ class WikiDatabase:
             self.exit_procedure()
         if entity_properties.empty:
             return None
-        return self.clean_relations(entity_properties['relations'].values[0])
+        return self.clean_relations(entity_properties)
 
     def get_entity_by_id(self, entity_id):
 
