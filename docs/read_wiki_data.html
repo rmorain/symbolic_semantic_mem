@@ -212,6 +212,8 @@ nb_path: "13_read_wiki_data.ipynb"
         <span class="n">output_file</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s1">&#39;Enter name of database file. Do not include .db: &#39;</span><span class="p">)</span>
 
     <span class="n">read_wiki_data</span><span class="p">(</span><span class="n">wiki_dump</span><span class="p">,</span> <span class="n">output_format</span><span class="p">,</span> <span class="n">output_file</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">output_format</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">cd</span><span class="o">.</span><span class="n">split_and_optimize</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.db&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">output_file</span><span class="p">))</span>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
@@ -221,6 +223,41 @@ nb_path: "13_read_wiki_data.ipynb"
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>data/latest-all.json.bz2
+What output file do you want? a database file or a text file with insert statements? 
+0: text file
+1: database file
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Database created
+</pre>
+</div>
+</div>
+
 </div>
 </div>
 
