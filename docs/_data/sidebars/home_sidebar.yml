@@ -33,15 +33,6 @@ entries:
     - output: web,pdf
       title: Database Proxy
       url: database_proxy.html
-    - output: web,pdf
-      title: Insert To Database
-      url: insert_to_database.html
-    - output: web,pdf
-      title: Properties
-      url: properties.html
-    - output: web,pdf
-      title: Title
-      url: create_database.html
     output: web
     title: kirby
   output: web

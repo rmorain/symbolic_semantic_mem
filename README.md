@@ -57,9 +57,3 @@ Before you make changes, create a branch.
 
 I make commits outside of the Jupyter lab terminal to avoid errors with configuring my email address.
 
-# Recreating the database
-
-Download [Wikidata JSON dump] https://dumps.wikimedia.org/wikidatawiki/entities/
-
-
-
