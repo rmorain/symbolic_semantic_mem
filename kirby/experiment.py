@@ -3,20 +3,28 @@
 __all__ = ['Experiment']
 
 # Cell
+import pytorch_lightning as pl
+import torch
+import wandb
+from .run_params import RunParams
+from .basic_model import BasicModel
+from pytorch_lightning.loggers import WandbLogger
+from pytorch_lightning.callbacks.early_stopping import EarlyStopping
+
+# Cell
 class Experiment():
     def __init__(self, run_params):
         self.run_params = run_params
-        self.model = BasicModel(run_params.model)
+        self.model = BasicModel(run_params)
 
     def run(self):
         trainer = pl.Trainer(
-            default_root_dir='logs',
             gpus=(1 if torch.cuda.is_available() else 0),
             max_epochs=self.run_params.max_epochs,
             fast_dev_run=self.run_params.debug,
-            logger=TensorBoardLogger(save_dir='logs/',
-                                name=self.run_params.run_name,
+            logger=WandbLogger(name=self.run_params.run_name,
                                 project=self.run_params.project_name),
+            callbacks=[EarlyStopping(monitor='val_loss')],
         )
 
-        trainer.fit(model)
+        trainer.fit(self.model)
