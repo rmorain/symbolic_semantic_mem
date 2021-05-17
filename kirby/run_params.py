@@ -11,7 +11,7 @@ class RunParams():
                 model='gpt2',
                 data_dir = 'data/',
                 data_files = {'train': ['data/wiki.train.raw'], 'valid': ['data/wiki.valid.raw'], 'test': ['data/wiki.test.raw']},
-                max_epochs=1,
+                max_epochs=1000,
                 debug=True,
                 batch_size=8,
                 data_set_percentage=1,
@@ -41,3 +41,4 @@ class RunParams():
         self.num_workers = num_workers
         self.kb_statements_file = kb_statements_file
         self.run_name = run_name
+        self.project_name = project_name
