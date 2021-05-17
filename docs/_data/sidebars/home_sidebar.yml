@@ -33,6 +33,9 @@ entries:
     - output: web,pdf
       title: Database Proxy
       url: database_proxy.html
+    - output: web,pdf
+      title: Wikitext Baseline
+      url: exp_0.html
     output: web
     title: kirby
   output: web
