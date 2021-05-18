@@ -89,7 +89,6 @@ class WikiDatabase:
         """
         entities_id = None
         try:
-            print('I love me!')
             entities_id = pd.read_sql_query(
                 "SELECT * FROM Entities WHERE label  LIKE \"%{}%\";".format(self.remove_quotations(label)),
                 self.conn)
@@ -134,12 +133,14 @@ class WikiDatabase:
             entity_id = pd.read_sql_query(
                 "SELECT * FROM Entities_{} WHERE label =  \"{}\";"\
                 .format(table_name, self.remove_quotations(label)), self.conn)
-            entities = entity_id.values.tolist()
-            # Return the first entity
-            entities = self._sort_entities(entities)
+            if entity_id.empty:
+                entities = self.get_entities_by_label_extensive(label)
+            else:
+                entities = entity_id.values.tolist()
+                # Return the first entity
+                entities = self._sort_entities(entities)
             return entities[0]
         except Exception as e:
-            print(e)
             self.exit_procedure()
 
     def _sort_entities(self, entities):
