@@ -12,6 +12,7 @@ import spacy
 import en_core_web_sm
 import tensorflow_hub as hub
 from sklearn.neighbors import NearestNeighbors
+import json
 
 # Cell
 class DatasetBuilder():
@@ -26,11 +27,41 @@ class DatasetBuilder():
     def build(self, ds, dataset_type='random'):
         "Build a database based a given dataset"
         if dataset_type == 'random':
-            ds.map(self.random, batched=False)
+            return ds.map(self.random, batched=False)
         elif dataset_type == 'description':
-            pass
+            return ds.map(self.description, batched=False)
         elif dataset_type == 'relevant':
             pass
+
+    def description(self, sequence):
+        """Return a description augmented version of the seqeuence `text`"""
+        text = sequence['text']
+        try:
+            keyword_entity = self._keyword_entity(text)
+            json_string = self._get_json(keyword_entity)
+            # Return concatenated string
+            sequence['text'] += " " + json_string
+        except Exception as e:
+            # We expect there to be an exception when no entities are found
+            pass
+        return sequence
+
+    def _keyword_entity(self, text):
+        """Return the entity of the highest ranked keyword"""
+        import pdb; pdb.set_trace()
+        ranked_phrases = self.get_ranked_phrases(text)
+        for phrase in ranked_phrases:
+            entity = self.db.get_entity_by_label(phrase)
+            if entity:
+                return entity
+        return None
+
+    def _get_json(self, item):
+        """Return JSON version of list object"""
+        d = {"label": None, "description": None}
+        d['label'] = item[1]
+        d['description'] = item[2]
+        return json.dumps(d)
 
     def keyword(self, x):
         ranked_phrases = self.get_ranked_phrases(x)
@@ -48,22 +79,16 @@ class DatasetBuilder():
 
 
     def get_entities_in_text(self, text):
-        "Returns entities found in the sentence `x`"
-        doc = self.nlp(x)
+        "Returns entities found in the sentence `text`"
+        doc = self.nlp(text)
         entities = []
         spacy_entities = doc.ents
         for entity in spacy_entities:
             entity = self.db.get_entity_by_label(entity.text)
-            entities.append(entity)
+            if entity:
+                entities.append(entity)
         return entities
 
-    def entity(self, ranked_phrases):
-        "Queries the knowledge base to find the entity and it's relations"
-        for phrase in ranked_phrases:
-            entity = self.kba.get_entity(phrase)
-            if entity is not None:
-                return entity
-        return entity
     def get_entity_associations(self, entity_id):
         """
         Given an `entity_id` return a dictionary containing all the associated properties.

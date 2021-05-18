@@ -8,7 +8,8 @@ index = {"DatasetBuilder": "01_dataset_builder.ipynb",
          "RunParams": "04_run_parameters.ipynb",
          "BasicModel": "05_basic_model.ipynb",
          "DataManager": "06_data_manager.ipynb",
-         "WikiDatabase": "08_database_proxy.ipynb"}
+         "WikiDatabase": "08_database_proxy.ipynb",
+         "properties": "09_properties.ipynb"}
 
 modules = ["dataset_builder.py",
            "statement_classifier.py",
@@ -16,7 +17,8 @@ modules = ["dataset_builder.py",
            "run_params.py",
            "basic_model.py",
            "data_manager.py",
-           "database_proxy.py"]
+           "database_proxy.py",
+           "properties.py"]
 
 doc_url = "https://rmorain.github.io/kirby/"
 
