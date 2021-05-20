@@ -23,7 +23,7 @@ class DataManager():
         tokenizer = GPT2Tokenizer.from_pretrained(self.run_params.model)
         tokenizer.pad_token = tokenizer.eos_token
         split = f'{split}[:{self.run_params.batch_size*self.block_size if self.run_params.debug else f"{self.run_params.data_set_percentage}%"}]'
-        ds = load_dataset('text', data_files=self.run_params.data_files, split=split)
+        ds = load_dataset(self.run_params.data_file_type, data_files=self.run_params.data_files, split=split)
         ds = ds.map(self.tokenize, batched=True, num_proc=4, remove_columns=['text'], fn_kwargs={'tokenizer':tokenizer})
         ds = ds.map(
             self.group_texts,
@@ -40,6 +40,7 @@ class DataManager():
         return tokens
 
     def group_texts(self, examples):
+        import pdb; pdb.set_trace()
         # Concatenate all texts.
         concatenated_examples = {k: sum(examples[k], []) for k in examples.keys()}
         total_length = len(concatenated_examples[list(examples.keys())[0]])

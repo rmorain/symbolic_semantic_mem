@@ -48,7 +48,6 @@ class DatasetBuilder():
 
     def _keyword_entity(self, text):
         """Return the entity of the highest ranked keyword"""
-        import pdb; pdb.set_trace()
         ranked_phrases = self.get_ranked_phrases(text)
         for phrase in ranked_phrases:
             entity = self.db.get_entity_by_label(phrase)

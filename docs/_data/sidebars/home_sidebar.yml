@@ -39,6 +39,9 @@ entries:
     - output: web,pdf
       title: Wikitext Baseline
       url: exp_0.html
+    - output: web,pdf
+      title: Title
+      url: exp_01.html
     output: web
     title: kirby
   output: web
