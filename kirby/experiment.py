@@ -28,3 +28,4 @@ class Experiment():
         )
 
         trainer.fit(self.model)
+        trainer.save_checkpoint(self.run_params.run_name())
