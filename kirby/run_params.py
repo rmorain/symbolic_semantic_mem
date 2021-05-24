@@ -14,7 +14,7 @@ class RunParams():
                 max_epochs=1000,
                 debug=True,
                 batch_size=8,
-                data_set_percentage=1,
+                data_set_percentage=100,
                 seq_length=32,
                 statement_length=16,
                 momentum=.9,

@@ -3,6 +3,7 @@
 __all__ = ['Experiment']
 
 # Cell
+import os
 import pytorch_lightning as pl
 import torch
 import wandb
@@ -25,6 +26,7 @@ class Experiment():
             logger=WandbLogger(name=self.run_params.run_name,
                                 project=self.run_params.project_name),
             callbacks=[EarlyStopping(monitor='val_loss')],
+            default_root_dir=os.getcwd() + '/../checkpoints',
         )
 
         trainer.fit(self.model)
