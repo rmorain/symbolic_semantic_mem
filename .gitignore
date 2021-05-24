@@ -12,4 +12,4 @@ LOG_FILE
 db/
 *.db
 wandb/
-checkpoints/
+*.ckpt
