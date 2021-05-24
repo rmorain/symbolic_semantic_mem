@@ -10,6 +10,7 @@ import torch
 class RunParams():
     def __init__(self,
                 model='gpt2',
+                pretrained=False,
                 data_dir = 'data/',
                 data_files = {'train': ['data/wiki.train.raw'], 'valid': ['data/wiki.valid.raw'], 'test': ['data/wiki.test.raw']},
                 max_epochs=1000,
@@ -29,6 +30,7 @@ class RunParams():
             ):
 
         self.model = model
+        self.pretrained = pretrained
         self.data_dir = data_dir
         self.data_files = data_files
         self.max_epochs = max_epochs
