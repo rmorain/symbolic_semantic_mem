@@ -4,6 +4,7 @@ __all__ = ['RunParams']
 
 # Cell
 import multiprocessing
+import torch
 
 # Cell
 class RunParams():
@@ -21,6 +22,7 @@ class RunParams():
                 lr=1e-2,
                 repo='wikitext-103-raw-v1',
                 num_workers=multiprocessing.cpu_count(),
+                num_gpus=torch.cuda.device_count(),
                 kb_statements_file=None,
                 run_name='test',
                 project_name='kirby'
@@ -39,6 +41,7 @@ class RunParams():
         self.lr = lr
         self.repo = repo
         self.num_workers = num_workers
+        self.num_gpus=num_gpus
         self.kb_statements_file = kb_statements_file
         self.run_name = run_name
         self.project_name = project_name
