@@ -1,0 +1,15 @@
+.DS_Store
+.vscode/
+.pyc
+kirby.egg-info/
+__pycache__/
+build
+dist
+.ipynb_checkpoints/
+data/
+logs/
+LOG_FILE
+db/
+*.db
+wandb/
+checkpoints/

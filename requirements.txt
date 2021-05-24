@@ -1,0 +1,17 @@
+pytorch_lightning 
+wandb 
+datasets 
+transformers 
+joblib 
+tqdm
+ipywidgets 
+chardet 
+jupyterlab 
+nodejs
+nltk 
+rake-nltk 
+qwikidata 
+tensorflow 
+tensorflow_hub 
+spacy 
+sklearn
