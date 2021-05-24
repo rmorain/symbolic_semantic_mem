@@ -1,0 +1,6 @@
+#!/bin/bash
+mkdir db
+
+# Download db
+scp robert@mind.cs.byu.edu:/home/data/kirby/wikidata.db db/wikidata.db
+
