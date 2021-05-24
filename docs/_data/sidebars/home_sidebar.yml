@@ -10,6 +10,9 @@ entries:
       title: Overview
       url: /
     - output: web,pdf
+      title: Wikitext Baseline
+      url: exp_01.html
+    - output: web,pdf
       title: Dataset Builder
       url: dataset_builder.html
     - output: web,pdf
@@ -33,9 +36,6 @@ entries:
     - output: web,pdf
       title: Database Proxy
       url: database_proxy.html
-    - output: web,pdf
-      title: Wikitext Baseline
-      url: exp_0.html
     output: web
     title: kirby
   output: web

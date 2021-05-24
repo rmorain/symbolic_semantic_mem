@@ -1,6 +1,7 @@
 {
   "kirby": {
     "Overview": "/",
+    "Wikitext Baseline": "exp_01.html",
     "Dataset Builder": "dataset_builder.html",
     "Statement Classifier": "statement_classifer.html",
     "Experiment": "experiment.html",
@@ -8,7 +9,6 @@
     "Basic Model": "basic_model.html",
     "Data Manager": "data_manager.html",
     "Property Scorer": "property_scorer.html",
-    "Database Proxy": "database_proxy.html",
-    "Wikitext Baseline": "exp_0.html"
+    "Database Proxy": "database_proxy.html"
   }
 }
