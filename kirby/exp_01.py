@@ -20,6 +20,6 @@ import wandb
 
 wandb.login()
 
-run_params = RunParams(run_name='no_augmentation_pretrained', debug=True, pretrained=True)
+run_params = RunParams(run_name='no_augmentation_pretrained', debug=False, pretrained=True)
 experiment = Experiment(run_params)
 experiment.run()
