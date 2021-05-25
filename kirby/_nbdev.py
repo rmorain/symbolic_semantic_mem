@@ -2,8 +2,8 @@
 
 __all__ = ["index", "modules", "custom_doc_links", "git_url"]
 
-index = {"run_params": "000_exp_01.ipynb",
-         "experiment": "000_exp_01.ipynb",
+index = {"run_params": "000_exp_02_pretrained.ipynb",
+         "experiment": "000_exp_02_pretrained.ipynb",
          "DatasetBuilder": "01_dataset_builder.ipynb",
          "StatementClassifier": "02_statement_classifer.ipynb",
          "Experiment": "03_experiment.ipynb",

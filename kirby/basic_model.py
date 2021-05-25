@@ -15,15 +15,16 @@ class BasicModel(pl.LightningModule):
     def __init__(self, run_params):
         super().__init__()
         self.run_params = run_params
-        config = GPT2Config()
-        self.model = GPT2LMHeadModel(config)
+        if self.run_params.pretrained:
+            self.model = GPT2LMHeadModel.from_pretrained(self.run_params.model)
+        else:
+            config = GPT2Config()
+            self.model = GPT2LMHeadModel(config)
         self.loss = torch.nn.CrossEntropyLoss(reduction='none')
-        pass
 
     def prepare_data(self):
         data_manager = DataManager(self.run_params)
         self.train_ds, self.val_ds = data_manager.prepare_data()
-
 
     def forward(self, x):
         loss = self.model(x['input_ids'], attention_mask=x['attention_mask'], labels=x['labels'])[0]
@@ -64,8 +65,6 @@ class BasicModel(pl.LightningModule):
                 )
 
     def configure_optimizers(self):
-        return torch.optim.SGD(
-            self.parameters(),
-            lr=self.run_params.lr,
-            momentum=self.run_params.momentum,
+        return torch.optim.Adam(
+            self.parameters()
         )
