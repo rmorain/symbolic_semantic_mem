@@ -2,7 +2,9 @@
 
 __all__ = ["index", "modules", "custom_doc_links", "git_url"]
 
-index = {"DatasetBuilder": "01_dataset_builder.ipynb",
+index = {"run_params": "000_exp_02_pretrained.ipynb",
+         "experiment": "000_exp_02_pretrained.ipynb",
+         "DatasetBuilder": "01_dataset_builder.ipynb",
          "StatementClassifier": "02_statement_classifer.ipynb",
          "Experiment": "03_experiment.ipynb",
          "RunParams": "04_run_parameters.ipynb",
@@ -11,7 +13,8 @@ index = {"DatasetBuilder": "01_dataset_builder.ipynb",
          "WikiDatabase": "08_database_proxy.ipynb",
          "properties": "09_properties.ipynb"}
 
-modules = ["dataset_builder.py",
+modules = ["exp_01.py",
+           "dataset_builder.py",
            "statement_classifier.py",
            "experiment.py",
            "run_params.py",

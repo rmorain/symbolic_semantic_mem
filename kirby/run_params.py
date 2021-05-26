@@ -4,30 +4,34 @@ __all__ = ['RunParams']
 
 # Cell
 import multiprocessing
+import torch
 
 # Cell
 class RunParams():
     def __init__(self,
                 model='gpt2',
+                pretrained=False,
                 data_dir = 'data/',
                 data_files = {'train': ['data/wiki.train.raw'], 'valid': ['data/wiki.valid.raw'], 'test': ['data/wiki.test.raw']},
                 data_file_type = 'text',
                 max_epochs=1000,
                 debug=True,
                 batch_size=8,
-                data_set_percentage=1,
+                data_set_percentage=100,
                 seq_length=32,
                 statement_length=16,
                 momentum=.9,
                 lr=1e-2,
                 repo='wikitext-103-raw-v1',
                 num_workers=multiprocessing.cpu_count(),
+                num_gpus=torch.cuda.device_count(),
                 kb_statements_file=None,
                 run_name='test',
                 project_name='kirby'
             ):
 
         self.model = model
+        self.pretrained = pretrained
         self.data_dir = data_dir
         self.data_files = data_files
         self.data_file_type = data_file_type
@@ -41,6 +45,7 @@ class RunParams():
         self.lr = lr
         self.repo = repo
         self.num_workers = num_workers
+        self.num_gpus=num_gpus
         self.kb_statements_file = kb_statements_file
         self.run_name = run_name
         self.project_name = project_name

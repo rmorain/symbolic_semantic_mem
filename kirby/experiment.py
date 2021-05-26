@@ -3,6 +3,7 @@
 __all__ = ['Experiment']
 
 # Cell
+import os
 import pytorch_lightning as pl
 import torch
 import wandb
@@ -19,12 +20,13 @@ class Experiment():
 
     def run(self):
         trainer = pl.Trainer(
-            gpus=(1 if torch.cuda.is_available() else 0),
+            gpus=self.run_params.num_gpus,
             max_epochs=self.run_params.max_epochs,
             fast_dev_run=self.run_params.debug,
             logger=WandbLogger(name=self.run_params.run_name,
                                 project=self.run_params.project_name),
             callbacks=[EarlyStopping(monitor='val_loss')],
+            default_root_dir=os.getcwd() + '/../checkpoints',
         )
 
         trainer.fit(self.model)
