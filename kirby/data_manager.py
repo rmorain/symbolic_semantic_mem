@@ -24,6 +24,7 @@ class DataManager():
         tokenizer.pad_token = tokenizer.eos_token
         split = f'{split}[:{self.run_params.batch_size*self.block_size if self.run_params.debug else f"{self.run_params.data_set_percentage}%"}]'
         ds = load_dataset(self.run_params.data_file_type, data_files=self.run_params.data_files, split=split)
+        ds = ds.filter(function=self.criteria)
         ds = ds.map(self.tokenize, batched=True, num_proc=4, remove_columns=['text'], fn_kwargs={'tokenizer':tokenizer})
         ds = ds.map(
             self.group_texts,
@@ -40,7 +41,6 @@ class DataManager():
         return tokens
 
     def group_texts(self, examples):
-        import pdb; pdb.set_trace()
         # Concatenate all texts.
         concatenated_examples = {k: sum(examples[k], []) for k in examples.keys()}
         total_length = len(concatenated_examples[list(examples.keys())[0]])
@@ -56,3 +56,19 @@ class DataManager():
         }
         result["labels"] = result["input_ids"].copy()
         return result
+
+    def load(self, split):
+        split = f'{split}[:{self.run_params.batch_size*self.block_size if self.run_params.debug else f"{self.run_params.data_set_percentage}%"}]'
+        ds = load_dataset(self.run_params.data_file_type, data_files=self.run_params.data_files, split=split)
+        ds = ds.filter(function=self.criteria)
+        return ds
+
+    def criteria(self, x):
+        x = x['text']
+        # Remove blanks
+        if len(x) == 1:
+            return False
+        # Remove headings
+        if x[0:2] == ' =':
+            return False
+        return True
