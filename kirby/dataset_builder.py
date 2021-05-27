@@ -4,25 +4,22 @@ __all__ = ['DatasetBuilder']
 
 # Cell
 import random
-from rake_nltk import Rake
 from .database_proxy import WikiDatabase
 import json
 import importlib
 import spacy
 import en_core_web_sm
-import tensorflow_hub as hub
-from sklearn.neighbors import NearestNeighbors
 import json
 
 # Cell
 class DatasetBuilder():
     "Build a dataset using `get_entities_in_text`"
     def __init__(self):
-        self.rake = Rake()
         self.db = WikiDatabase()
-        self.nlp = en_core_web_sm.load()
-        module_url = "https://tfhub.dev/google/universal-sentence-encoder/4" #@param ["https://tfhub.dev/google/universal-sentence-encoder/4", "https://tfhub.dev/google/universal-sentence-encoder-large/5"]
-        self.encoder = hub.load(module_url)
+        self.nlp = spacy.load("en_core_web_sm", disable=["tok2vec", "tagger", "parser", "attribute_ruler", "lemmatizer"])
+
+#         module_url = "https://tfhub.dev/google/universal-sentence-encoder/4" #@param ["https://tfhub.dev/google/universal-sentence-encoder/4", "https://tfhub.dev/google/universal-sentence-encoder-large/5"]
+#         self.encoder = hub.load(module_url)
 
     def build(self, ds, dataset_type='random'):
         "Build a database based a given dataset"
@@ -32,6 +29,20 @@ class DatasetBuilder():
             return ds.map(self.description, batched=False)
         elif dataset_type == 'relevant':
             pass
+
+    def build_csv(self, ds, split):
+        ds.map(self.retrieve_knowledge, batched=False)
+        ds.to_csv('data/augmented_datasets/' + split + '.csv')
+
+    def retrieve_knowledge(self, sequence):
+        import pdb; pdb.set_trace()
+        text = sequence['text']
+        keywords, entities = self.get_entities_in_text(text)
+        sequence['knowledge'] = []
+        for i, k in enumerate(keywords):
+            sequence['knowledge'].append((k, entities[i]))
+
+
 
     def description(self, sequence):
         """Return a description augmented version of the seqeuence `text`"""
@@ -86,7 +97,7 @@ class DatasetBuilder():
             entity = self.db.get_entity_by_label(entity.text)
             if entity:
                 entities.append(entity)
-        return entities
+        return spacy_entities, entities
 
     def get_entity_associations(self, entity_id):
         """
