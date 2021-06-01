@@ -97,43 +97,107 @@ nb_path: "06_data_manager.ipynb"
 
 <div class="output_area">
 
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Using custom data configuration default-04bff418a63932f2
-Reusing dataset text (/root/.cache/huggingface/datasets/text/default-04bff418a63932f2/0.0.0/e16f44aa1b321ece1f87b07977cc5d70be93d69b20486d6dacd62e12cf25c9a5)
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>&gt; &lt;ipython-input-4-65bd16d99e15&gt;(13)prepare_ds()
+-&gt; tokenizer = GPT2Tokenizer.from_pretrained(self.run_params.model)
 </pre>
 </div>
+</div>
+
+<div class="output_area">
+
+
 </div>
 
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>
-
-
-
-
+<pre>&#39;gpt2&#39;
 </pre>
 </div>
 </div>
 
 <div class="output_area">
 
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Using custom data configuration default-04bff418a63932f2
-Reusing dataset text (/root/.cache/huggingface/datasets/text/default-04bff418a63932f2/0.0.0/e16f44aa1b321ece1f87b07977cc5d70be93d69b20486d6dacd62e12cf25c9a5)
-</pre>
-</div>
+
 </div>
 
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>
-
-
-
-
+<pre>&gt; &lt;ipython-input-4-65bd16d99e15&gt;(14)prepare_ds()
+-&gt; tokenizer.pad_token = tokenizer.eos_token
 </pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>PreTrainedTokenizer(name_or_path=&#39;gpt2&#39;, vocab_size=50257, model_max_len=1024, is_fast=False, padding_side=&#39;right&#39;, special_tokens={&#39;bos_token&#39;: AddedToken(&#34;&lt;|endoftext|&gt;&#34;, rstrip=False, lstrip=False, single_word=False, normalized=True), &#39;eos_token&#39;: AddedToken(&#34;&lt;|endoftext|&gt;&#34;, rstrip=False, lstrip=False, single_word=False, normalized=True), &#39;unk_token&#39;: AddedToken(&#34;&lt;|endoftext|&gt;&#34;, rstrip=False, lstrip=False, single_word=False, normalized=True)})
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_text output_error">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">BdbQuit</span>                                   Traceback (most recent call last)
+<span class="ansi-green-fg">&lt;ipython-input-5-0717e3c812d7&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span>
+<span class="ansi-green-intense-fg ansi-bold">      3</span> run_params <span class="ansi-blue-fg">=</span> RunParams<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">      4</span> data_manager <span class="ansi-blue-fg">=</span> DataManager<span class="ansi-blue-fg">(</span>run_params<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-fg">----&gt; 5</span><span class="ansi-red-fg"> </span>train_ds<span class="ansi-blue-fg">,</span> valid_ds <span class="ansi-blue-fg">=</span> data_manager<span class="ansi-blue-fg">.</span>prepare_data<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">      6</span> <span class="ansi-green-fg">assert</span> isinstance<span class="ansi-blue-fg">(</span>train_ds<span class="ansi-blue-fg">,</span> Dataset<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">      7</span> <span class="ansi-green-fg">assert</span> isinstance<span class="ansi-blue-fg">(</span>valid_ds<span class="ansi-blue-fg">,</span> Dataset<span class="ansi-blue-fg">)</span>
+
+<span class="ansi-green-fg">&lt;ipython-input-4-65bd16d99e15&gt;</span> in <span class="ansi-cyan-fg">prepare_data</span><span class="ansi-blue-fg">(self)</span>
+<span class="ansi-green-intense-fg ansi-bold">      6</span>     <span class="ansi-red-fg"># Load, Tokenize, and Augment data</span>
+<span class="ansi-green-intense-fg ansi-bold">      7</span>     <span class="ansi-green-fg">def</span> prepare_data<span class="ansi-blue-fg">(</span>self<span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-fg">----&gt; 8</span><span class="ansi-red-fg">         </span>train_ds<span class="ansi-blue-fg">,</span> val_ds <span class="ansi-blue-fg">=</span> map<span class="ansi-blue-fg">(</span>self<span class="ansi-blue-fg">.</span>prepare_ds<span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">&#39;train&#39;</span><span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">&#39;valid&#39;</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">      9</span>         <span class="ansi-green-fg">return</span> train_ds<span class="ansi-blue-fg">,</span> val_ds
+<span class="ansi-green-intense-fg ansi-bold">     10</span> 
+
+<span class="ansi-green-fg">&lt;ipython-input-4-65bd16d99e15&gt;</span> in <span class="ansi-cyan-fg">prepare_ds</span><span class="ansi-blue-fg">(self, split)</span>
+<span class="ansi-green-intense-fg ansi-bold">     12</span>         <span class="ansi-green-fg">import</span> pdb<span class="ansi-blue-fg">;</span> pdb<span class="ansi-blue-fg">.</span>set_trace<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">     13</span>         tokenizer <span class="ansi-blue-fg">=</span> GPT2Tokenizer<span class="ansi-blue-fg">.</span>from_pretrained<span class="ansi-blue-fg">(</span>self<span class="ansi-blue-fg">.</span>run_params<span class="ansi-blue-fg">.</span>model<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-fg">---&gt; 14</span><span class="ansi-red-fg">         </span>tokenizer<span class="ansi-blue-fg">.</span>pad_token <span class="ansi-blue-fg">=</span> tokenizer<span class="ansi-blue-fg">.</span>eos_token
+<span class="ansi-green-intense-fg ansi-bold">     15</span>         split <span class="ansi-blue-fg">=</span> <span class="ansi-blue-fg">f&#39;{split}[:{self.run_params.batch_size*self.block_size if self.run_params.debug else f&#34;{self.run_params.data_set_percentage}%&#34;}]&#39;</span>
+<span class="ansi-green-intense-fg ansi-bold">     16</span>         ds <span class="ansi-blue-fg">=</span> load_dataset<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">&#39;text&#39;</span><span class="ansi-blue-fg">,</span> data_files<span class="ansi-blue-fg">=</span>self<span class="ansi-blue-fg">.</span>run_params<span class="ansi-blue-fg">.</span>data_files<span class="ansi-blue-fg">,</span> split<span class="ansi-blue-fg">=</span>split<span class="ansi-blue-fg">)</span>
+
+<span class="ansi-green-fg">&lt;ipython-input-4-65bd16d99e15&gt;</span> in <span class="ansi-cyan-fg">prepare_ds</span><span class="ansi-blue-fg">(self, split)</span>
+<span class="ansi-green-intense-fg ansi-bold">     12</span>         <span class="ansi-green-fg">import</span> pdb<span class="ansi-blue-fg">;</span> pdb<span class="ansi-blue-fg">.</span>set_trace<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">     13</span>         tokenizer <span class="ansi-blue-fg">=</span> GPT2Tokenizer<span class="ansi-blue-fg">.</span>from_pretrained<span class="ansi-blue-fg">(</span>self<span class="ansi-blue-fg">.</span>run_params<span class="ansi-blue-fg">.</span>model<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-fg">---&gt; 14</span><span class="ansi-red-fg">         </span>tokenizer<span class="ansi-blue-fg">.</span>pad_token <span class="ansi-blue-fg">=</span> tokenizer<span class="ansi-blue-fg">.</span>eos_token
+<span class="ansi-green-intense-fg ansi-bold">     15</span>         split <span class="ansi-blue-fg">=</span> <span class="ansi-blue-fg">f&#39;{split}[:{self.run_params.batch_size*self.block_size if self.run_params.debug else f&#34;{self.run_params.data_set_percentage}%&#34;}]&#39;</span>
+<span class="ansi-green-intense-fg ansi-bold">     16</span>         ds <span class="ansi-blue-fg">=</span> load_dataset<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">&#39;text&#39;</span><span class="ansi-blue-fg">,</span> data_files<span class="ansi-blue-fg">=</span>self<span class="ansi-blue-fg">.</span>run_params<span class="ansi-blue-fg">.</span>data_files<span class="ansi-blue-fg">,</span> split<span class="ansi-blue-fg">=</span>split<span class="ansi-blue-fg">)</span>
+
+<span class="ansi-green-fg">~/anaconda3/envs/kirby/lib/python3.6/bdb.py</span> in <span class="ansi-cyan-fg">trace_dispatch</span><span class="ansi-blue-fg">(self, frame, event, arg)</span>
+<span class="ansi-green-intense-fg ansi-bold">     49</span>             <span class="ansi-green-fg">return</span> <span class="ansi-red-fg"># None</span>
+<span class="ansi-green-intense-fg ansi-bold">     50</span>         <span class="ansi-green-fg">if</span> event <span class="ansi-blue-fg">==</span> <span class="ansi-blue-fg">&#39;line&#39;</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-fg">---&gt; 51</span><span class="ansi-red-fg">             </span><span class="ansi-green-fg">return</span> self<span class="ansi-blue-fg">.</span>dispatch_line<span class="ansi-blue-fg">(</span>frame<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">     52</span>         <span class="ansi-green-fg">if</span> event <span class="ansi-blue-fg">==</span> <span class="ansi-blue-fg">&#39;call&#39;</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-intense-fg ansi-bold">     53</span>             <span class="ansi-green-fg">return</span> self<span class="ansi-blue-fg">.</span>dispatch_call<span class="ansi-blue-fg">(</span>frame<span class="ansi-blue-fg">,</span> arg<span class="ansi-blue-fg">)</span>
+
+<span class="ansi-green-fg">~/anaconda3/envs/kirby/lib/python3.6/bdb.py</span> in <span class="ansi-cyan-fg">dispatch_line</span><span class="ansi-blue-fg">(self, frame)</span>
+<span class="ansi-green-intense-fg ansi-bold">     68</span>         <span class="ansi-green-fg">if</span> self<span class="ansi-blue-fg">.</span>stop_here<span class="ansi-blue-fg">(</span>frame<span class="ansi-blue-fg">)</span> <span class="ansi-green-fg">or</span> self<span class="ansi-blue-fg">.</span>break_here<span class="ansi-blue-fg">(</span>frame<span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-intense-fg ansi-bold">     69</span>             self<span class="ansi-blue-fg">.</span>user_line<span class="ansi-blue-fg">(</span>frame<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-fg">---&gt; 70</span><span class="ansi-red-fg">             </span><span class="ansi-green-fg">if</span> self<span class="ansi-blue-fg">.</span>quitting<span class="ansi-blue-fg">:</span> <span class="ansi-green-fg">raise</span> BdbQuit
+<span class="ansi-green-intense-fg ansi-bold">     71</span>         <span class="ansi-green-fg">return</span> self<span class="ansi-blue-fg">.</span>trace_dispatch
+<span class="ansi-green-intense-fg ansi-bold">     72</span> 
+
+<span class="ansi-red-fg">BdbQuit</span>: </pre>
 </div>
 </div>
 
