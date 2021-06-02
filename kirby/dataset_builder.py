@@ -31,40 +31,24 @@ class DatasetBuilder():
             pass
 
     def build_csv(self, ds, split):
-        ds.map(self.retrieve_knowledge, batched=False)
-        ds.to_csv('data/augmented_datasets/' + split + '.csv')
+        ds = ds.map(self.retrieve_knowledge, batched=False)
+        ds.save_to_disk('data/augmented_datasets/')
 
     def retrieve_knowledge(self, sequence):
-        import pdb; pdb.set_trace()
         text = sequence['text']
-        keywords, entities = self.get_entities_in_text(text)
-        sequence['knowledge'] = []
-        for i, k in enumerate(keywords):
-            sequence['knowledge'].append((k, entities[i]))
-
-
-
-    def description(self, sequence):
-        """Return a description augmented version of the seqeuence `text`"""
-        text = sequence['text']
-        try:
-            keyword_entity = self._keyword_entity(text)
-            json_string = self._get_json(keyword_entity)
-            # Return concatenated string
-            sequence['text'] += " " + json_string
-        except Exception as e:
-            # We expect there to be an exception when no entities are found
-            pass
+        entities = self.get_entities_in_text(text)
+        knowledge = self.add_associations(entities)
+        sequence['knowledge'] = knowledge
         return sequence
 
-    def _keyword_entity(self, text):
-        """Return the entity of the highest ranked keyword"""
-        ranked_phrases = self.get_ranked_phrases(text)
-        for phrase in ranked_phrases:
-            entity = self.db.get_entity_by_label(phrase)
-            if entity:
-                return entity
-        return None
+    def add_associations(self, entities):
+        "Returns list of entity/association dictionaries"
+        associations = []
+        for e in entities:
+            a = self.get_entity_associations(e)
+            k = {e[1]: a}
+            associations.append(k)
+        return associations
 
     def _get_json(self, item):
         """Return JSON version of list object"""
@@ -72,21 +56,6 @@ class DatasetBuilder():
         d['label'] = item[1]
         d['description'] = item[2]
         return json.dumps(d)
-
-    def keyword(self, x):
-        ranked_phrases = self.get_ranked_phrases(x)
-        return ranked_phrases[0]
-
-    def get_ranked_phrases(self, x):
-        self.rake.extract_keywords_from_text(x)
-        return self.rake.get_ranked_phrases()
-
-    #staticmethod
-    def add_to_accepted(self, a_sentences, sentence):
-        if len(a_sentences) > 2:
-            a_sentences.pop(0)
-        a_sentences.append(sentence)
-
 
     def get_entities_in_text(self, text):
         "Returns entities found in the sentence `text`"
@@ -97,15 +66,18 @@ class DatasetBuilder():
             entity = self.db.get_entity_by_label(entity.text)
             if entity:
                 entities.append(entity)
-        return spacy_entities, entities
+        return entities
 
-    def get_entity_associations(self, entity_id):
+    def get_entity_associations(self, entity):
         """
         Given an `entity_id` return a dictionary containing all the associated properties.
         """
-        entity_associations_dict = {}
+        entity_id = entity[0]
+        entity_associations_dict = {'id':entity_id, 'description':entity[2]}
         # Remove all None values from list
         associations = self.db.get_entity_associations(entity_id)
+        if not associations:
+            return None
         for property_id, related_entity_id in associations:
             property_name, related_entity_label = self.db.get_property_string(property_id, related_entity_id)
             entity_associations_dict[property_name] = related_entity_label
