@@ -12,6 +12,7 @@ class RunParams():
                 model='gpt2',
                 pretrained=False,
                 data_dir = 'data/',
+                db = 'db/wikidata.db',
                 data_files = {'train': ['data/wiki.train.raw'], 'valid': ['data/wiki.valid.raw'], 'test': ['data/wiki.test.raw']},
                 data_file_type = 'text',
                 max_epochs=1000,
@@ -33,6 +34,7 @@ class RunParams():
         self.model = model
         self.pretrained = pretrained
         self.data_dir = data_dir
+        self.db = db 
         self.data_files = data_files
         self.data_file_type = data_file_type
         self.max_epochs = max_epochs
