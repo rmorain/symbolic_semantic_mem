@@ -6,25 +6,39 @@ __all__ = ['WikiDatabase']
 import pandas as pd
 import sqlite3
 # import timeList
-from .properties import properties
+from properties import properties
 
 # Cell
 class WikiDatabase:
     conn = None
-    def __init__(self):
+    def __init__(self, run_params):
+        self.run_params = run_params
         try:
             self.properties_dict = properties()
-            self.conn = sqlite3.connect("db/wikidata.db")
+            self.conn = sqlite3.connect(self.run_params.db)
             print(self.conn)
         except Exception as e:
             print(e)
             exit(-1)
 
     def exit_procedure(self):
-        pass
-#         self.conn.close()
-#         exit(-1)
+        self.conn.close()
+        return None
 
+    def get_knowledge(self, entity_string):
+        """
+        Given an entity string, return a complete knowledge dictionary
+        """
+        # Get entity 
+        entity = self.get_entity_by_label(entity_string)
+
+        # Get associations
+        associations = self.get_entity_associations(entity[0])
+
+        # Clean associations
+        knowledge_dict = self.clean_relations(associations)
+
+        return knowledge_dict 
 
     @staticmethod
     def get_table_name(entity_label):
