@@ -16,3 +16,5 @@ tensorflow_hub
 spacy 
 sklearn
 nbdev
+flake8
+black
