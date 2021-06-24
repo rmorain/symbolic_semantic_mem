@@ -1,12 +1,10 @@
 __all__ = ["RunParams"]
 
-# Cell
 import multiprocessing
 
 import torch
 
 
-# Cell
 class RunParams:
     def __init__(
         self,

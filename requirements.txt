@@ -18,3 +18,4 @@ sklearn
 nbdev
 flake8
 black
+isort
