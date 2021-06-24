@@ -8,8 +8,7 @@ from .knowledge_gpt2_model import KnowledgeGPT2LMHeadModel
 
 
 class KnowledgeModel(BasicModel):
-    """GPT2 model that uses knowledge inputs
-    """
+    """GPT2 model that uses knowledge inputs"""
 
     def __init__(self, run_params):
         super().__init__(run_params)
