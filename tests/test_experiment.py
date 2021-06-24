@@ -2,12 +2,14 @@ import unittest
 
 from kirby.experiment import Experiment
 from kirby.run_params import RunParams
+from kirby.basic_model import BasicModel
 
 
 class TestExperiment(unittest.TestCase):
     def setUp(self):
         self.run_params = RunParams()
-        self.experiment = Experiment(self.run_params)
+        self.model = BasicModel(self.run_params)
+        self.experiment = Experiment(self.run_params, self.model)
 
     def tearDown(self):
         pass
