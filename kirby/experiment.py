@@ -2,15 +2,14 @@ __all__ = ["Experiment"]
 
 import os
 import pytorch_lightning as pl
-from .basic_model import BasicModel
 from pytorch_lightning.loggers import WandbLogger
-from pytorch_lightning.callbacks.early_stopping import EarlyStopping
+from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
 
 
 class Experiment:
-    def __init__(self, run_params):
+    def __init__(self, run_params, model):
         self.run_params = run_params
-        self.model = BasicModel(run_params)
+        self.model = model
 
     def run(self):
         trainer = pl.Trainer(
@@ -20,9 +19,16 @@ class Experiment:
             logger=WandbLogger(
                 name=self.run_params.run_name, project=self.run_params.project_name
             ),
-            callbacks=[EarlyStopping(monitor="val_loss")],
-            default_root_dir=os.getcwd() + "/../checkpoints",
+            callbacks=[
+                EarlyStopping(monitor="val_loss"),
+                ModelCheckpoint(
+                    dirpath=os.getcwd() + "/checkpoints",
+                    filename="{epoch}-{val_loss:.2f}-" + self.run_params.run_name,
+                    monitor="val_loss",
+                    save_top_k=1,
+                ),
+            ],
+            default_root_dir=os.getcwd() + "/checkpoints",
         )
 
         trainer.fit(self.model)
-        trainer.save_checkpoint(self.run_params.run_name())
