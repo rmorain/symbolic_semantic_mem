@@ -1,26 +1,46 @@
 # Build description dataset
+import pandas as pd
+from tqdm import tqdm
+
+from kirby.database_proxy import WikiDatabase
 from kirby.run_params import RunParams
-from kirby.data_manager import DataManager
-from kirby.dataset_builder import DatasetBuilder
-from datasets import load_dataset
 
-run_params = RunParams(debug=True)
-data_manager = DataManager(run_params)
-ds_builder = DatasetBuilder()
-block_size = 128
 
-split = 'train'
-split = f'{split}[:{run_params.batch_size*block_size if run_params.debug else f"{run_params.data_set_percentage}%"}]'
-ds = load_dataset('text', data_files=run_params.data_files, split=split)
-aug_train_ds = ds_builder.build(ds, dataset_type='description')
+def add_knowledge(example, db=None):
+    """
+    Adds a `knowledge` column to the data point
+    Knowledge is a list of dictionaries.
 
-# Save
-aug_train_ds.to_csv('data/augmented_datasets/description_train.csv')
+    Example:
+        [
+            {
+                'description':'A very good description.',
+                'association': 'More associations',
+                ...
+            }
+        ]
+    """
+    knowledge_list = []
+    for entity in example["entities"]:
+        k = db.get_knowledge(entity)
+        knowledge_list.append(k)
+    example["knowledge"] = knowledge_list
+    return example
 
-split = 'valid'
-split = f'{split}[:{run_params.batch_size*block_size if run_params.debug else f"{run_params.data_set_percentage}%"}]'
-ds = load_dataset('text', data_files=run_params.data_files, split=split)
-aug_valid_ds = ds_builder.build(ds, dataset_type='description')
 
-# Save
-aug_valid_ds.to_csv('data/augmented_datasets/description_valid.csv')
+# Pickle files
+f1 = "data/augmented_datasets/pickle/combined1.pkl"
+
+# Load pickle files
+df = pd.read_pickle(f1)
+
+rp = RunParams()
+db = WikiDatabase(rp)
+# Add knowledge in neccessary
+with tqdm(total=df.shape[0]) as pbar:
+    for index, row in df.iterrows():
+        if index >= 635201 and index < 709978:
+            row = add_knowledge(row, db)
+        pbar.update(1)
+df.to_pickle(f1)
+print("Finished")
