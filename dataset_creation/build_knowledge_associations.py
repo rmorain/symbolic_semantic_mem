@@ -1,9 +1,8 @@
 import pandas as pd
 from datasets import Dataset
-from tqdm import tqdm
-
 from kirby.database_proxy import WikiDatabase
 from kirby.run_params import RunParams
+from tqdm import tqdm
 
 
 def add_knowledge(example, db=None):
@@ -29,12 +28,12 @@ def add_knowledge(example, db=None):
 
 
 # Load dataset
-split = "train"
+split = "valid"
 save_location = "data/augmented_datasets/entities/" + split + "/"
 ds = pd.DataFrame.from_dict(Dataset.load_from_disk(save_location))
 
 # Split in half
-ds = ds.iloc[: ds.shape[0] // 3]
+# ds = ds.iloc[: ds.shape[0] // 3]
 # Augment data
 # Add `knowledge` column
 knowledge_list = [None for i in range(ds.shape[0])]
@@ -46,8 +45,8 @@ with tqdm(total=ds.shape[0]) as pbar:
     for index, row in ds.iterrows():
         row = add_knowledge(row, db)
         pbar.update(1)
-        if index % 100 == 0:
-            ds.to_pickle("data/augmented_datasets/pickle/augmented_train1.pkl")
+        # if index % 100 == 0:
+        # ds.to_pickle("data/augmented_datasets/pickle/augmented_valid.pkl")
 
 # Save
-ds.to_pickle("data/augmented_datasets/pickle/augmented_train1.pkl")
+ds.to_pickle("data/augmented_datasets/pickle/augmented_valid.pkl")
