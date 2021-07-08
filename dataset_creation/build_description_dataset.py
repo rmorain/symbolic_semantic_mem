@@ -29,7 +29,7 @@ def add_knowledge(example, db=None):
 
 
 # Pickle files
-f1 = "data/augmented_datasets/pickle/combined1.pkl"
+f1 = "data/augmented_datasets/pickle/combined.pkl"
 
 # Load pickle files
 df = pd.read_pickle(f1)
@@ -42,5 +42,5 @@ with tqdm(total=df.shape[0]) as pbar:
         if index >= 635201 and index < 709978:
             row = add_knowledge(row, db)
         pbar.update(1)
-df.to_pickle(f1)
+df.to_pickle("data/augmented_datasets/pickle/combined1.pkl")
 print("Finished")
