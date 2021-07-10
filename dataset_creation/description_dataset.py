@@ -19,11 +19,12 @@ def get_description(row):
             pass
 
 
-df = pd.read_pickle("data/augmented_datasets/pickle/combined_complete.pkl")
+df = pd.read_pickle("data/augmented_datasets/pickle/augmented_valid.pkl")
 
 with tqdm(total=df.shape[0]) as pbar:
     for index, row in df.iterrows():
         row = get_description(row)
         pbar.update(1)
 
-df.to_pickle("data/augmented_datasets/pickle/description.pkl")
+df["knowledge"] = df["knowledge"].astype(str)
+df.to_pickle("data/augmented_datasets/pickle/description_valid.pkl")
