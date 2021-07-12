@@ -9,10 +9,10 @@ def KnowledgeInputDouble(text, knowledge):
     input_tokens = tokenize(text, run_params.seq_length, tokenizer)
     knowledge_tokens = tokenize(knowledge, run_params.knowledge_buffer, tokenizer)
     knowledge_input = {
-        "input_ids": input_tokens["input_ids"],
-        "attention_mask": input_tokens["attention_mask"],
-        "knowledge": knowledge_tokens["input_ids"],
-        "knowledge_mask": knowledge_tokens["attention_mask"],
+        "text_input_ids": input_tokens["input_ids"],
+        "text_attention": input_tokens["attention_mask"],
+        "knowledge_input_ids": knowledge_tokens["input_ids"],
+        "knowledge_attention": knowledge_tokens["attention_mask"],
     }
     return knowledge_input
 
