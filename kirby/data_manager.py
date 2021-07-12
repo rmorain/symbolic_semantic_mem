@@ -1,6 +1,7 @@
 __all__ = ["DataManager"]
 
-from datasets import load_dataset
+import pandas as pd
+from datasets import Dataset, load_dataset
 from transformers import GPT2Tokenizer
 
 
@@ -17,7 +18,7 @@ class DataManager:
     def prepare_ds(self, split):
         tokenizer = GPT2Tokenizer.from_pretrained(self.run_params.model)
         tokenizer.pad_token = tokenizer.eos_token
-        split = f'{split}[:{self.run_params.batch_size*self.block_size if self.run_params.debug else f"{self.run_params.data_set_percentage}%"}]'
+        split = self.get_split(split)
         ds = load_dataset(
             self.run_params.data_file_type,
             data_files=self.run_params.data_files,
@@ -28,7 +29,7 @@ class DataManager:
             self.tokenize,
             batched=True,
             num_proc=4,
-            remove_columns=["text"],
+            remove_columns=self.get_remove_columns(),
             fn_kwargs={"tokenizer": tokenizer},
         )
         ds = ds.map(
@@ -37,12 +38,54 @@ class DataManager:
             #             batch_size=self.block_size,
             #             num_proc=self.run_params.num_workers
         )
-        ds.set_format(type="torch", columns=["input_ids", "attention_mask", "labels"])
+        ds.set_format(type="torch")
         return ds
+
+    def get_remove_columns(self):
+        if self.run_params.data_file_type == "pandas":
+            return ["text", "knowledge"]
+        else:
+            return ["text"]
+
+    def prepare_knowledge_ds(self):
+        """Specifically for loading a knowledge dataset"""
+        df = pd.read_pickle(self.run_params.data_files)
+        ds = Dataset.from_pandas(df)
+        tokenizer = GPT2Tokenizer.from_pretrained(self.run_params.model)
+        tokenizer.pad_token = tokenizer.eos_token
+        ds = ds.map(
+            self.tokenize_knowledge,
+            batched=True,
+            num_proc=4,
+            remove_columns=["text"],
+            fn_kwargs={"tokenizer": tokenizer},
+        )
+
+    def get_split(self, split):
+        if self.run_params.debug:
+            split += f"[:{self.run_params.batch_size*self.block_size}]"
+        else:
+            split += f"[:{self.run_params.data_set_percentage}%]"
+        return split
 
     # Tokenize a sequence
     def tokenize(self, x, tokenizer=None):
-        tokens = tokenizer(x["text"])
+        text_tokens = tokenizer(x["text"])
+        try:
+            knowledge_tokens = tokenizer(x["knowledge"])
+            # Combine knowledge and text tokens
+            result = {
+                "text_input_ids": text_tokens["input_ids"],
+                "text_attention": text_tokens["attention_mask"],
+                "knowledge_input_ids": knowledge_tokens["input_ids"],
+                "knowledge_attention": knowledge_tokens["attention_mask"],
+            }
+        except KeyError:
+            result = text_tokens
+        return result
+
+    def tokenize_knowledge(self, x, tokenizer=None):
+        tokens = tokenizer(x["knowledge"])
         return tokens
 
     def group_texts(self, examples):
@@ -62,11 +105,10 @@ class DataManager:
             ]
             for k, t in concatenated_examples.items()
         }
-        result["labels"] = result["input_ids"].copy()
         return result
 
     def load(self, split):
-        split = f'{split}[:{self.run_params.batch_size*self.block_size if self.run_params.debug else f"{self.run_params.data_set_percentage}%"}]'
+        split = self.get_split(split)
         ds = load_dataset(
             self.run_params.data_file_type,
             data_files=self.run_params.data_files,
