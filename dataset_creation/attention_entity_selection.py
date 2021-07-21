@@ -1,4 +1,8 @@
+from statistics import mean
+
+import pandas as pd
 import torch
+from tqdm import tqdm
 from transformers import GPT2Model
 
 model = GPT2Model.from_pretrained("gpt2")
@@ -23,17 +27,20 @@ def sort_attentions(attentions, tokens, entities, tokenizer):
     t = tokens.tolist()
     scores = []
     for e in entities:
-        scores.append(calculate_attention_scores(t, e, tokenizer, a))
+        scores.append((e, calculate_attention_scores(t, e, tokenizer, a)))
     sorted_scores = sorted(scores, key=lambda x: x[1])
     sorted_scores.reverse()
     return sorted_scores
 
 
 def calculate_attention_scores(tokens, entity, tokenizer, attentions):
-    t = [tokenizer.decode(x).lower().strip(" ") for x in tokens]
-    sub = subfinder(t, entity.lower().split(" "))
-    entity_scores = (entity, sum([attentions[i] for i in sub]))
-    return entity_scores
+    entity_tokens = tokenizer(" " + entity)["input_ids"]
+    entity_indices = subfinder(tokens, entity_tokens)
+    try:
+        score = mean(attentions[entity_indices[0] : entity_indices[-1] + 1])
+    except Exception:
+        score = 0
+    return score
 
 
 def subfinder(word_list, pattern):
@@ -44,3 +51,33 @@ def subfinder(word_list, pattern):
         if sublist == pattern:
             return list(range(i, i + window_length))
     return word_indices
+
+
+def process_row(row, tokenizer):
+    text = row["text"]
+    tokens = tokenizer(text)["input_ids"]
+    tokens = torch.LongTensor(tokens)
+    attentions = get_attention(tokens)
+    attentions = process_attentions(attentions)
+    sorted_attentions = sort_attentions(attentions, tokens, row["entities"], tokenizer)
+
+    return sorted_attentions
+
+
+def process_data(data_file, tokenizer, debug=True):
+    # Load data
+    df = pd.read_pickle(data_file)
+
+    if debug:
+        df = df.iloc[:100]
+    else:
+        df = df.iloc[:286510]
+
+    with tqdm(total=df.shape[0]) as pbar:
+        for index, row in df.iterrows():
+            row["entities"] = process_row(row, tokenizer)
+            pbar.update(1)
+    if not debug:
+        df.to_pickle("data/augmented_datasets/pickle/sorted_attentions1.pkl")
+    print("Finished")
+    return df

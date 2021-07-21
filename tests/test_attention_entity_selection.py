@@ -3,6 +3,7 @@ import unittest
 import torch
 from dataset_creation.attention_entity_selection import (get_attention,
                                                          process_attentions,
+                                                         process_data,
                                                          sort_attentions)
 from transformers import GPT2Tokenizer
 
@@ -33,6 +34,11 @@ class TestAttentionEntitySelection(unittest.TestCase):
             attentions, self.tokens, self.entities, self.tokenizer
         )
         self.assertIsNotNone(sorted_attentions)
+
+    def test_process_data(self):
+        data = "data/augmented_datasets/pickle/wikiknowledge.pkl"
+        processed_data = process_data(data, self.tokenizer, debug=False)
+        self.assertIsNotNone(processed_data)
 
 
 if __name__ == "__main__":
