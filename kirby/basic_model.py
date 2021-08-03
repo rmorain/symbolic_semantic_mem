@@ -24,7 +24,9 @@ class BasicModel(pl.LightningModule):
 
     def forward(self, x):
         loss = self.model(
-            x["input_ids"], attention_mask=x["attention_mask"], labels=x["input_ids"]
+            x["input_ids"][0],
+            attention_mask=x["attention_mask"][0],
+            labels=x["input_ids"][0],
         )[0]
         return loss
 

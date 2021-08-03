@@ -28,8 +28,14 @@ class DataManager:
             split=split,
         )
         ds = ds.filter(function=self.criteria)
+        tokenize_func = (
+            self.tokenize_knowledge
+            if self.run_params.knowledge_tokenize
+            else self.tokenize
+        )
+
         ds = ds.map(
-            self.tokenize,
+            tokenize_func,
             batched=False,
             num_proc=4,
             remove_columns=self.get_remove_columns(ds),
@@ -68,45 +74,44 @@ class DataManager:
     # Tokenize a sequence
     def tokenize(self, x, tokenizer=None):
         text_length = self.run_params.seq_length
-        know_length = self.run_params.knowledge_buffer
-        total_length = text_length + know_length
         text_tokens = tokenizer(
             x["text"],
             truncation=True,
+            padding="max_length",
             max_length=text_length,
             return_tensors="pt",
         )
-        try:
-            knowledge_tokens = tokenizer(
-                x["knowledge"],
-                truncation=True,
-                padding="max_length",
-                max_length=total_length - len(text_tokens["input_ids"][0]),
-                return_tensors="pt",
-            )
-            # Combine knowledge and text tokens
-            input_ids = torch.cat(
-                (text_tokens["input_ids"], knowledge_tokens["input_ids"]), 1
-            )
-            attention_mask = torch.cat(
-                (text_tokens["attention_mask"], knowledge_tokens["attention_mask"]),
-                1,
-            )
-            labels = copy.deepcopy(input_ids)
-            labels[:, -len(knowledge_tokens["input_ids"][0]) :] = -100
-            result = {
-                "input_ids": input_ids,
-                "attention_mask": attention_mask,
-                "labels": labels,
-            }
-
-        except KeyError:
-            result = text_tokens
-        return result
+        return text_tokens
 
     def tokenize_knowledge(self, x, tokenizer=None):
-        tokens = tokenizer(x["knowledge"])
-        return tokens
+        text_length = self.run_params.seq_length
+        know_length = self.run_params.knowledge_buffer
+        total_length = text_length + know_length
+        text_tokens = tokenizer(
+            x["text"], truncation=True, max_length=text_length, return_tensors="pt",
+        )
+        knowledge_tokens = tokenizer(
+            x["knowledge"],
+            truncation=True,
+            padding="max_length",
+            max_length=total_length - len(text_tokens["input_ids"][0]),
+            return_tensors="pt",
+        )
+        # Combine knowledge and text tokens
+        input_ids = torch.cat(
+            (text_tokens["input_ids"], knowledge_tokens["input_ids"]), 1
+        )
+        attention_mask = torch.cat(
+            (text_tokens["attention_mask"], knowledge_tokens["attention_mask"]), 1,
+        )
+        labels = copy.deepcopy(input_ids)
+        labels[:, -len(knowledge_tokens["input_ids"][0]) :] = -100
+        result = {
+            "input_ids": input_ids,
+            "attention_mask": attention_mask,
+            "labels": labels,
+        }
+        return result
 
     def group_texts(self, examples):
         # Concatenate all texts.

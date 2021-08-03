@@ -12,6 +12,7 @@ run_params = RunParams(
     pretrained=True,
     data_files=data_files,
     data_file_type="pandas",
+    knowledge_tokenize=True,
 )
 model = KnowledgeModel(run_params)
 experiment = Experiment(run_params, model)
