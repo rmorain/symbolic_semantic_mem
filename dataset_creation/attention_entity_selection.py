@@ -3,7 +3,7 @@ from statistics import mean
 import pandas as pd
 import torch
 from tqdm import tqdm
-from transformers import GPT2Model
+from transformers import GPT2Model, GPT2Tokenizer
 
 model = GPT2Model.from_pretrained("gpt2")
 
@@ -71,13 +71,19 @@ def process_data(data_file, tokenizer, debug=True):
     if debug:
         df = df.iloc[:100]
     else:
-        df = df.iloc[:286510]
+        df = df.iloc[573020:]
 
     with tqdm(total=df.shape[0]) as pbar:
         for index, row in df.iterrows():
             row["entities"] = process_row(row, tokenizer)
             pbar.update(1)
     if not debug:
-        df.to_pickle("data/augmented_datasets/pickle/sorted_attentions1.pkl")
+        df.to_pickle("data/augmented_datasets/pickle/sorted_attentions3.pkl")
     print("Finished")
     return df
+
+
+if __name__ == "__main__":
+    data = "data/augmented_datasets/pickle/wikiknowledge.pkl"
+    tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
+    process_data(data, tokenizer, debug=False)
