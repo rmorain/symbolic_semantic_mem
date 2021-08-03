@@ -17,7 +17,6 @@ class KnowledgeModel(BasicModel):
         self.loss = torch.nn.CrossEntropyLoss(reduction="none")
 
     def forward(self, x):
-        __import__("pudb").set_trace()
         loss = self.model(
             x["input_ids"][0],
             attention_mask=x["attention_mask"][0],
