@@ -1,6 +1,9 @@
 __all__ = ["DataManager"]
 
+import copy
+
 import pandas as pd
+import torch
 from datasets import Dataset, load_dataset
 from transformers import GPT2Tokenizer
 
@@ -27,22 +30,16 @@ class DataManager:
         ds = ds.filter(function=self.criteria)
         ds = ds.map(
             self.tokenize,
-            batched=True,
+            batched=False,
             num_proc=4,
-            remove_columns=self.get_remove_columns(),
+            remove_columns=self.get_remove_columns(ds),
             fn_kwargs={"tokenizer": tokenizer},
-        )
-        ds = ds.map(
-            self.group_texts,
-            batched=True,
-            #             batch_size=self.block_size,
-            #             num_proc=self.run_params.num_workers
         )
         ds.set_format(type="torch")
         return ds
 
-    def get_remove_columns(self):
-        if self.run_params.data_file_type == "pandas":
+    def get_remove_columns(self, ds):
+        if ds.num_columns > 1:
             return ["text", "knowledge"]
         else:
             return ["text"]
@@ -55,7 +52,7 @@ class DataManager:
         tokenizer.pad_token = tokenizer.eos_token
         ds = ds.map(
             self.tokenize_knowledge,
-            batched=True,
+            batched=False,
             num_proc=4,
             remove_columns=["text"],
             fn_kwargs={"tokenizer": tokenizer},
@@ -70,16 +67,39 @@ class DataManager:
 
     # Tokenize a sequence
     def tokenize(self, x, tokenizer=None):
-        text_tokens = tokenizer(x["text"])
+        text_length = self.run_params.seq_length
+        know_length = self.run_params.knowledge_buffer
+        total_length = text_length + know_length
+        text_tokens = tokenizer(
+            x["text"],
+            truncation=True,
+            max_length=text_length,
+            return_tensors="pt",
+        )
         try:
-            knowledge_tokens = tokenizer(x["knowledge"])
+            knowledge_tokens = tokenizer(
+                x["knowledge"],
+                truncation=True,
+                padding="max_length",
+                max_length=total_length - len(text_tokens["input_ids"][0]),
+                return_tensors="pt",
+            )
             # Combine knowledge and text tokens
+            input_ids = torch.cat(
+                (text_tokens["input_ids"], knowledge_tokens["input_ids"]), 1
+            )
+            attention_mask = torch.cat(
+                (text_tokens["attention_mask"], knowledge_tokens["attention_mask"]),
+                1,
+            )
+            labels = copy.deepcopy(input_ids)
+            labels[:, -len(knowledge_tokens["input_ids"][0]) :] = -100
             result = {
-                "text_input_ids": text_tokens["input_ids"],
-                "text_attention": text_tokens["attention_mask"],
-                "knowledge_input_ids": knowledge_tokens["input_ids"],
-                "knowledge_attention": knowledge_tokens["attention_mask"],
+                "input_ids": input_ids,
+                "attention_mask": attention_mask,
+                "labels": labels,
             }
+
         except KeyError:
             result = text_tokens
         return result
