@@ -8,11 +8,11 @@ data_files = {
 }
 run_params = RunParams(
     run_name="description",
-    debug=False,
+    debug=True,
     pretrained=True,
     data_files=data_files,
     data_file_type="pandas",
 )
-model = KnowledgeModel()
-experiment = Experiment(run_params)
+model = KnowledgeModel(run_params)
+experiment = Experiment(run_params, model)
 experiment.run()

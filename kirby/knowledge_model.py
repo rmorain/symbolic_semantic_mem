@@ -1,5 +1,3 @@
-import copy
-
 import torch
 from transformers import GPT2Config
 
@@ -19,14 +17,10 @@ class KnowledgeModel(BasicModel):
         self.loss = torch.nn.CrossEntropyLoss(reduction="none")
 
     def forward(self, x):
-        combined_input = torch.cat((x["text_input_ids"], x["knowledge_input_ids"]), 1)
-        labels = copy.deepcopy(combined_input)
-        # Mask knowledge tokens so they don't contribute to the loss
-        labels[:, -self.run_params.knowledge_buffer :] = -100
-        combined_attention = torch.cat(
-            (x["text_attention"], x["knowledge_attention"]), 1
-        )
+        __import__("pudb").set_trace()
         loss = self.model(
-            combined_input, attention_mask=combined_attention, labels=labels
+            x["input_ids"][0],
+            attention_mask=x["attention_mask"][0],
+            labels=x["labels"][0],
         )[0]
         return loss
