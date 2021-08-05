@@ -19,9 +19,9 @@ class TestKnowledgeModel(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def test_knowledge_model_forward_with_knowledge_input(self):
-        output = self.model(self.test_input)
-        self.assertIsNotNone(output)
+    # def test_knowledge_model_forward_with_knowledge_input(self):
+    # output = self.model(self.test_input)
+    # self.assertIsNotNone(output)
 
     def test_knowledge_model_experiment(self):
         data_files = {
@@ -32,6 +32,7 @@ class TestKnowledgeModel(unittest.TestCase):
             run_name="description",
             debug=True,
             pretrained=True,
+            knowledge_tokenize=True,
             data_files=data_files,
             data_file_type="pandas",
         )

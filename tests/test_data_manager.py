@@ -18,12 +18,12 @@ class TestDataManager(unittest.TestCase):
     def test_train_ds_input_ids_length(self):
         """Each sequence in the dataset should have the same length"""
         for x in self.train_ds:
-            self.assertEqual(x["input_ids"].shape[-1], self.run_params.seq_length)
+            self.assertEqual(x["input_ids"][0].shape[-1], self.run_params.seq_length)
 
     def test_valid_ds_input_ids_length(self):
         """Each sequence in the dataset should have the same length"""
         for x in self.valid_ds:
-            self.assertEqual(x["input_ids"].shape[-1], self.run_params.seq_length)
+            self.assertEqual(x["input_ids"][0].shape[-1], self.run_params.seq_length)
 
     def test_split_debug(self):
         self.assertEqual(self.train_ds.shape[0], 484)
@@ -31,9 +31,8 @@ class TestDataManager(unittest.TestCase):
     def test_split_percentage(self):
         dm = DataManager(RunParams(debug=False, data_set_percentage=1))
         train_ds, valid_ds = dm.prepare_data()
-
-        self.assertEqual(train_ds.shape[0], 8820)
-        self.assertEqual(valid_ds.shape[0], 13)
+        self.assertEqual(train_ds.shape[0], 8531)
+        self.assertEqual(valid_ds.shape[0], 20)
 
     def test_knowledge_loading(self):
         data_file = "data/augmented_datasets/pickle/description.pkl"
@@ -44,6 +43,7 @@ class TestDataManager(unittest.TestCase):
         # Test with text only
         x = {"text": "Stephen Curry is my favorite basketball player"}
         tokenizer = GPT2Tokenizer.from_pretrained(self.run_params.model)
+        tokenizer.pad_token = tokenizer.eos_token
         tokens = self.dm.tokenize(x, tokenizer=tokenizer)
         self.assertIsNotNone(tokens)
 

@@ -36,8 +36,8 @@ class TestAttentionEntitySelection(unittest.TestCase):
         self.assertIsNotNone(sorted_attentions)
 
     def test_process_data(self):
-        data = "data/augmented_datasets/pickle/wikiknowledge.pkl"
-        processed_data = process_data(data, self.tokenizer, debug=False)
+        data = "data/augmented_datasets/pickle/wikidata_with_knowledge.pkl"
+        processed_data = process_data(data, self.tokenizer, debug=True)
         self.assertIsNotNone(processed_data)
 
 
