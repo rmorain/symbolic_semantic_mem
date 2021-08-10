@@ -88,7 +88,10 @@ class DataManager:
         know_length = self.run_params.knowledge_buffer
         total_length = text_length + know_length
         text_tokens = tokenizer(
-            x["text"], truncation=True, max_length=text_length, return_tensors="pt",
+            x["text"],
+            truncation=True,
+            max_length=text_length,
+            return_tensors="pt",
         )
         knowledge_tokens = tokenizer(
             x["knowledge"],
@@ -102,7 +105,8 @@ class DataManager:
             (text_tokens["input_ids"], knowledge_tokens["input_ids"]), 1
         )
         attention_mask = torch.cat(
-            (text_tokens["attention_mask"], knowledge_tokens["attention_mask"]), 1,
+            (text_tokens["attention_mask"], knowledge_tokens["attention_mask"]),
+            1,
         )
         labels = copy.deepcopy(input_ids)
         labels[:, -len(knowledge_tokens["input_ids"][0]) :] = -100

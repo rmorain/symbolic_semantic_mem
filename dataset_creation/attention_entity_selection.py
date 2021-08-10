@@ -68,22 +68,22 @@ def process_data(data_file, tokenizer, debug=True):
     # Load data
     df = pd.read_pickle(data_file)
 
-    if debug:
-        df = df.iloc[:100]
-    else:
-        df = df.iloc[573020:]
+    # if debug:
+    # df = df.iloc[:100]
+    # else:
+    # df = df.iloc[573020:]
 
     with tqdm(total=df.shape[0]) as pbar:
         for index, row in df.iterrows():
             row["entities"] = process_row(row, tokenizer)
             pbar.update(1)
     if not debug:
-        df.to_pickle("data/augmented_datasets/pickle/sorted_attentions3.pkl")
+        df.to_pickle("data/augmented_datasets/pickle/sorted_attentions_valid.pkl")
     print("Finished")
     return df
 
 
 if __name__ == "__main__":
-    data = "data/augmented_datasets/pickle/wikiknowledge.pkl"
+    data = "data/augmented_datasets/pickle/augmented_valid.pkl"
     tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
     process_data(data, tokenizer, debug=False)
