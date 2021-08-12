@@ -12,7 +12,7 @@ data_files = {
 }
 run_params = RunParams(
     run_name="max_attention",
-    debug=True,
+    debug=False,
     pretrained=True,
     data_files=data_files,
     data_file_type="pandas",

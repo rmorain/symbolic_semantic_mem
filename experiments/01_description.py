@@ -8,7 +8,7 @@ data_files = {
 }
 run_params = RunParams(
     run_name="description",
-    debug=False,
+    debug=True,
     pretrained=True,
     data_files=data_files,
     data_file_type="pandas",
