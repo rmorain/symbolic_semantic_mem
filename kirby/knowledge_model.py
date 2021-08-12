@@ -23,7 +23,6 @@ class KnowledgeModel(BasicModel, LightningModule):
             torch.tensor(x["attention_mask"][0]).to(self.model.device).long()
         )
         labels = torch.tensor(x["labels"][0]).to(self.model.device).long()
-        __import__("pudb").set_trace()
         loss = self.model(
             input_ids,
             attention_mask=attention_mask,

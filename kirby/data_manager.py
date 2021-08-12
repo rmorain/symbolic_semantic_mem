@@ -37,10 +37,11 @@ class DataManager:
         ds = ds.map(
             tokenize_func,
             batched=False,
-            num_proc=4,
+            # num_proc=4,
             remove_columns=self.get_remove_columns(ds),
             fn_kwargs={"tokenizer": tokenizer},
         )
+        ds = ds.filter(function=self.right_length)
         ds.set_format(type="torch")
         return ds
 
@@ -49,20 +50,6 @@ class DataManager:
             return ["text", "knowledge"]
         else:
             return ["text"]
-
-    def prepare_knowledge_ds(self):
-        """Specifically for loading a knowledge dataset"""
-        df = pd.read_pickle(self.run_params.data_files)
-        ds = Dataset.from_pandas(df)
-        tokenizer = GPT2Tokenizer.from_pretrained(self.run_params.model)
-        tokenizer.pad_token = tokenizer.eos_token
-        ds = ds.map(
-            self.tokenize_knowledge,
-            batched=False,
-            num_proc=4,
-            remove_columns=["text"],
-            fn_kwargs={"tokenizer": tokenizer},
-        )
 
     def get_split(self, split):
         if self.run_params.debug:
@@ -145,6 +132,14 @@ class DataManager:
         )
         ds = ds.filter(function=self.criteria)
         return ds
+
+    def right_length(self, x):
+        if (
+            len(x["input_ids"][0])
+            != self.run_params.seq_length + self.run_params.knowledge_buffer
+        ):
+            return False
+        return True
 
     def criteria(self, x):
         x = x["text"]
