@@ -4,7 +4,7 @@ import copy
 
 import pandas as pd
 import torch
-from datasets import Dataset, load_dataset
+from datasets import Dataset, features, load_dataset
 from transformers import GPT2Tokenizer
 
 
@@ -21,12 +21,12 @@ class DataManager:
     def prepare_ds(self, split):
         tokenizer = GPT2Tokenizer.from_pretrained(self.run_params.model)
         tokenizer.pad_token = tokenizer.eos_token
-        split = self.get_split(split)
-        ds = load_dataset(
-            self.run_params.data_file_type,
-            data_files=self.run_params.data_files,
-            split=split,
-        )
+        df = pd.read_pickle(self.run_params.data_files[split][0])
+
+        if self.run_params.debug:
+            df = df.iloc[: self.run_params.batch_size]
+
+        ds = Dataset.from_pandas(df)
         ds = ds.filter(function=self.criteria)
         tokenize_func = (
             self.tokenize_knowledge
@@ -51,12 +51,9 @@ class DataManager:
         else:
             return ["text"]
 
-    def get_split(self, split):
+    def get_num_rows(self, num_rows):
         if self.run_params.debug:
-            split += f"[:{self.run_params.batch_size*self.block_size}]"
-        else:
-            split += f"[:{self.run_params.data_set_percentage}%]"
-        return split
+            return self.run_params.batch_size
 
     # Tokenize a sequence
     def tokenize(self, x, tokenizer=None):
@@ -75,10 +72,7 @@ class DataManager:
         know_length = self.run_params.knowledge_buffer
         total_length = text_length + know_length
         text_tokens = tokenizer(
-            x["text"],
-            truncation=True,
-            max_length=text_length,
-            return_tensors="pt",
+            x["text"], truncation=True, max_length=text_length, return_tensors="pt",
         )
         knowledge_tokens = tokenizer(
             x["knowledge"],
@@ -92,8 +86,7 @@ class DataManager:
             (text_tokens["input_ids"], knowledge_tokens["input_ids"]), 1
         )
         attention_mask = torch.cat(
-            (text_tokens["attention_mask"], knowledge_tokens["attention_mask"]),
-            1,
+            (text_tokens["attention_mask"], knowledge_tokens["attention_mask"]), 1,
         )
         labels = copy.deepcopy(input_ids)
         labels[:, -len(knowledge_tokens["input_ids"][0]) :] = -100

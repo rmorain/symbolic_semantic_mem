@@ -5,15 +5,11 @@ from tqdm import tqdm
 from transformers import GPT2Tokenizer
 
 data_files = {
-    "train": [
-        "data/augmented_datasets/pickle/wikidata_with_max_attention_entity_selection.pkl"
-    ],
-    "valid": [
-        "data/augmented_datasets/pickle/wikidata_with_max_attention_entity_selection_valid.pkl"
-    ],
+    "train": ["data/augmented_datasets/pickle/min_attention.pkl"],
+    "valid": ["data/augmented_datasets/pickle/min_attention_valid.pkl"],
 }
 run_params = RunParams(
-    run_name="max_attention",
+    run_name="min_attention",
     debug=False,
     pretrained=True,
     data_files=data_files,
@@ -21,13 +17,17 @@ run_params = RunParams(
     knowledge_tokenize=True,
 )
 dm = DataManager(run_params)
-tds, vds = dm.prepare_data()
+# tds, vds = dm.prepare_data()
 debug = True
+df = pd.read_pickle(data_files["train"][0])
 tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
-with tqdm(total=vds.shape[0]) as pbar:
-    for i, row in enumerate(vds):
-        if row["input_ids"][0].shape[0] != 192:
+with tqdm(total=df.shape[0]) as pbar:
+    for i, row in df.iterrows():
+        if row["text"] is None:
             __import__("pudb").set_trace()
+        if row["knowledge"] is None:
+            __import__("pudb").set_trace()
+
         pbar.update(1)
 
 # df.to_pickle(f)

@@ -15,6 +15,7 @@ df = pd.read_pickle("data/augmented_datasets/pickle/sorted_attentions_valid.pkl"
 debug = False
 with tqdm(total=df.shape[0]) as pbar:
     for index, row in df.iterrows():
+        description = None
         # Reverse entities to get min
         row["entities"].sort(reverse=False, key=lambda x: x[1])
         for entity in row["entities"]:
@@ -26,7 +27,7 @@ with tqdm(total=df.shape[0]) as pbar:
                 row["knowledge"] = json.dumps(k_dict)
                 break
         if description is None:
-            row["knowledge"] = ""
+            row["knowledge"] = "{No info}"
         pbar.update(1)
 df = df.drop("entities", axis=1)
 if not debug:
