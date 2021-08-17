@@ -4,7 +4,7 @@ import copy
 
 import pandas as pd
 import torch
-from datasets import Dataset, load_dataset
+from datasets import Dataset, features, load_dataset
 from transformers import GPT2Tokenizer
 
 
@@ -21,20 +21,27 @@ class DataManager:
     def prepare_ds(self, split):
         tokenizer = GPT2Tokenizer.from_pretrained(self.run_params.model)
         tokenizer.pad_token = tokenizer.eos_token
-        split = self.get_split(split)
-        ds = load_dataset(
-            self.run_params.data_file_type,
-            data_files=self.run_params.data_files,
-            split=split,
-        )
+        df = pd.read_pickle(self.run_params.data_files[split][0])
+
+        if self.run_params.debug:
+            df = df.iloc[: self.run_params.batch_size]
+
+        ds = Dataset.from_pandas(df)
         ds = ds.filter(function=self.criteria)
+        tokenize_func = (
+            self.tokenize_knowledge
+            if self.run_params.knowledge_tokenize
+            else self.tokenize
+        )
+
         ds = ds.map(
-            self.tokenize,
+            tokenize_func,
             batched=False,
-            num_proc=4,
+            # num_proc=4,
             remove_columns=self.get_remove_columns(ds),
             fn_kwargs={"tokenizer": tokenizer},
         )
+        ds = ds.filter(function=self.right_length)
         ds.set_format(type="torch")
         return ds
 
@@ -44,69 +51,51 @@ class DataManager:
         else:
             return ["text"]
 
-    def prepare_knowledge_ds(self):
-        """Specifically for loading a knowledge dataset"""
-        df = pd.read_pickle(self.run_params.data_files)
-        ds = Dataset.from_pandas(df)
-        tokenizer = GPT2Tokenizer.from_pretrained(self.run_params.model)
-        tokenizer.pad_token = tokenizer.eos_token
-        ds = ds.map(
-            self.tokenize_knowledge,
-            batched=False,
-            num_proc=4,
-            remove_columns=["text"],
-            fn_kwargs={"tokenizer": tokenizer},
-        )
-
-    def get_split(self, split):
+    def get_num_rows(self, num_rows):
         if self.run_params.debug:
-            split += f"[:{self.run_params.batch_size*self.block_size}]"
-        else:
-            split += f"[:{self.run_params.data_set_percentage}%]"
-        return split
+            return self.run_params.batch_size
 
     # Tokenize a sequence
     def tokenize(self, x, tokenizer=None):
         text_length = self.run_params.seq_length
-        know_length = self.run_params.knowledge_buffer
-        total_length = text_length + know_length
         text_tokens = tokenizer(
             x["text"],
             truncation=True,
+            padding="max_length",
             max_length=text_length,
             return_tensors="pt",
         )
-        try:
-            knowledge_tokens = tokenizer(
-                x["knowledge"],
-                truncation=True,
-                padding="max_length",
-                max_length=total_length - len(text_tokens["input_ids"][0]),
-                return_tensors="pt",
-            )
-            # Combine knowledge and text tokens
-            input_ids = torch.cat(
-                (text_tokens["input_ids"], knowledge_tokens["input_ids"]), 1
-            )
-            attention_mask = torch.cat(
-                (text_tokens["attention_mask"], knowledge_tokens["attention_mask"]),
-                1,
-            )
-            labels = copy.deepcopy(input_ids)
-            labels[:, -len(knowledge_tokens["input_ids"][0]) :] = -100
-            result = {
-                "input_ids": input_ids,
-                "attention_mask": attention_mask,
-                "labels": labels,
-            }
-
-        except KeyError:
-            result = text_tokens
-        return result
+        return text_tokens
 
     def tokenize_knowledge(self, x, tokenizer=None):
-        tokens = tokenizer(x["knowledge"])
-        return tokens
+        text_length = self.run_params.seq_length
+        know_length = self.run_params.knowledge_buffer
+        total_length = text_length + know_length
+        text_tokens = tokenizer(
+            x["text"], truncation=True, max_length=text_length, return_tensors="pt",
+        )
+        knowledge_tokens = tokenizer(
+            x["knowledge"],
+            truncation=True,
+            padding="max_length",
+            max_length=total_length - len(text_tokens["input_ids"][0]),
+            return_tensors="pt",
+        )
+        # Combine knowledge and text tokens
+        input_ids = torch.cat(
+            (text_tokens["input_ids"], knowledge_tokens["input_ids"]), 1
+        )
+        attention_mask = torch.cat(
+            (text_tokens["attention_mask"], knowledge_tokens["attention_mask"]), 1,
+        )
+        labels = copy.deepcopy(input_ids)
+        labels[:, -len(knowledge_tokens["input_ids"][0]) :] = -100
+        result = {
+            "input_ids": input_ids,
+            "attention_mask": attention_mask,
+            "labels": labels,
+        }
+        return result
 
     def group_texts(self, examples):
         # Concatenate all texts.
@@ -136,6 +125,14 @@ class DataManager:
         )
         ds = ds.filter(function=self.criteria)
         return ds
+
+    def right_length(self, x):
+        if (
+            len(x["input_ids"][0])
+            != self.run_params.seq_length + self.run_params.knowledge_buffer
+        ):
+            return False
+        return True
 
     def criteria(self, x):
         x = x["text"]

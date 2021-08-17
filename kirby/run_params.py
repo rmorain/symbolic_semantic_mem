@@ -24,6 +24,7 @@ class RunParams:
         data_set_percentage=100,
         seq_length=128,
         knowledge_buffer=64,
+        knowledge_tokenize=False,
         momentum=0.9,
         lr=1e-2,
         repo="wikitext-103-raw-v1",
@@ -46,6 +47,7 @@ class RunParams:
         self.data_set_percentage = data_set_percentage
         self.seq_length = seq_length
         self.knowledge_buffer = knowledge_buffer
+        self.knowledge_tokenize = knowledge_tokenize
         self.momentum = momentum
         self.lr = lr
         self.repo = repo
