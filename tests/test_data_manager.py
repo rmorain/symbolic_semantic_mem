@@ -25,14 +25,14 @@ class TestDataManager(unittest.TestCase):
         for x in self.valid_ds:
             self.assertEqual(x["input_ids"][0].shape[-1], self.run_params.seq_length)
 
-    def test_split_debug(self):
-        self.assertEqual(self.train_ds.shape[0], 484)
+    # def test_split_debug(self):
+    # self.assertEqual(self.train_ds.shape[0], 484)
 
-    def test_split_percentage(self):
-        dm = DataManager(RunParams(debug=False, data_set_percentage=1))
-        train_ds, valid_ds = dm.prepare_data()
-        self.assertEqual(train_ds.shape[0], 8531)
-        self.assertEqual(valid_ds.shape[0], 20)
+    # def test_split_percentage(self):
+    # dm = DataManager(RunParams(debug=False, data_set_percentage=1))
+    # train_ds, valid_ds = dm.prepare_data()
+    # self.assertEqual(train_ds.shape[0], 8531)
+    # self.assertEqual(valid_ds.shape[0], 20)
 
     def test_knowledge_loading(self):
         data_file = "data/augmented_datasets/pickle/description.pkl"

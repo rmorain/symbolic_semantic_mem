@@ -65,4 +65,4 @@ class BasicModel(pl.LightningModule):
         )
 
     def configure_optimizers(self):
-        return torch.optim.Adam(self.parameters())
+        return torch.optim.Adam(self.parameters(), lr=self.run_params.lr)
