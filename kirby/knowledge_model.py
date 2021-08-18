@@ -23,5 +23,9 @@ class KnowledgeModel(BasicModel, LightningModule):
             torch.tensor(x["attention_mask"][0]).to(self.model.device).long()
         )
         labels = torch.tensor(x["labels"][0]).to(self.model.device).long()
-        loss = self.model(input_ids, attention_mask=attention_mask, labels=labels,)[0]
+        loss = self.model(
+            input_ids,
+            attention_mask=attention_mask,
+            labels=labels,
+        )[0]
         return loss

@@ -24,7 +24,7 @@ class DataManager:
         df = pd.read_pickle(self.run_params.data_files[split][0])
 
         if self.run_params.debug:
-            df = df.iloc[: self.run_params.batch_size]
+            df = df.iloc[: self.run_params.batch_size * 3]
 
         ds = Dataset.from_pandas(df)
         ds = ds.filter(function=self.criteria)
@@ -72,7 +72,10 @@ class DataManager:
         know_length = self.run_params.knowledge_buffer
         total_length = text_length + know_length
         text_tokens = tokenizer(
-            x["text"], truncation=True, max_length=text_length, return_tensors="pt",
+            x["text"],
+            truncation=True,
+            max_length=text_length,
+            return_tensors="pt",
         )
         knowledge_tokens = tokenizer(
             x["knowledge"],
@@ -86,7 +89,8 @@ class DataManager:
             (text_tokens["input_ids"], knowledge_tokens["input_ids"]), 1
         )
         attention_mask = torch.cat(
-            (text_tokens["attention_mask"], knowledge_tokens["attention_mask"]), 1,
+            (text_tokens["attention_mask"], knowledge_tokens["attention_mask"]),
+            1,
         )
         labels = copy.deepcopy(input_ids)
         labels[:, -len(knowledge_tokens["input_ids"][0]) :] = -100
@@ -128,8 +132,14 @@ class DataManager:
 
     def right_length(self, x):
         if (
-            len(x["input_ids"][0])
+            self.run_params.knowledge_tokenize
+            and len(x["input_ids"][0])
             != self.run_params.seq_length + self.run_params.knowledge_buffer
+        ):
+            return False
+        elif (
+            not self.run_params.knowledge_tokenize
+            and len(x["input_ids"][0]) != self.run_params.seq_length
         ):
             return False
         return True
