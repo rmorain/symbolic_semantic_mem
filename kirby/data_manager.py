@@ -24,7 +24,7 @@ class DataManager:
         df = pd.read_pickle(self.run_params.data_files[split][0])
 
         if self.run_params.debug:
-            df = df.iloc[: self.run_params.batch_size * 3]
+            df = df.iloc[: self.run_params.batch_size * 3 * torch.cuda.device_count()]
 
         ds = Dataset.from_pandas(df)
         ds = ds.filter(function=self.criteria)

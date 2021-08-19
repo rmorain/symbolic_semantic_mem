@@ -4,6 +4,8 @@ import os
 import pytorch_lightning as pl
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
+from pytorch_lightning.plugins import DDPPlugin
+
 
 
 class Experiment:
@@ -14,6 +16,7 @@ class Experiment:
     def run(self):
         trainer = pl.Trainer(
             gpus=self.run_params.num_gpus,
+            plugins=DDPPlugin(find_unused_parameters=False),
             max_epochs=self.run_params.max_epochs,
             fast_dev_run=self.run_params.debug,
             logger=WandbLogger(

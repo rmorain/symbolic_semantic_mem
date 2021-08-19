@@ -26,6 +26,7 @@ with tqdm(total=df.shape[0]) as pbar:
         if description is None:
             row["knowledge"] = ""
         pbar.update(1)
+df = df.drop('entities', axis=1)
 if not debug:
     df.to_pickle(
         "data/augmented_datasets/pickle/wikidata_with_max_attention_entity_selection_valid.pkl"

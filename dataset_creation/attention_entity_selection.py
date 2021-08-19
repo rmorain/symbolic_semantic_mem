@@ -69,7 +69,7 @@ def process_data(data_file, tokenizer, debug=True):
     df = pd.read_pickle(data_file)
 
     if debug:
-        df = df.iloc[:100]
+        df = df.iloc[:10]
 
     with tqdm(total=df.shape[0]) as pbar:
         for index, row in df.iterrows():

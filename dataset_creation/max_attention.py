@@ -11,11 +11,12 @@ def get_knowledge(entity_string, knowledge_list):
     return None
 
 
-df = pd.read_pickle("data/augmented_datasets/pickle/sorted_attention.pkl")
+df = pd.read_pickle("data/augmented_datasets/pickle/sorted_attentions_valid.pkl")
 debug = False
 with tqdm(total=df.shape[0]) as pbar:
     for index, row in df.iterrows():
         for entity in row["entities"]:
+            description = None
             max_entity = entity[0]
             description = get_knowledge(max_entity, row["knowledge"])
             if description:
@@ -25,8 +26,10 @@ with tqdm(total=df.shape[0]) as pbar:
                 break
         if description is None:
             row["knowledge"] = ""
+        if row["knowledge"] == []:
+            row["knowledge"] = ""
         pbar.update(1)
 df = df.drop("entities", axis=1)
 if not debug:
-    df.to_pickle("data/augmented_datasets/pickle/max_attention.pkl")
+    df.to_pickle("data/augmented_datasets/pickle/max_attention_valid.pkl")
 print("Finished")
