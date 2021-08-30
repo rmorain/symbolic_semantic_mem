@@ -1,6 +1,7 @@
 import json
 
 import pandas as pd
+from datasets import Dataset
 from tqdm import tqdm
 
 
@@ -11,8 +12,9 @@ def get_knowledge(entity_string, knowledge_list):
     return None
 
 
-df = pd.read_pickle("data/augmented_datasets/pickle/sorted_attentions_valid.pkl")
+df = pd.read_pickle("data/augmented_datasets/pickle/sorted_attentions.pkl")
 debug = False
+count = 0
 with tqdm(total=df.shape[0]) as pbar:
     for index, row in df.iterrows():
         description = None
@@ -26,10 +28,16 @@ with tqdm(total=df.shape[0]) as pbar:
                 # Save as JSON string
                 row["knowledge"] = json.dumps(k_dict)
                 break
-        if description is None:
-            row["knowledge"] = "{No info}"
+        if not isinstance(row["knowledge"], str):
+            count += 1
+            row["knowledge"] = "No info"
         pbar.update(1)
 df = df.drop("entities", axis=1)
 if not debug:
-    df.to_pickle("data/augmented_datasets/pickle/min_attention_valid.pkl")
+    df.to_pickle("data/augmented_datasets/pickle/min_attention.pkl")
+try:
+    ds = Dataset.from_pandas(df)
+except Exception as e:
+    raise e
+print(count / df.shape[0] * 100)
 print("Finished")

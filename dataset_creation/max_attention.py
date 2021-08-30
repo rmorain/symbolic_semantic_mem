@@ -11,7 +11,7 @@ def get_knowledge(entity_string, knowledge_list):
     return None
 
 
-df = pd.read_pickle("data/augmented_datasets/pickle/sorted_attentions.pkl")
+df = pd.read_pickle("data/augmented_datasets/pickle/sorted_attentions_valid.pkl")
 debug = False
 with tqdm(total=df.shape[0]) as pbar:
     for index, row in df.iterrows():
@@ -31,5 +31,5 @@ with tqdm(total=df.shape[0]) as pbar:
         pbar.update(1)
 df = df.drop("entities", axis=1)
 if not debug:
-    df.to_pickle("data/augmented_datasets/pickle/max_attention.pkl")
+    df.to_pickle("data/augmented_datasets/pickle/max_attention_valid.pkl")
 print("Finished")
