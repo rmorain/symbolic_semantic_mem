@@ -5,11 +5,11 @@ from tqdm import tqdm
 from transformers import GPT2Tokenizer
 
 data_files = {
-    "train": ["data/augmented_datasets/pickle/min_attention.pkl"],
-    "valid": ["data/augmented_datasets/pickle/min_attention_valid.pkl"],
+    "train": ["data/augmented_datasets/pickle/max_attention.pkl"],
+    "valid": ["data/augmented_datasets/pickle/max_attention_valid.pkl"],
 }
 run_params = RunParams(
-    run_name="min_attention",
+    run_name="max_attention",
     debug=False,
     pretrained=True,
     data_files=data_files,
@@ -19,7 +19,7 @@ run_params = RunParams(
 dm = DataManager(run_params)
 # tds, vds = dm.prepare_data()
 debug = True
-df = pd.read_pickle(data_files["train"][0])
+df = pd.read_pickle(data_files["valid"][0])
 tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
 with tqdm(total=df.shape[0]) as pbar:
     for i, row in df.iterrows():
@@ -27,6 +27,9 @@ with tqdm(total=df.shape[0]) as pbar:
             __import__("pudb").set_trace()
         if row["knowledge"] is None:
             __import__("pudb").set_trace()
+        if row['knowledge'] == []:
+            __import__("pudb").set_trace()
+
 
         pbar.update(1)
 

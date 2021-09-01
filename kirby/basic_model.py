@@ -18,7 +18,7 @@ class BasicModel(pl.LightningModule):
             self.model = GPT2LMHeadModel(config)
         self.loss = torch.nn.CrossEntropyLoss(reduction="none")
 
-    def prepare_data(self):
+    def setup(self, stage):
         data_manager = DataManager(self.run_params)
         self.train_ds, self.val_ds = data_manager.prepare_data()
 
