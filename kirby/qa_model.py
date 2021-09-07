@@ -24,17 +24,25 @@ class QAModel(BasicModel, LightningModule):
         # Update the model embeddings with the new vocabulary size
         self.model.resize_token_embeddings(len(self.tokenizer))
 
-    def setup(self, stage):
-        df = pd.read_pickle(self.run_params.data_files["train"])
+    def prepare_data(self):
+        self.setup()
+
+    def setup(self, stage=None):
+        self.train_ds = self.prepare_ds(self.run_params.data_files["train"])
+        self.val_ds = self.prepare_ds(self.run_params.data_files["valid"])
+
+    def prepare_ds(self, path):
+        df = pd.read_pickle(path)
         if self.run_params.debug:
             df = df.iloc[: self.run_params.batch_size * 3 * torch.cuda.device_count()]
-        self.train_ds = Dataset.from_pandas(df)
-        self.train_ds = self.train_ds.map(
+        ds = Dataset.from_pandas(df)
+        ds = ds.map(
             self.tokenize,
             batched=False,
             # num_proc=4,
             remove_columns=["question", "correct", "distractors"],
         )
+        return ds
 
     def tokenize(self, x):
         question = x["question"]
@@ -102,10 +110,10 @@ class QAModel(BasicModel, LightningModule):
         attention_mask.unsqueeze_(0)
         mc_token_ids.unsqueeze_(0)
         # Forward
-        outputs = self.model(
+        loss = self.model(
             input_ids,
             attention_mask=attention_mask,
             mc_token_ids=mc_token_ids,
             mc_labels=labels,
-        )
-        return outputs
+        ).mc_loss
+        return loss
