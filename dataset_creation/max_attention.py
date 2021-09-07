@@ -12,7 +12,7 @@ def get_knowledge(entity_string, knowledge_list):
     return None
 
 
-df = pd.read_pickle("data/augmented_datasets/pickle/sorted_attentions.pkl")
+df = pd.read_pickle("data/augmented_datasets/pickle/sorted_attentions_valid.pkl")
 debug = False
 count = 0
 with tqdm(total=df.shape[0]) as pbar:
