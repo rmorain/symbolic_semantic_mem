@@ -29,11 +29,10 @@ class TestQAModel(unittest.TestCase):
             pickle.dump(self.model.train_ds[3], x)
 
     def test_forward(self):
-        # TODO: Fix this
         with open(self.x, "rb") as x:
             x = pickle.load(x)
         outputs = self.model.forward(x)
-        __import__("pudb").set_trace()
+        self.assertIsNotNone(outputs)
 
 
 if __name__ == "__main__":

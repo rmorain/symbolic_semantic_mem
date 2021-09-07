@@ -17,6 +17,7 @@ class QAModel(BasicModel, LightningModule):
         self.model = GPT2DoubleHeadsModel(config)
         self.loss = torch.nn.CrossEntropyLoss(reduction="none")
         self.tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
+        self.tokenizer.pad_token = self.tokenizer.eos_token
 
         # Add [CLS] to the vocabulary
         self.tokenizer.add_special_tokens({"cls_token": "[CLS]"})
@@ -42,54 +43,69 @@ class QAModel(BasicModel, LightningModule):
         question_tokens = self.tokenizer(
             question,
             truncation=True,
-            max_length=self.run_params.seq_length,
         )
         answer_tokens = self.tokenizer(
             answer,
             truncation=True,
+            padding="max_length",
             max_length=self.run_params.seq_length,
         )
         distractor_tokens = [
             self.tokenizer(
                 d,
                 truncation=True,
+                padding="max_length",
                 max_length=self.run_params.seq_length,
             )
             for d in distractors
         ]
-        result = self.get_result(question_tokens, answer_tokens, distractor_tokens)
 
+        result = self.get_result(question_tokens, answer_tokens, distractor_tokens)
         return result
 
     def get_result(self, question_tokens, answer_tokens, distractor_tokens):
-        input_ids = question_tokens["input_ids"] + answer_tokens["input_ids"]
-        attention_mask = (
-            question_tokens["attention_mask"] + answer_tokens["attention_mask"]
-        )
-        for d in distractor_tokens:
-            input_ids = input_ids + d["input_ids"]
-            attention_mask = attention_mask + d["attention_mask"]
-        cls_token_location = [
-            i if (token == self.tokenizer.cls_token_id) else None
-            for i, token in enumerate(input_ids)
-        ]
-        cls_token_location = list(filter(None, cls_token_location))
-        mc_token_ids = torch.tensor([cls_token_location])
-        return {
-            "input_ids": torch.tensor(input_ids).unsqueeze(0),
-            "mc_token_ids": mc_token_ids,
-            "attention_mask": torch.tensor([attention_mask]).unsqueeze(0),
+        result = {
+            "question_tokens_ids": question_tokens["input_ids"],
+            "question_tokens_mask": question_tokens["attention_mask"],
+            "answer_tokens_ids": answer_tokens["input_ids"],
+            "answer_tokens_mask": answer_tokens["attention_mask"],
         }
 
+        result["distractor_token_ids"] = [d["input_ids"] for d in distractor_tokens]
+        result["distractor_token_mask"] = [
+            d["attention_mask"] for d in distractor_tokens
+        ]
+
+        return result
+
     def forward(self, x):
-        input_ids = torch.tensor(x["input_ids"][0]).to(self.model.device).long()
-        attention_mask = (
-            torch.tensor(x["attention_mask"][0]).to(self.model.device).long()
-        )
-        mc_token_ids = torch.tensor(x["mc_token_ids"][0]).to(self.model.device).long()
+        input_ids = [x["question_tokens_ids"] + d for d in x["distractor_token_ids"]]
+        attention_mask = [
+            x["question_tokens_mask"] + d for d in x["distractor_token_mask"]
+        ]
+        input_ids.append(x["question_tokens_ids"] + x["answer_tokens_ids"])
+        attention_mask.append(x["question_tokens_mask"] + x["answer_tokens_mask"])
+        input_ids = torch.tensor(input_ids).to(self.model.device).long()
+        attention_mask = torch.tensor(attention_mask).to(self.model.device).long()
+        attention_mask = torch.reshape(attention_mask, input_ids.shape)
+        mc_token_ids = (input_ids == 50257).nonzero(as_tuple=True)[1]
+        labels = torch.tensor([0, 0, 0, 1]).to(self.model.device).long()
+        # Shuffle everything
+        random_indices = torch.randperm(input_ids.shape[0])
+        input_ids = input_ids[random_indices]
+        attention_mask = attention_mask[random_indices]
+        mc_token_ids = mc_token_ids[random_indices]
+        labels = labels[random_indices]
+        labels = torch.argmax(labels)
+        # Unsqueeze
+        input_ids.unsqueeze_(0)
+        attention_mask.unsqueeze_(0)
+        mc_token_ids.unsqueeze_(0)
+        # Forward
         outputs = self.model(
             input_ids,
             attention_mask=attention_mask,
             mc_token_ids=mc_token_ids,
+            mc_labels=labels,
         )
         return outputs
