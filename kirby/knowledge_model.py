@@ -4,6 +4,7 @@ from transformers import GPT2Config
 
 from .basic_model import BasicModel
 from .knowledge_gpt2_model import KnowledgeGPT2LMHeadModel
+from .data_manager import DataManager
 
 
 class KnowledgeModel(BasicModel, LightningModule):
@@ -18,11 +19,9 @@ class KnowledgeModel(BasicModel, LightningModule):
         self.loss = torch.nn.CrossEntropyLoss(reduction="none")
 
     def forward(self, x):
-        input_ids = torch.tensor(x["input_ids"][0]).to(self.model.device).long()
-        attention_mask = (
-            torch.tensor(x["attention_mask"][0]).to(self.model.device).long()
-        )
-        labels = torch.tensor(x["labels"][0]).to(self.model.device).long()
+        input_ids = x["input_ids"][0]
+        attention_mask = x["attention_mask"][0]
+        labels = x["labels"][0]
         loss = self.model(
             input_ids,
             attention_mask=attention_mask,

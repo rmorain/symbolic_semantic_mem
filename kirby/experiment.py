@@ -19,6 +19,7 @@ class Experiment:
             plugins=DDPPlugin(find_unused_parameters=False),
             max_epochs=self.run_params.max_epochs,
             fast_dev_run=self.run_params.debug,
+            accelerator="ddp",
             logger=WandbLogger(
                 name=self.run_params.run_name, project=self.run_params.project_name
             ),
