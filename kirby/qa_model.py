@@ -102,6 +102,8 @@ class QAModel(BasicModel, LightningModule):
         input_ids = input_ids.tolist()
         mc_token_ids = mc_token_ids.tolist()
         labels = 3
+        for i in input_ids:
+            assert len(i) == self.run_params.seq_length
         result = {
             "input_ids": input_ids,
             "attention_mask": attention_mask,
