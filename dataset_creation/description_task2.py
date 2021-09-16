@@ -12,6 +12,7 @@ def get_questions(row):
         "question": "What is " + row["label"] + "?",
         "correct": row["description"],
         "distractors": distractors,
+        "knowledge": "{" + row["label"] + " : " + row["description"] + "}",
     }
     data_list.append(data)
 
@@ -28,6 +29,6 @@ df = df.progress_apply(get_questions, axis=1)
 
 new_df = pd.DataFrame(data_list)
 if not debug:
-    new_df.to_pickle("data/augmented_datasets/pickle/description_qa.pkl")
+    new_df.to_pickle("data/augmented_datasets/pickle/description_qa_knowledge.pkl")
 else:
     __import__("pudb").set_trace()

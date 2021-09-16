@@ -1,3 +1,5 @@
+import logging
+
 import pandas as pd
 import torch
 import torch.nn.functional as F
@@ -28,38 +30,56 @@ class QAModel(BasicModel, LightningModule):
         self.train_acc = torchmetrics.Accuracy()
         self.val_acc = torchmetrics.Accuracy()
 
+        logging.basicConfig(
+            filename="logs/qa_model.log",
+            level=logging.DEBUG,
+            datefmt="%m/%d/%Y %I:%M:%S %p",
+        )
+        logging.debug("Initializing QAModel")
+
     def prepare_data(self):
         self.setup()
 
     def setup(self, stage=None):
-        self.train_ds = self.prepare_ds(self.run_params.data_files["train"])
-        self.val_ds = self.prepare_ds(self.run_params.data_files["valid"])
+        ds = self.prepare_ds(self.run_params.data_files)
+        self.train_ds = ds[: int(ds.shape[0] * 0.8)]
+        self.val_ds = ds[int(-1 * ds.shape[0] * 0.2) :]
+        self.train_ds = Dataset.from_dict(self.train_ds)
+        self.val_ds = Dataset.from_dict(self.val_ds)
 
     def prepare_ds(self, path):
         df = pd.read_pickle(path)
         if self.run_params.debug:
-            df = df.iloc[: self.run_params.batch_size * 3 * torch.cuda.device_count()]
+            df = df.iloc[
+                : self.run_params.batch_size * 3 * 2 * torch.cuda.device_count()
+            ]
         ds = Dataset.from_pandas(df)
         ds = ds.map(
             self.tokenize,
             batched=False,
             # num_proc=4,
-            remove_columns=["question", "correct", "distractors"],
+            remove_columns=["question", "correct", "distractors", "knowledge"],
         )
         return ds
 
     def tokenize(self, x):
-        question = x["question"] + " "
-        answer = x["correct"] + " [CLS]"
-        distractors = [d + " [CLS]" for d in x["distractors"]]
+        question = x["question"]
+        knowledge = x["knowledge"]
+        answer = x["correct"]
+        distractors = x["distractors"]
         question_tokens = self.tokenizer(
             question,
+        )
+        knowledge_tokens = self.tokenizer(
+            knowledge,
         )
         answer_tokens = self.tokenizer(
             answer,
             truncation=True,
             padding="max_length",
-            max_length=self.run_params.seq_length - len(question_tokens["input_ids"]),
+            max_length=self.run_params.seq_length
+            - len(question_tokens["input_ids"])
+            - 1,
         )
         distractor_tokens = [
             self.tokenizer(
@@ -67,10 +87,13 @@ class QAModel(BasicModel, LightningModule):
                 truncation=True,
                 padding="max_length",
                 max_length=self.run_params.seq_length
-                - len(question_tokens["input_ids"]),
+                - len(question_tokens["input_ids"])
+                - 1,
             )
             for d in distractors
         ]
+        if self.run_params.knowledge_tokenize:
+            question_tokens += knowledge_tokens
 
         result = self.get_result(question_tokens, answer_tokens, distractor_tokens)
         return result
@@ -97,13 +120,33 @@ class QAModel(BasicModel, LightningModule):
         attention_mask.append(
             result["question_tokens_mask"] + result["answer_tokens_mask"]
         )
+        cls_token_indices = []
+        for mask in attention_mask:
+            try:
+                index = mask.index(0)
+            except ValueError:
+                index = len(mask)
+            cls_token_indices.append(index)
+
+        for i, ids in enumerate(input_ids):
+            ids.insert(cls_token_indices[i], 50257)
+            attention_mask[i].insert(cls_token_indices[i], 1)
         input_ids = torch.tensor(input_ids).to(self.model.device).long()
         mc_token_ids = (input_ids == 50257).nonzero(as_tuple=True)[1]
         input_ids = input_ids.tolist()
         mc_token_ids = mc_token_ids.tolist()
         labels = 3
-        for i in input_ids:
-            assert len(i) == self.run_params.seq_length
+        for i, ids in enumerate(input_ids):
+            try:
+                assert len(ids) == self.run_params.seq_length
+                assert len(attention_mask[i]) == self.run_params.seq_length
+                try:
+                    index = attention_mask[i].index(0) - 1
+                    assert mc_token_ids[i] == index
+                except ValueError:
+                    assert mc_token_ids[i] == self.run_params.seq_length - 1
+            except Exception:
+                __import__("pudb").set_trace()
         result = {
             "input_ids": input_ids,
             "attention_mask": attention_mask,
@@ -124,6 +167,7 @@ class QAModel(BasicModel, LightningModule):
         mc_token_ids = mc_token_ids.reshape((self.run_params.batch_size, 4))
         mc_token_ids = mc_token_ids.contiguous()
         labels = x["labels"]
+        self.datalog(input_ids, attention_mask, mc_token_ids, labels)
         # Forward
         outputs = self.model(
             input_ids,
@@ -136,6 +180,15 @@ class QAModel(BasicModel, LightningModule):
         loss = outputs.mc_loss
         targets = labels.clone().detach()
         return loss, preds, targets
+
+    def datalog(self, input_ids, attention_mask, mc_token_ids, labels):
+        for i, batch in enumerate(input_ids):
+            for j, choice in enumerate(batch):
+                id_str = self.tokenizer.decode(choice[: mc_token_ids[i][j]])
+                logging.debug("input_ids: %s", id_str)
+                logging.debug("attention_mask: %s", attention_mask[i][j])
+                logging.debug("mc_token_ids: %s", mc_token_ids[i][j])
+            logging.debug("label: %s", labels[i])
 
     def fix_batch(self, choices):
         result = [
