@@ -74,8 +74,12 @@ class QAModel(BasicModel, LightningModule):
             knowledge,
         )
         if self.run_params.knowledge_tokenize:
-            question_tokens["input_ids"] += knowledge_tokens["input_ids"]
-            question_tokens["attention_mask"] += knowledge_tokens["attention_mask"]
+            if (
+                len(knowledge_tokens["input_ids"]) + len(question_tokens)
+                < self.run_params.seq_length
+            ):
+                question_tokens["input_ids"] += knowledge_tokens["input_ids"]
+                question_tokens["attention_mask"] += knowledge_tokens["attention_mask"]
         answer_tokens = self.tokenizer(
             answer,
             truncation=True,
