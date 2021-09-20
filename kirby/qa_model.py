@@ -64,7 +64,7 @@ class QAModel(BasicModel, LightningModule):
 
     def tokenize(self, x):
         question = x["question"]
-        knowledge = x["knowledge"]
+        knowledge = " " + x["knowledge"] + " "
         answer = x["correct"]
         distractors = x["distractors"]
         question_tokens = self.tokenizer(
@@ -73,6 +73,9 @@ class QAModel(BasicModel, LightningModule):
         knowledge_tokens = self.tokenizer(
             knowledge,
         )
+        if self.run_params.knowledge_tokenize:
+            question_tokens["input_ids"] += knowledge_tokens["input_ids"]
+            question_tokens["attention_mask"] += knowledge_tokens["attention_mask"]
         answer_tokens = self.tokenizer(
             answer,
             truncation=True,
@@ -92,8 +95,6 @@ class QAModel(BasicModel, LightningModule):
             )
             for d in distractors
         ]
-        if self.run_params.knowledge_tokenize:
-            question_tokens += knowledge_tokens
 
         result = self.get_result(question_tokens, answer_tokens, distractor_tokens)
         return result
