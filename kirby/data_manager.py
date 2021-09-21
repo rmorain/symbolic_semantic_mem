@@ -71,29 +71,54 @@ class DataManager:
         text_length = self.run_params.seq_length
         know_length = self.run_params.knowledge_buffer
         total_length = text_length + know_length
-        text_tokens = tokenizer(
-            x["text"],
-            truncation=True,
-            max_length=text_length,
-            return_tensors="pt",
-        )
-        knowledge_tokens = tokenizer(
-            x["knowledge"],
-            truncation=True,
-            padding="max_length",
-            max_length=total_length - len(text_tokens["input_ids"][0]),
-            return_tensors="pt",
-        )
-        # Combine knowledge and text tokens
-        input_ids = torch.cat(
-            (text_tokens["input_ids"], knowledge_tokens["input_ids"]), 1
-        )
-        attention_mask = torch.cat(
-            (text_tokens["attention_mask"], knowledge_tokens["attention_mask"]),
-            1,
-        )
-        labels = copy.deepcopy(input_ids)
-        labels[:, -len(knowledge_tokens["input_ids"][0]) :] = -100
+        if self.run_params.knowledge_front:
+            knowledge_tokens = tokenizer(
+                x["knowledge"],
+                truncation=True,
+                max_length=text_length,
+                return_tensors="pt",
+            )
+            text_tokens = tokenizer(
+                x["text"],
+                truncation=True,
+                padding="max_length",
+                max_length=total_length - len(knowledge_tokens["input_ids"][0]),
+                return_tensors="pt",
+            )
+            # Combine knowledge and text tokens
+            input_ids = torch.cat(
+                (knowledge_tokens["input_ids"], text_tokens["input_ids"]), 1
+            )
+            attention_mask = torch.cat(
+                (knowledge_tokens["attention_mask"], text_tokens["attention_mask"]),
+                1,
+            )
+            labels = copy.deepcopy(input_ids)
+            labels[:, : len(knowledge_tokens["input_ids"][0])] = -100
+        else:
+            text_tokens = tokenizer(
+                x["text"],
+                truncation=True,
+                max_length=text_length,
+                return_tensors="pt",
+            )
+            knowledge_tokens = tokenizer(
+                x["knowledge"],
+                truncation=True,
+                padding="max_length",
+                max_length=total_length - len(text_tokens["input_ids"][0]),
+                return_tensors="pt",
+            )
+            # Combine knowledge and text tokens
+            input_ids = torch.cat(
+                (text_tokens["input_ids"], knowledge_tokens["input_ids"]), 1
+            )
+            attention_mask = torch.cat(
+                (text_tokens["attention_mask"], knowledge_tokens["attention_mask"]),
+                1,
+            )
+            labels = copy.deepcopy(input_ids)
+            labels[:, -len(knowledge_tokens["input_ids"][0]) :] = -100
         result = {
             "input_ids": input_ids,
             "attention_mask": attention_mask,

@@ -1,10 +1,10 @@
 import torch
 from pytorch_lightning import LightningModule
-from transformers import GPT2Config
+from transformers import GPT2Config, GPT2Tokenizer
 
 from .basic_model import BasicModel
-from .knowledge_gpt2_model import KnowledgeGPT2LMHeadModel
 from .data_manager import DataManager
+from .knowledge_gpt2_model import KnowledgeGPT2LMHeadModel
 
 
 class KnowledgeModel(BasicModel, LightningModule):
@@ -17,6 +17,7 @@ class KnowledgeModel(BasicModel, LightningModule):
         config.knowledge_buffer = self.run_params.knowledge_buffer
         self.model = KnowledgeGPT2LMHeadModel(config)
         self.loss = torch.nn.CrossEntropyLoss(reduction="none")
+        self.tokenizer = GPT2Tokenizer.from_pretrained(self.run_params.model)
 
     def forward(self, x):
         input_ids = x["input_ids"][0]

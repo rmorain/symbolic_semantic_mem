@@ -24,6 +24,7 @@ class RunParams:
         seq_length=128,
         knowledge_buffer=64,
         knowledge_tokenize=False,
+        knowledge_front=False,
         momentum=0.9,
         lr=1e-3,
         repo="wikitext-103-raw-v1",
@@ -47,6 +48,7 @@ class RunParams:
         self.seq_length = seq_length
         self.knowledge_buffer = knowledge_buffer
         self.knowledge_tokenize = knowledge_tokenize
+        self.knowledge_front = knowledge_front
         self.momentum = momentum
         self.lr = lr
         self.repo = repo

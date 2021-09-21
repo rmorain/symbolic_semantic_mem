@@ -13,6 +13,7 @@ run_params = RunParams(
     data_files=data_files,
     data_file_type="pandas",
     knowledge_tokenize=True,
+    knowledge_front=True,
 )
 model = KnowledgeModel(run_params)
 experiment = Experiment(run_params, model)
