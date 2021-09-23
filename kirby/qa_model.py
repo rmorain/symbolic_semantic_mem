@@ -108,8 +108,10 @@ class QAModel(BasicModel, LightningModule):
         ]
 
         result = self.get_result(question_tokens, answer_tokens, distractor_tokens)
-        if knowledge_mask_indices:
+        try:
             result["knowledge_mask_indices"] = knowledge_mask_indices
+        except Exception:
+            result["knowledge_mask_indices"] = None
         return result
 
     def get_result(self, question_tokens, answer_tokens, distractor_tokens):
