@@ -78,8 +78,15 @@ class QAModel(BasicModel, LightningModule):
                 len(knowledge_tokens["input_ids"]) + len(question_tokens)
                 < self.run_params.seq_length
             ):
+                question_length = len(question_tokens["input_ids"])
+                knowledge_length = len(knowledge_tokens["input_ids"])
+                knowledge_mask_indices = (
+                    question_length,
+                    question_length + knowledge_length,
+                )
                 question_tokens["input_ids"] += knowledge_tokens["input_ids"]
                 question_tokens["attention_mask"] += knowledge_tokens["attention_mask"]
+
         answer_tokens = self.tokenizer(
             answer,
             truncation=True,
@@ -101,6 +108,8 @@ class QAModel(BasicModel, LightningModule):
         ]
 
         result = self.get_result(question_tokens, answer_tokens, distractor_tokens)
+        if knowledge_mask_indices:
+            result["knowledge_mask_indices"] = knowledge_mask_indices
         return result
 
     def get_result(self, question_tokens, answer_tokens, distractor_tokens):
@@ -164,6 +173,18 @@ class QAModel(BasicModel, LightningModule):
     def forward(self, x):
         input_ids = self.fix_batch(x["input_ids"])
         attention_mask = self.fix_batch(x["attention_mask"])
+        if x["knowledge_mask_indices"] and self.run_params.mask_percent != 0.0:
+            start, end = x["knowledge_mask_indices"]
+            for i, batch in enumerate(attention_mask):
+                knowledge_length = end[i] - start[i]
+                perm = torch.randperm(knowledge_length, device="cuda") + start[i]
+                mask_indices = perm[
+                    : int(self.run_params.mask_percent * knowledge_length)
+                ]
+                attention_mask[i, :, mask_indices] = 0
+                # knowledge_mask = torch.randint(0, 2, (knowledge_length,), device="cuda")
+                # knowledge_mask = knowledge_mask.repeat(4, 1)
+                # attention_mask[i, :, start[i] : end[i]] = knowledge_mask
         mc_token_ids = [
             [sequence.tolist() for sequence in choice] for choice in x["mc_token_ids"]
         ]

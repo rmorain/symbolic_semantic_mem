@@ -26,6 +26,7 @@ class RunParams:
         knowledge_tokenize=False,
         knowledge_front=False,
         momentum=0.9,
+        mask_percent=0,
         lr=1e-3,
         repo="wikitext-103-raw-v1",
         num_workers=multiprocessing.cpu_count(),
@@ -50,6 +51,7 @@ class RunParams:
         self.knowledge_tokenize = knowledge_tokenize
         self.knowledge_front = knowledge_front
         self.momentum = momentum
+        self.mask_percent = mask_percent
         self.lr = lr
         self.repo = repo
         self.num_workers = num_workers
