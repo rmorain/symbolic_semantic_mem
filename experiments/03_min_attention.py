@@ -7,7 +7,7 @@ data_files = {
     "valid": ["data/augmented_datasets/pickle/min_attention_valid.pkl"],
 }
 run_params = RunParams(
-    run_name="max_attention",
+    run_name="min_attention",
     debug=True,
     pretrained=True,
     data_files=data_files,

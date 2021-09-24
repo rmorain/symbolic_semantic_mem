@@ -1,4 +1,5 @@
 import logging
+from logging.handlers import RotatingFileHandler
 
 import pandas as pd
 import torch
@@ -30,12 +31,27 @@ class QAModel(BasicModel, LightningModule):
         self.train_acc = torchmetrics.Accuracy()
         self.val_acc = torchmetrics.Accuracy()
 
-        logging.basicConfig(
-            filename="logs/qa_model.log",
-            level=logging.DEBUG,
-            datefmt="%m/%d/%Y %I:%M:%S %p",
+        log_formatter = logging.Formatter(
+            "%(asctime)s %(levelname)s %(funcName)s(%(lineno)d) %(message)s"
         )
-        logging.debug("Initializing QAModel")
+
+        logFile = "logs/qa_log"
+
+        my_handler = RotatingFileHandler(
+            logFile,
+            mode="a",
+            maxBytes=5 * 1024 * 1024,
+            backupCount=2,
+            encoding=None,
+            delay=0,
+        )
+        my_handler.setFormatter(log_formatter)
+        my_handler.setLevel(logging.INFO)
+
+        self.app_log = logging.getLogger("root")
+        self.app_log.setLevel(logging.INFO)
+
+        self.app_log.addHandler(my_handler)
 
     def prepare_data(self):
         self.setup()
@@ -78,12 +94,16 @@ class QAModel(BasicModel, LightningModule):
                 len(knowledge_tokens["input_ids"]) + len(question_tokens)
                 < self.run_params.seq_length
             ):
-                question_length = len(question_tokens["input_ids"])
                 knowledge_length = len(knowledge_tokens["input_ids"])
-                knowledge_mask_indices = (
-                    question_length,
-                    question_length + knowledge_length,
-                )
+                # Modify attention mask
+                if self.run_params.mask_percent != 0.0:
+                    perm = torch.randperm(knowledge_length)
+                    mask_indices = perm[
+                        : round(self.run_params.mask_percent * knowledge_length)
+                    ]
+                    for i in mask_indices:
+                        knowledge_tokens["attention_mask"][i] = 0
+
                 question_tokens["input_ids"] += knowledge_tokens["input_ids"]
                 question_tokens["attention_mask"] += knowledge_tokens["attention_mask"]
 
@@ -108,10 +128,6 @@ class QAModel(BasicModel, LightningModule):
         ]
 
         result = self.get_result(question_tokens, answer_tokens, distractor_tokens)
-        try:
-            result["knowledge_mask_indices"] = knowledge_mask_indices
-        except Exception:
-            result["knowledge_mask_indices"] = None
         return result
 
     def get_result(self, question_tokens, answer_tokens, distractor_tokens):
@@ -137,11 +153,11 @@ class QAModel(BasicModel, LightningModule):
             result["question_tokens_mask"] + result["answer_tokens_mask"]
         )
         cls_token_indices = []
-        for mask in attention_mask:
+        for seq in input_ids:
             try:
-                index = mask.index(0)
+                index = seq.index(50256)
             except ValueError:
-                index = len(mask)
+                index = len(seq)
             cls_token_indices.append(index)
 
         for i, ids in enumerate(input_ids):
@@ -157,7 +173,7 @@ class QAModel(BasicModel, LightningModule):
                 assert len(ids) == self.run_params.seq_length
                 assert len(attention_mask[i]) == self.run_params.seq_length
                 try:
-                    index = attention_mask[i].index(0) - 1
+                    index = ids.index(50256) - 1
                     assert mc_token_ids[i] == index
                 except ValueError:
                     assert mc_token_ids[i] == self.run_params.seq_length - 1
@@ -175,18 +191,6 @@ class QAModel(BasicModel, LightningModule):
     def forward(self, x):
         input_ids = self.fix_batch(x["input_ids"])
         attention_mask = self.fix_batch(x["attention_mask"])
-        if x["knowledge_mask_indices"] and self.run_params.mask_percent != 0.0:
-            start, end = x["knowledge_mask_indices"]
-            for i, batch in enumerate(attention_mask):
-                knowledge_length = end[i] - start[i]
-                perm = torch.randperm(knowledge_length, device="cuda") + start[i]
-                mask_indices = perm[
-                    : int(self.run_params.mask_percent * knowledge_length)
-                ]
-                attention_mask[i, :, mask_indices] = 0
-                # knowledge_mask = torch.randint(0, 2, (knowledge_length,), device="cuda")
-                # knowledge_mask = knowledge_mask.repeat(4, 1)
-                # attention_mask[i, :, start[i] : end[i]] = knowledge_mask
         mc_token_ids = [
             [sequence.tolist() for sequence in choice] for choice in x["mc_token_ids"]
         ]
@@ -213,10 +217,10 @@ class QAModel(BasicModel, LightningModule):
         for i, batch in enumerate(input_ids):
             for j, choice in enumerate(batch):
                 id_str = self.tokenizer.decode(choice[: mc_token_ids[i][j]])
-                logging.debug("input_ids: %s", id_str)
-                logging.debug("attention_mask: %s", attention_mask[i][j])
-                logging.debug("mc_token_ids: %s", mc_token_ids[i][j])
-            logging.debug("label: %s", labels[i])
+                self.app_log.debug("input_ids: %s", id_str)
+                self.app_log.debug("attention_mask: %s", attention_mask[i][j])
+                self.app_log.debug("mc_token_ids: %s", mc_token_ids[i][j])
+            self.app_log.debug("label: %s", labels[i])
 
     def fix_batch(self, choices):
         result = [
