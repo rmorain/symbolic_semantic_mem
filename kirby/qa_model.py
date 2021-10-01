@@ -35,7 +35,7 @@ class QAModel(BasicModel, LightningModule):
             "%(asctime)s %(levelname)s %(funcName)s(%(lineno)d) %(message)s"
         )
 
-        logFile = "logs/qa_log"
+        logFile = "logs/qa_log.log"
 
         my_handler = RotatingFileHandler(
             logFile,
@@ -199,14 +199,17 @@ class QAModel(BasicModel, LightningModule):
         mc_token_ids = mc_token_ids.reshape((self.run_params.batch_size, 4))
         mc_token_ids = mc_token_ids.contiguous()
         labels = x["labels"]
-        self.datalog(input_ids, attention_mask, mc_token_ids, labels)
+        # self.datalog(input_ids, attention_mask, mc_token_ids, labels)
         # Forward
-        outputs = self.model(
-            input_ids,
-            attention_mask=attention_mask,
-            mc_token_ids=mc_token_ids,
-            mc_labels=labels,
-        )
+        try:
+            outputs = self.model(
+                input_ids,
+                attention_mask=attention_mask,
+                mc_token_ids=mc_token_ids,
+                mc_labels=labels,
+            )
+        except Exception:
+            __import__("pudb").set_trace()
         preds = F.softmax(outputs.mc_logits, dim=1)
 
         loss = outputs.mc_loss
@@ -217,10 +220,10 @@ class QAModel(BasicModel, LightningModule):
         for i, batch in enumerate(input_ids):
             for j, choice in enumerate(batch):
                 id_str = self.tokenizer.decode(choice[: mc_token_ids[i][j]])
-                self.app_log.debug("input_ids: %s", id_str)
-                self.app_log.debug("attention_mask: %s", attention_mask[i][j])
-                self.app_log.debug("mc_token_ids: %s", mc_token_ids[i][j])
-            self.app_log.debug("label: %s", labels[i])
+                self.app_log.info("input_ids: %s", id_str)
+                self.app_log.info("attention_mask: %s", attention_mask[i][j])
+                self.app_log.info("mc_token_ids: %s", mc_token_ids[i][j])
+            self.app_log.info("label: %s", labels[i])
 
     def fix_batch(self, choices):
         result = [
