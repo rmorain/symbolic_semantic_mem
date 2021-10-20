@@ -35,6 +35,7 @@ class RunParams:
         run_name="test",
         project_name="kirby",
         random_seed=0,
+        patience=3,
     ):
 
         self.model = model
@@ -61,3 +62,4 @@ class RunParams:
         self.run_name = run_name
         self.project_name = project_name
         self.random_seed = random_seed
+        self.patience = patience

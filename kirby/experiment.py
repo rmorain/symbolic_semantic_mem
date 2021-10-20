@@ -25,7 +25,7 @@ class Experiment:
                 name=self.run_params.run_name, project=self.run_params.project_name
             ),
             callbacks=[
-                EarlyStopping(monitor="val_loss"),
+                EarlyStopping(monitor="val_loss", patience=self.run_params.patience),
                 ModelCheckpoint(
                     dirpath=os.getcwd() + "/checkpoints",
                     filename="{epoch}-{val_loss:.2f}-" + self.run_params.run_name,
