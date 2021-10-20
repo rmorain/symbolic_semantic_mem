@@ -63,3 +63,7 @@ class RunParams:
         self.project_name = project_name
         self.random_seed = random_seed
         self.patience = patience
+
+    def to_dict(self):
+        return {key:value for key, value in self.__dict__.items() if not key.startswith('__') and not callable(key)}
+
