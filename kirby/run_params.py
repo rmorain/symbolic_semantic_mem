@@ -34,6 +34,7 @@ class RunParams:
         kb_statements_file=None,
         run_name="test",
         project_name="kirby",
+        random_seed=0,
     ):
 
         self.model = model
@@ -59,3 +60,4 @@ class RunParams:
         self.kb_statements_file = kb_statements_file
         self.run_name = run_name
         self.project_name = project_name
+        self.random_seed = random_seed

@@ -12,6 +12,7 @@ class Experiment:
     def __init__(self, run_params, model):
         self.run_params = run_params
         self.model = model
+        pl.utilities.seed.seed_everything(seed=self.run_params.random_seed, workers=True)
 
     def run(self):
         trainer = pl.Trainer(
