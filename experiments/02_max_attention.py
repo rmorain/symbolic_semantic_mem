@@ -18,6 +18,8 @@ run_params = RunParams(
     data_file_type="pandas",
     knowledge_tokenize=True,
     num_gpus=7,
+    random_seed=0,
+    patience=10,
 )
 model = KnowledgeModel(run_params)
 

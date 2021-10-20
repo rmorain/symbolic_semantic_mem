@@ -6,6 +6,7 @@ import pytorch_lightning as pl
 from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.plugins import DDPPlugin
+import wandb
 
 
 class Experiment:
@@ -13,6 +14,23 @@ class Experiment:
         self.run_params = run_params
         self.model = model
         pl.utilities.seed.seed_everything(seed=self.run_params.random_seed, workers=True)
+
+        # Log config
+        wandb.init(config={
+            "batch_size" : self.run_params.batch_size,
+            "lr" : self.run_params.lr,
+            "patience" : self.run_params.patience,
+            "run_name" : self.run_params.run_name,
+            "seq_length" : self.run_params.seq_length,
+            "knowledge_buffer" : self.run_params.knowledge_buffer,
+            "momentum" : self.run_params.momentum,
+            "model" : self.run_params.model,
+            "pretrained" : self.run_params.pretrained,
+            "num_workers" : self.run_params.num_workers,
+            "num_gpus" : self.run_params.num_gpus,
+            "random_seed" : self.run_params.random_seed,
+            })
+
 
     def run(self):
         trainer = pl.Trainer(
