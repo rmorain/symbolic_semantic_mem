@@ -46,7 +46,8 @@ class DataManager:
         return ds
 
     def get_remove_columns(self, ds):
-        return ds.features.keys()
+        keys = [x for x in ds.features.keys()]
+        return keys
 
     def get_num_rows(self, num_rows):
         if self.run_params.debug:
