@@ -37,7 +37,7 @@ class DataManager:
         ds = ds.map(
             tokenize_func,
             batched=False,
-            num_proc=1,
+            num_proc=self.run_params.num_workers,
             remove_columns=self.get_remove_columns(ds),
             fn_kwargs={"tokenizer": tokenizer},
         )
