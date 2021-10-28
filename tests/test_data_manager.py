@@ -75,7 +75,11 @@ class TestDataManager(unittest.TestCase):
             )
         )
         train_ds, _ = dm.prepare_data()
-        self.assertIsNotNone(train_ds)
+        for x in train_ds:
+            total_length = self.run_params.seq_length + self.run_params.knowledge_buffer
+            self.assertEqual(x["input_ids"][0].shape[-1], total_length)
+            self.assertEqual(x["attention_mask"][0].shape[-1], total_length)
+            self.assertEqual(x["labels"][0].shape[-1], total_length)
 
 
 if __name__ == "__main__":

@@ -41,7 +41,6 @@ class DataManager:
             remove_columns=self.get_remove_columns(ds),
             fn_kwargs={"tokenizer": tokenizer},
         )
-        __import__("pudb").set_trace()
         ds = ds.filter(function=self.right_length)
         ds.set_format(type="torch")
         return ds
@@ -126,8 +125,10 @@ class DataManager:
                         ),
                         1,
                     )
-            knowledge_length = len(input_ids) - len(labels)
-            prediction_mask = torch.tensor([-100 for _ in range(knowledge_length)])
+            knowledge_length = input_ids.shape[-1] - labels.shape[-1]
+            prediction_mask = torch.tensor(
+                [-100 for _ in range(knowledge_length)]
+            ).unsqueeze(0)
             labels = torch.cat((labels, prediction_mask), 1)
             # Add padding if necessary
             if input_ids.shape[-1] < total_length:
