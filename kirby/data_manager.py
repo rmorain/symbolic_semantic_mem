@@ -37,19 +37,17 @@ class DataManager:
         ds = ds.map(
             tokenize_func,
             batched=False,
-            num_proc=4,
+            num_proc=1,
             remove_columns=self.get_remove_columns(ds),
             fn_kwargs={"tokenizer": tokenizer},
         )
+        __import__("pudb").set_trace()
         ds = ds.filter(function=self.right_length)
         ds.set_format(type="torch")
         return ds
 
     def get_remove_columns(self, ds):
-        if ds.num_columns > 1:
-            return ["text", "knowledge"]
-        else:
-            return ["text"]
+        return ds.features.keys()
 
     def get_num_rows(self, num_rows):
         if self.run_params.debug:
@@ -96,34 +94,65 @@ class DataManager:
             labels = copy.deepcopy(input_ids)
             labels[:, : len(knowledge_tokens["input_ids"][0])] = -100
         else:
-            text_tokens = tokenizer(
-                x["text"],
-                truncation=True,
-                max_length=text_length,
-                return_tensors="pt",
-            )
-            knowledge_tokens = tokenizer(
-                x["knowledge"],
-                truncation=True,
-                padding="max_length",
-                max_length=total_length - len(text_tokens["input_ids"][0]),
-                return_tensors="pt",
-            )
-            # Combine knowledge and text tokens
-            input_ids = torch.cat(
-                (text_tokens["input_ids"], knowledge_tokens["input_ids"]), 1
-            )
-            attention_mask = torch.cat(
-                (text_tokens["attention_mask"], knowledge_tokens["attention_mask"]),
-                1,
-            )
-            labels = copy.deepcopy(input_ids)
-            labels[:, -len(knowledge_tokens["input_ids"][0]) :] = -100
-        result = {
-            "input_ids": input_ids,
-            "attention_mask": attention_mask,
-            "labels": labels,
-        }
+            input_ids, attention_mask, labels = None, None, None
+            keys = [i for i in x.keys()]
+            order = [2, 0, 1]
+            keys = [keys[i] for i in order]
+            for key in keys:
+                if input_ids is None:
+                    tokens = tokenizer(
+                        x[key],
+                        return_tensors="pt",
+                        truncation=True,
+                        max_length=self.run_params.seq_length,
+                    )
+                    input_ids = tokens["input_ids"]
+                    attention_mask = tokens["attention_mask"]
+                    # Text is tokenized first
+                    labels = copy.deepcopy(tokens["input_ids"])
+                else:
+                    tokens = tokenizer(
+                        x[key],
+                        return_tensors="pt",
+                        truncation=True,
+                        max_length=self.run_params.knowledge_buffer
+                        // (len(x.keys()) - 1),
+                    )
+                    input_ids = torch.cat((input_ids, tokens["input_ids"]), 1)
+                    attention_mask = torch.cat(
+                        (
+                            attention_mask,
+                            tokens["attention_mask"],
+                        ),
+                        1,
+                    )
+            knowledge_length = len(input_ids) - len(labels)
+            prediction_mask = torch.tensor([-100 for _ in range(knowledge_length)])
+            labels = torch.cat((labels, prediction_mask), 1)
+            # Add padding if necessary
+            if input_ids.shape[-1] < total_length:
+                pad_length = total_length - input_ids.shape[-1]
+                padding = torch.tensor(
+                    [tokenizer.pad_token_id for _ in range(pad_length)]
+                ).unsqueeze(0)
+                attention_padding = torch.tensor(
+                    [0 for _ in range(pad_length)]
+                ).unsqueeze(0)
+                label_padding = torch.tensor(
+                    [-100 for _ in range(pad_length)]
+                ).unsqueeze(0)
+                input_ids = torch.cat((input_ids, padding), 1)
+                attention_mask = torch.cat((attention_mask, attention_padding), 1)
+                labels = torch.cat((labels, label_padding), 1)
+            elif input_ids.shape[-1] > total_length:
+                input_ids = input_ids[:, :total_length]
+                attention_mask = attention_mask[:, :total_length]
+                labels = labels[:, :total_length]
+            result = {
+                "input_ids": input_ids,
+                "attention_mask": attention_mask,
+                "labels": labels,
+            }
         return result
 
     def group_texts(self, examples):

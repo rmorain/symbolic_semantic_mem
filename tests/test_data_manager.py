@@ -64,6 +64,19 @@ class TestDataManager(unittest.TestCase):
         self.assertIsNotNone(train_ds)
         self.assertIsNotNone(valid_ds)
 
+    def test_knowledge_tokenizer_higher_order(self):
+        data_files = {
+            "train": ["data/augmented_datasets/pickle/min_med.pkl"],
+            "valid": ["data/augmented_datasets/pickle/min_med.pkl"],
+        }
+        dm = DataManager(
+            RunParams(
+                data_files=data_files, data_file_type="pandas", knowledge_tokenize=True
+            )
+        )
+        train_ds, _ = dm.prepare_data()
+        self.assertIsNotNone(train_ds)
+
 
 if __name__ == "__main__":
     unittest.main()
