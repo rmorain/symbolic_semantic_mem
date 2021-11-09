@@ -4,7 +4,7 @@ import copy
 
 import pandas as pd
 import torch
-from datasets import Dataset, features, load_dataset
+from datasets import Dataset, load_dataset
 from transformers import GPT2Tokenizer
 
 
@@ -96,8 +96,10 @@ class DataManager:
         else:
             input_ids, attention_mask, labels = None, None, None
             keys = [i for i in x.keys()]
-            order = [2, 0, 1]
-            keys = [keys[i] for i in order]
+            end = keys[-1]
+            beginning = keys[0]
+            keys[0] = end
+            keys[-1] = beginning
             for key in keys:
                 if input_ids is None:
                     tokens = tokenizer(

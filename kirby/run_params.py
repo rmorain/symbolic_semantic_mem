@@ -34,8 +34,10 @@ class RunParams:
         kb_statements_file=None,
         run_name="test",
         project_name="kirby",
-        random_seed=0,
+        random_seed=torch.randint,
         patience=3,
+        output_attentions=False,
+        accelerator="ddp",
     ):
 
         self.model = model
@@ -63,7 +65,12 @@ class RunParams:
         self.project_name = project_name
         self.random_seed = random_seed
         self.patience = patience
+        self.output_attentions = output_attentions
+        self.accelerator = accelerator
 
     def to_dict(self):
-        return {key:value for key, value in self.__dict__.items() if not key.startswith('__') and not callable(key)}
-
+        return {
+            key: value
+            for key, value in self.__dict__.items()
+            if not key.startswith("__") and not callable(key)
+        }

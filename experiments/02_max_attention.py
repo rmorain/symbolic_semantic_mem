@@ -3,12 +3,8 @@ from kirby.knowledge_model import KnowledgeModel
 from kirby.run_params import RunParams
 
 data_files = {
-    "train": [
-        "data/augmented_datasets/pickle/max_attention.pkl"
-    ],
-    "valid": [
-        "data/augmented_datasets/pickle/max_attention_valid.pkl"
-    ],
+    "train": ["data/augmented_datasets/pickle/max_attention.pkl"],
+    "valid": ["data/augmented_datasets/pickle/max_attention_valid.pkl"],
 }
 run_params = RunParams(
     run_name="max_attention",
@@ -17,7 +13,7 @@ run_params = RunParams(
     data_files=data_files,
     data_file_type="pandas",
     knowledge_tokenize=True,
-    num_gpus=7,
+    num_gpus=1,
     random_seed=0,
     patience=10,
 )

@@ -3,7 +3,6 @@ from pytorch_lightning import LightningModule
 from transformers import GPT2Config, GPT2Tokenizer
 
 from .basic_model import BasicModel
-from .data_manager import DataManager
 from .knowledge_gpt2_model import KnowledgeGPT2LMHeadModel
 
 
@@ -23,9 +22,13 @@ class KnowledgeModel(BasicModel, LightningModule):
         input_ids = x["input_ids"][0]
         attention_mask = x["attention_mask"][0]
         labels = x["labels"][0]
-        loss = self.model(
+        outputs = self.model(
             input_ids,
             attention_mask=attention_mask,
             labels=labels,
-        )[0]
+            output_attentions=self.run_params.output_attentions,
+        )
+        loss = outputs[0]
+        if self.run_params.output_attentions:
+            return outputs.attentions
         return loss
