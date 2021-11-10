@@ -16,6 +16,7 @@ for i in range(num_runs):
         data_files=data_files,
         data_file_type="pandas",
         knowledge_tokenize=True,
+        max_epochs=1,
     )
     model = KnowledgeModel(run_params)
 
