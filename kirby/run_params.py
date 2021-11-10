@@ -2,6 +2,7 @@ __all__ = ["RunParams"]
 
 import multiprocessing
 
+import numpy as np
 import torch
 
 
@@ -34,7 +35,7 @@ class RunParams:
         kb_statements_file=None,
         run_name="test",
         project_name="kirby",
-        random_seed=torch.randint,
+        random_seed=np.random.randint(0, 10000000),
         patience=3,
         output_attentions=False,
         accelerator="ddp",
