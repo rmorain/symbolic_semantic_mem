@@ -2,7 +2,7 @@ __all__ = ["BasicModel"]
 
 import pytorch_lightning as pl
 import torch
-from transformers import GPT2Config, GPT2LMHeadModel
+from transformers import AutoConfig, AutoModelWithLMHead
 
 from .data_manager import DataManager
 
@@ -12,7 +12,7 @@ class BasicModel(pl.LightningModule):
         super().__init__()
         self.run_params = run_params
         if self.run_params.pretrained:
-            self.model = GPT2LMHeadModel.from_pretrained(self.run_params.model)
+            self.model = AutoModelWithLMHead.from_pretrained(self.run_params.model)
         else:
             config = GPT2Config()
             self.model = GPT2LMHeadModel(config)

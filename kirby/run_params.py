@@ -39,6 +39,7 @@ class RunParams:
         patience=3,
         output_attentions=False,
         accelerator="ddp",
+        bert="False",
     ):
 
         self.model = model
@@ -68,6 +69,7 @@ class RunParams:
         self.patience = patience
         self.output_attentions = output_attentions
         self.accelerator = accelerator
+        self.bert = bert
 
     def to_dict(self):
         return {

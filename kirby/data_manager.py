@@ -1,11 +1,12 @@
 __all__ = ["DataManager"]
 
 import copy
+import random
 
 import pandas as pd
 import torch
 from datasets import Dataset, load_dataset
-from transformers import GPT2Tokenizer
+from transformers import AutoTokenizer
 
 
 class DataManager:
@@ -19,8 +20,9 @@ class DataManager:
         return train_ds, val_ds
 
     def prepare_ds(self, split):
-        tokenizer = GPT2Tokenizer.from_pretrained(self.run_params.model)
-        tokenizer.pad_token = tokenizer.eos_token
+        tokenizer = AutoTokenizer.from_pretrained(self.run_params.model)
+        if not self.run_params.bert:
+            tokenizer.pad_token = tokenizer.eos_token
         df = pd.read_pickle(self.run_params.data_files[split][0])
 
         if self.run_params.debug:
