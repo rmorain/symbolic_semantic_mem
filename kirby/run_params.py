@@ -39,7 +39,7 @@ class RunParams:
         patience=3,
         output_attentions=False,
         accelerator="ddp",
-        bert="False",
+        bert=False,
     ):
 
         self.model = model
