@@ -44,7 +44,8 @@ class DataManager:
             fn_kwargs={"tokenizer": tokenizer},
         )
         ds = ds.filter(function=self.right_length)
-        ds.set_format(type="torch")
+        format_settings = {"type": "torch", "format_kwargs": {"dtype": torch.long}}
+        ds.set_format(**format_settings)
         return ds
 
     def get_remove_columns(self, ds):
