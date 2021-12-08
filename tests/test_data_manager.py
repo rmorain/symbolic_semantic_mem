@@ -10,7 +10,7 @@ class TestDataManager(unittest.TestCase):
     def setUp(self):
         self.run_params = RunParams()
         self.dm = DataManager(self.run_params)
-        self.train_ds, self.valid_ds = self.dm.prepare_data()
+        # self.train_ds, self.valid_ds = self.dm.prepare_data()
 
     def tearDown(self):
         pass
@@ -72,6 +72,26 @@ class TestDataManager(unittest.TestCase):
         dm = DataManager(
             RunParams(
                 data_files=data_files, data_file_type="pandas", knowledge_tokenize=True
+            )
+        )
+        train_ds, _ = dm.prepare_data()
+        for x in train_ds:
+            total_length = self.run_params.seq_length + self.run_params.knowledge_buffer
+            self.assertEqual(x["input_ids"][0].shape[-1], total_length)
+            self.assertEqual(x["attention_mask"][0].shape[-1], total_length)
+            self.assertEqual(x["labels"][0].shape[-1], total_length)
+
+    def test_text_knowledge_baseline(self):
+        data_files = {
+            "train": ["data/text_knowledge_baseline.pkl"],
+            "valid": ["data/text_knowledge_baseline_valid.pkl"],
+        }
+        dm = DataManager(
+            RunParams(
+                num_workers=1,
+                data_files=data_files,
+                data_file_type="pandas",
+                knowledge_tokenize=True,
             )
         )
         train_ds, _ = dm.prepare_data()

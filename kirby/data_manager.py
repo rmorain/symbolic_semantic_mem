@@ -114,6 +114,26 @@ class DataManager:
                     attention_mask = tokens["attention_mask"]
                     # Text is tokenized first
                     labels = copy.deepcopy(tokens["input_ids"])
+                    # Use the excess text tokens as knowledge tokens
+                    if len(keys) == 1:
+                        tokens = tokenizer(
+                            x[key],
+                            return_tensors="pt",
+                        )
+                        knowledge_tokens = tokens["input_ids"][
+                            :, self.run_params.seq_length : total_length
+                        ]
+                        knowledge_mask = tokens["attention_mask"][
+                            :, self.run_params.seq_length : total_length
+                        ]
+                        input_ids = torch.cat((input_ids, knowledge_tokens), 1)
+                        attention_mask = torch.cat(
+                            (
+                                attention_mask,
+                                knowledge_mask,
+                            ),
+                            1,
+                        )
                 else:
                     tokens = tokenizer(
                         x[key],
