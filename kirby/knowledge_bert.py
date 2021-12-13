@@ -19,6 +19,7 @@ class KnowledgeBert(BasicModel, LightningModule):
         )
 
     def forward(self, x):
+        __import__("pudb").set_trace()
         input_ids = x["input_ids"]
         attention_mask = x["attention_mask"].squeeze(1)
         labels = x["labels"]
@@ -129,6 +130,8 @@ class DataCollatorForLanguageModeling:
             if self.tokenizer.pad_token_id is not None:
                 labels[labels == self.tokenizer.pad_token_id] = -100
             batch["labels"] = labels
+        knowledge = batch["labels"][:, self.run_params.seq_length :] == -100
+        assert knowledge.all()
         return batch
 
     def mask_tokens(self, inputs, special_tokens_mask=None):
@@ -153,8 +156,8 @@ class DataCollatorForLanguageModeling:
             special_tokens_mask = torch.tensor(special_tokens_mask, dtype=torch.bool)
         else:
             special_tokens_mask = special_tokens_mask.bool()
-
-        special_tokens_mask[:, -self.run_params.knowledge_buffer :] = True
+        if self.run_params.knowledge_tokenize:
+            special_tokens_mask[:, -self.run_params.knowledge_buffer :] = True
         probability_matrix = probability_matrix.masked_fill(
             special_tokens_mask, value=0.0
         )
