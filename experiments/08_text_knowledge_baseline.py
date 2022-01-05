@@ -3,8 +3,8 @@ from kirby.knowledge_model import KnowledgeModel
 from kirby.run_params import RunParams
 
 data_files = {
-    "train": ["data/text_knowledge_baseline.pkl"],
-    "valid": ["data/text_knowledge_baseline_valid.pkl"],
+    "train": ["data/text_knowledge_baseline_fair.pkl"],
+    "valid": ["data/text_knowledge_baseline_fair_valid.pkl"],
 }
 run_params = RunParams(
     run_name="text_knowledge_baseline",
