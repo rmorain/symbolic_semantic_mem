@@ -1,6 +1,6 @@
 import pandas as pd
 
-PATH = "volume/data/augmented_datasets/pickle/"
+PATH = "data/augmented_datasets/pickle/"
 
 min_df = pd.read_pickle(PATH + "min_attention_valid.pkl")
 med_df = pd.read_pickle(PATH + "median_attention_valid.pkl")

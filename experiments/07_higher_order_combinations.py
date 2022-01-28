@@ -20,7 +20,7 @@ run_params = RunParams(
     data_files=data_files,
     data_file_type="pandas",
     knowledge_tokenize=True,
-    num_workers=1,
+    num_workers=16,
 )
 model = KnowledgeModel(run_params)
 

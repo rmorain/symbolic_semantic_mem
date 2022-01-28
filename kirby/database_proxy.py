@@ -1,17 +1,26 @@
-__all__ = ['WikiDatabase']
+__all__ = ["WikiDatabase"]
+
+import sqlite3
 
 import pandas as pd
-import sqlite3
+import redis
+
 # import timeList
 from .properties import properties
 
+
 class WikiDatabase:
     conn = None
+
     def __init__(self, run_params):
         self.run_params = run_params
         try:
             self.properties_dict = properties()
             self.conn = sqlite3.connect(self.run_params.db)
+            self.redis_connection = redis.Redis(
+                host="localhost",
+                port=6379,
+            )
         except Exception as e:
             print(e)
             exit(-1)
@@ -24,8 +33,11 @@ class WikiDatabase:
         """
         Given an entity string, return a complete knowledge dictionary
         """
+        knowledge_dict = self.redis_connection.hgetall(entity_string)
+        if knowledge_dict:
+            return knowledge_dict
         self.conn = sqlite3.connect(self.run_params.db)
-        # Get entity 
+        # Get entity
         entity = self.get_entity_by_label(entity_string)
         if entity is None:
             return None
@@ -35,8 +47,9 @@ class WikiDatabase:
 
         # Format associations
         knowledge_dict = self.format_associations(entity, associations)
+        self.redis_connection.hset(entity_string, mapping=knowledge_dict)
 
-        return knowledge_dict 
+        return knowledge_dict
 
     @staticmethod
     def get_table_name(entity_label):
@@ -49,7 +62,7 @@ class WikiDatabase:
         if entity_label[0].isalpha():
             return entity_label[0].lower()
         else:
-            return 'not_alpha'
+            return "not_alpha"
 
     @staticmethod
     def clean_relations(relations_df):
@@ -60,16 +73,16 @@ class WikiDatabase:
         """
         relations = []
         for index, row in relations_df.iterrows():
-            relations.append([row['property_id'], row['related_entity_id']])
+            relations.append([row["property_id"], row["related_entity_id"]])
         return relations
 
     @staticmethod
     def get_property_label(relations_id):
         """
-            :param property_id: id of the property to look for
-            :type property_id:
-            :return: label of the given id, None if the id does not exist
-            :rtype:
+        :param property_id: id of the property to look for
+        :type property_id:
+        :return: label of the given id, None if the id does not exist
+        :rtype:
         """
         return property_dict[relations_id]
 
@@ -77,11 +90,11 @@ class WikiDatabase:
     def remove_quotations(label):
         index = 0
         while index < len(label):
-            if label[index] == '\'':
-                label = label[:index] + '\'' + label[index:]
+            if label[index] == "'":
+                label = label[:index] + "'" + label[index:]
                 index += 1
-            elif label[index] == "\"":
-                label = label[:index - 1] + '\'' + '\'' + label[index:]
+            elif label[index] == '"':
+                label = label[: index - 1] + "'" + "'" + label[index:]
                 index += 1
             index += 1
 
@@ -102,8 +115,11 @@ class WikiDatabase:
         entities_id = None
         try:
             entities_id = pd.read_sql_query(
-                "SELECT * FROM Entities WHERE label  LIKE \"%{}%\";".format(self.remove_quotations(label)),
-                self.conn)
+                'SELECT * FROM Entities WHERE label  LIKE "%{}%";'.format(
+                    self.remove_quotations(label)
+                ),
+                self.conn,
+            )
         except Exception as e:
             print(e)
             self.exit_procedure()
@@ -123,13 +139,15 @@ class WikiDatabase:
         entities_id = None
         try:
             entities_id = pd.read_sql_query(
-                "SELECT * FROM Entities_{} WHERE label  LIKE \"{}%\";"\
-                .format(table_name, self.remove_quotations(label)), self.conn)
+                'SELECT * FROM Entities_{} WHERE label  LIKE "{}%";'.format(
+                    table_name, self.remove_quotations(label)
+                ),
+                self.conn,
+            )
             return entities_id.values.tolist()
         except Exception as e:
             print(e)
             self.exit_procedure()
-
 
     def get_entity_by_label(self, label):
         """
@@ -145,8 +163,11 @@ class WikiDatabase:
         table_name = self.get_table_name(label)
         try:
             entity_id = pd.read_sql_query(
-                "SELECT * FROM Entities_{} WHERE label =  \"{}\";"\
-                .format(table_name, self.remove_quotations(label)), self.conn)
+                'SELECT * FROM Entities_{} WHERE label =  "{}";'.format(
+                    table_name, self.remove_quotations(label)
+                ),
+                self.conn,
+            )
             if entity_id.empty:
                 entities = self.get_entities_by_label_extensive(label)
             else:
@@ -159,15 +180,13 @@ class WikiDatabase:
 
     def _sort_entities(self, entities):
         """
-            Given a list of entities, sort the list where the lowest id number is first.
+        Given a list of entities, sort the list where the lowest id number is first.
 
-            We are assuming that the most likely entity is the one with the lowest id number
-            in the knowledge base.
+        We are assuming that the most likely entity is the one with the lowest id number
+        in the knowledge base.
         """
         # Chops off the first letter Q and casts the string as a number
-        return sorted(entities, key=lambda x:int(x[0][1:]))
-
-
+        return sorted(entities, key=lambda x: int(x[0][1:]))
 
     def get_entity_associations(self, entity_id):
         """
@@ -181,8 +200,11 @@ class WikiDatabase:
         entity_properties = None
         try:
             entity_properties = pd.read_sql_query(
-                "SELECT * FROM Properties_relations WHERE entity_id = \"{}\";".format(entity_id),
-                self.conn)
+                'SELECT * FROM Properties_relations WHERE entity_id = "{}";'.format(
+                    entity_id
+                ),
+                self.conn,
+            )
         except Exception as e:
             print(e)
             self.exit_procedure()
@@ -195,8 +217,11 @@ class WikiDatabase:
         relation_label = None
         try:
             relation_label = pd.read_sql_query(
-                "SELECT label, description FROM Entities WHERE entity_id = \"{}\"".format(entity_id),
-                self.conn)
+                'SELECT label, description FROM Entities WHERE entity_id = "{}"'.format(
+                    entity_id
+                ),
+                self.conn,
+            )
         except Exception as e:
             print(e)
             self.exit_procedure()
@@ -226,7 +251,6 @@ class WikiDatabase:
             self.exit_procedure()
         return property_name, related_entity_label
 
-
     def format_associations(self, entity, associations):
         """
         Given an entity and it's associations, format them as a dictionary
@@ -241,15 +265,17 @@ class WikiDatabase:
         if not entity:
             return None
         entity_associations_dict = {
-                'id' : entity[0],
-                'label' : entity[1],
-                'description' : entity[2] 
-                }
+            "id": entity[0],
+            "label": entity[1],
+            "description": entity[2],
+        }
         # Remove all None values from list
         if not associations:
             return None
         for property_id, related_entity_id in associations:
-            property_name, related_entity_label = self.get_property_string(property_id, related_entity_id)
+            property_name, related_entity_label = self.get_property_string(
+                property_id, related_entity_id
+            )
             if related_entity_label:
                 entity_associations_dict[property_name] = related_entity_label
         return entity_associations_dict
