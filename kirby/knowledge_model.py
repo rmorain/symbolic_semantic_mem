@@ -12,9 +12,16 @@ class KnowledgeModel(BasicModel, LightningModule):
     def __init__(self, run_params):
         super().__init__(run_params)
         self.run_params = run_params
-        config = GPT2Config()
-        config.knowledge_buffer = self.run_params.knowledge_buffer
-        self.model = KnowledgeGPT2LMHeadModel(config)
+        if self.run_params.pretrained:
+            self.model = KnowledgeGPT2LMHeadModel.from_pretrained("gpt2")
+            for params in self.model.parameters():
+                print(params)
+                __import__("pudb").set_trace()
+                break
+        else:
+            config = GPT2Config()
+            config.knowledge_buffer = self.run_params.knowledge_buffer
+            self.model = KnowledgeGPT2LMHeadModel(config)
         self.loss = torch.nn.CrossEntropyLoss(reduction="none")
         self.tokenizer = GPT2Tokenizer.from_pretrained(self.run_params.model)
 
@@ -32,3 +39,10 @@ class KnowledgeModel(BasicModel, LightningModule):
         if self.run_params.output_attentions:
             return outputs.attentions
         return loss
+
+    def generate(self, prompt, max_new_tokens):
+        input_ids = self.tokenizer(prompt, return_tensors="pt").input_ids
+        outputs = self.model.generate(
+            input_ids=input_ids, max_new_tokens=max_new_tokens
+        )
+        return self.tokenizer.batch_decode(outputs, skip_special_tokens=True)

@@ -9,7 +9,12 @@ from tests.doubles import KnowledgeInputDouble
 
 class TestKnowledgeModel(unittest.TestCase):
     def setUp(self):
-        self.run_params = RunParams()
+        self.run_params = RunParams(
+            run_name="description",
+            debug=True,
+            pretrained=True,
+            knowledge_tokenize=True,
+        )
         self.model = KnowledgeModel(self.run_params)
         self.test_input = KnowledgeInputDouble(
             "Stephen Curry is my favorite basketball player",
@@ -39,6 +44,13 @@ class TestKnowledgeModel(unittest.TestCase):
         model = KnowledgeModel(run_params)
         experiment = Experiment(run_params, model)
         experiment.run()
+
+    def test_generate(self):
+        prompt = "Harry Potter raised his wand and said "
+        max_new_tokens = 30
+        model = KnowledgeModel(self.run_params)
+        generated_text = model.generate(prompt, max_new_tokens)
+        __import__("pudb").set_trace()
 
 
 if __name__ == "__main__":

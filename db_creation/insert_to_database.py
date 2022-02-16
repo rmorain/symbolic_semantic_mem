@@ -2,6 +2,53 @@
 
 __all__ = []
 
+import sqlite3
+
 # Cell
 from qwikidata.json_dump import WikidataJsonDump
-import sqlite3
+
+
+# Use if you created a text file when reading the wikidata file and \n",
+# now you want to insert the data to a database",
+def text_to_database(database_path, text_path):
+    connection = sqlite3.connect(database_path) 
+    sql_query = []
+    last_line = ''
+    crsr = connection.cursor()
+    count = 0
+    with open(text_path, 'r', encoding=\"utf-8") as file:
+        while True:
+            line = file.readline()
+            if not line:
+                break
+            if line == '\\n':
+                # print('Hello')
+                # print(sql_query)
+                file.readline()
+                file.readline()
+                file.readline()
+                # sql_command = '\\\"\\\"\\\"{}\\\"\\\"\\\"'.format(sql_query)
+                try:
+                    if len(sql_query) < 2:
+                        continue
+                    if sql_query[-1][-1] == ',':
+                        sql_query[-1] = sql_query[-1][:-1] + ';'
+                    crsr.execute(''.join(sql_query))
+                except Exception as e:
+                    print(e)
+                    for line in sql_query:
+                        print(line, end='')
+                    print('Something went wrong with the following ')
+                    break
+                    connection.commit()
+                    sql_query.clear()
+            sql_query.append(line)
+# close the connection
+        connection.close()
+def main():
+    database_path = input('Enter the path to the database')
+    sql_statements = input('Enter the path to the .txt file containing the sql statements')
+    text_to_database(database_path, sql_statements)
+  
+if __name__ == '__main__':
+    main()"

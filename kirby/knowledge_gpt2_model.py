@@ -6,9 +6,9 @@ from transformers.models.gpt2.modeling_gpt2 import (GPT2MLP, GPT2Attention,
 
 
 class KnowledgeAttention(GPT2Attention):
-    def __init__(self, config, is_cross_attention=False):
+    def __init__(self, config, is_cross_attention=False, knowledge_buffer_length=64):
         super().__init__(config, is_cross_attention)
-        self.knowledge_buffer = config.knowledge_buffer
+        self.knowledge_buffer = knowledge_buffer_length
         pass
 
     def _attn(self, query, key, value, attention_mask=None, head_mask=None):
@@ -21,7 +21,10 @@ class KnowledgeAttention(GPT2Attention):
             # if only "normal" attention layer implements causal mask
             query_length, key_length = query.size(-2), key.size(-2)
             causal_mask = self.bias[
-                :, :, key_length - query_length : key_length, :key_length,
+                :,
+                :,
+                key_length - query_length : key_length,
+                :key_length,
             ].bool()
             # Expand causal mask to always look at knowledge buffer
             causal_mask[:, :, :, -self.knowledge_buffer :] = True
@@ -48,13 +51,15 @@ class KnowledgeAttention(GPT2Attention):
 
 
 class KnowledgeGPT2Block(GPT2Block):
-    def __init__(self, config):
+    def __init__(self, config, knowledge_buffer_length=64):
         super().__init__(config)
         hidden_size = config.hidden_size
         inner_dim = config.n_inner if config.n_inner is not None else 4 * hidden_size
 
         self.ln_1 = nn.LayerNorm(hidden_size, eps=config.layer_norm_epsilon)
-        self.attn = KnowledgeAttention(config)
+        self.attn = KnowledgeAttention(
+            config, knowledge_buffer_length=knowledge_buffer_length
+        )
         self.ln_2 = nn.LayerNorm(hidden_size, eps=config.layer_norm_epsilon)
 
         if config.add_cross_attention:
@@ -67,7 +72,7 @@ class KnowledgeGPT2Block(GPT2Block):
 
 
 class KnowledgeGPT2Model(GPT2Model):
-    def __init__(self, config):
+    def __init__(self, config, knowledge_buffer_length=64):
         super().__init__(config)
 
         self.embed_dim = config.hidden_size
@@ -77,7 +82,12 @@ class KnowledgeGPT2Model(GPT2Model):
 
         self.drop = nn.Dropout(config.embd_pdrop)
         self.h = nn.ModuleList(
-            [KnowledgeGPT2Block(config) for _ in range(config.num_hidden_layers)]
+            [
+                KnowledgeGPT2Block(
+                    config, knowledge_buffer_length=knowledge_buffer_length
+                )
+                for _ in range(config.num_hidden_layers)
+            ]
         )
         self.ln_f = nn.LayerNorm(self.embed_dim, eps=config.layer_norm_epsilon)
 
@@ -95,9 +105,11 @@ class KnowledgeGPT2LMHeadModel(GPT2LMHeadModel):
         r"lm_head.weight",
     ]
 
-    def __init__(self, config):
+    def __init__(self, config, knowledge_buffer_length=64):
         super().__init__(config)
-        self.transformer = KnowledgeGPT2Model(config)
+        self.transformer = KnowledgeGPT2Model(
+            config, knowledge_buffer_length=knowledge_buffer_length
+        )
         self.lm_head = nn.Linear(config.n_embd, config.vocab_size, bias=False)
 
         self.init_weights()

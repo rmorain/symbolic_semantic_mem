@@ -20,6 +20,8 @@ class WikiDatabase:
             self.redis_connection = redis.Redis(
                 host="localhost",
                 port=6379,
+                charset="utf-8",
+                decode_responses=True,
             )
         except Exception as e:
             print(e)
@@ -51,6 +53,13 @@ class WikiDatabase:
 
         return knowledge_dict
 
+    def get_knowledge_by_id(self, entity_id):
+        __import__("pudb").set_trace()
+        entity = self.get_entity_by_id(entity_id, all_knowledge=True)
+        associations = self.get_entity_associations(entity_id)
+        knowledge_dict = self.format_associations(entity, associations)
+        return knowledge_dict
+
     @staticmethod
     def get_table_name(entity_label):
         """
@@ -76,15 +85,15 @@ class WikiDatabase:
             relations.append([row["property_id"], row["related_entity_id"]])
         return relations
 
-    @staticmethod
-    def get_property_label(relations_id):
+    @classmethod
+    def get_property_label(self, relations_id):
         """
         :param property_id: id of the property to look for
         :type property_id:
         :return: label of the given id, None if the id does not exist
         :rtype:
         """
-        return property_dict[relations_id]
+        return self.property_dict[relations_id]
 
     @staticmethod
     def remove_quotations(label):
@@ -212,7 +221,7 @@ class WikiDatabase:
             return None
         return self.clean_relations(entity_properties)
 
-    def get_entity_by_id(self, entity_id):
+    def get_entity_by_id(self, entity_id, all_knowledge=False):
 
         relation_label = None
         try:
@@ -227,6 +236,9 @@ class WikiDatabase:
             self.exit_procedure()
         if relation_label.empty:
             return None
+        if all_knowledge:
+            entity = (entity_id, relation_label.label[0], relation_label.description[0])
+            return entity
         return relation_label.iloc[0]["label"]
 
     def get_property_string(self, property_id, related_entity_id):
