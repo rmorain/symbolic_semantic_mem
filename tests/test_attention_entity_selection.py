@@ -10,12 +10,14 @@ from transformers import GPT2Tokenizer
 
 class TestAttentionEntitySelection(unittest.TestCase):
     def setUp(self):
-        self.text = "The animal didn't cross the road because it was too tired"
+        # self.text = "The animal didn't cross the road because it was too tired"
+        self.text = "Apple is looking at buying U.K. startup for $1 billion."
         self.tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
         self.tokenizer.pad_token = self.tokenizer.eos_token
         self.tokens = self.tokenizer(self.text)
         self.tokens = torch.LongTensor(self.tokens["input_ids"])
-        self.entities = ["animal", "cross the road"]
+        self.entities = ["Apple", "U.K.", "$1 billion"]
+        # self.entities = ["animal", "cross the road"]
 
     def test_model_returns_attention(self):
         attention = get_attention(self.tokens)

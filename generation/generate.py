@@ -1,3 +1,6 @@
+import concurrent.futures
+import random
+
 import spacy
 import torch
 import torch.nn.functional as F
@@ -26,16 +29,31 @@ def get_entities(sequence):
 def get_knowledge_from_entities(entities):
     knowledge_list = []
     for entity in entities:
-        knowledge = db.get_knowledge(entity)
+        knowledge = db.get_associated_entities(entity)
         if knowledge:
             knowledge_list.append(knowledge)
     return knowledge_list
 
 
-def filter_knowledge(knowledge):
+def format_associated_entities(knowledge):
+    # Randomly pick associated entity
+    associated_entities = knowledge["associated_entities"]
+    if len(associated_entities) > 0:
+        rand_index = random.randint(0, len(associated_entities) - 1)
+        rand_entity = associated_entities[rand_index]
+        relations = list(rand_entity.items())
+        x = relations[0][1] + "'s " + relations[2][0] + " is " + relations[2][1]
+        return x
+    else:
+        return filter_knowledge(knowledge)
+
+
+def filter_knowledge(knowledge, associated_entities=False):
     """
     Filter the knowledge
     """
+    if associated_entities:
+        return format_associated_entities(knowledge)
     label = knowledge["label"]
     description = knowledge["description"]
     statement = f"{label} is a {description} "
@@ -45,29 +63,28 @@ def filter_knowledge(knowledge):
 def prepare_prompt(prompt, prompt_length, knowledge_length, prev_entities):
     entities = get_entities(prompt)
     knowledge_list = get_knowledge_from_entities(entities)
-    statement = get_statement(knowledge_list)
-    if not statement:
+    statement_list = get_statement(knowledge_list)
+    if not statement_list:
         entities = prev_entities  # If no valid entities found, keep prev entities
         knowledge_list = get_knowledge_from_entities(entities)
-        statement = get_statement(knowledge_list)
+        statement_list = get_statement(knowledge_list)
     # Trim prompt tokens
     prompt_tokens = tokenizer(prompt)["input_ids"]
-    # knowledge_tokens = tokenizer(statement)["input_ids"]
     prompt = tokenizer.decode(prompt_tokens[-prompt_length:])
-    knowledge = statement
-    # knowledge = tokenizer.decode(knowledge_tokens[: knowledge_length - 2])
-    return knowledge, prompt, entities
+    return statement_list, prompt, entities
 
 
 def get_statement(knowledge_list):
+    statement_list = []
     for knowledge in knowledge_list:
         if "Wikimedia disambiguation page" in knowledge["description"]:
             continue
         if knowledge["description"] == "":
             continue
 
-        return filter_knowledge(knowledge)
-    return None
+        statement = filter_knowledge(knowledge, associated_entities=True)
+        statement_list.append(statement)
+    return statement_list
 
 
 class Node:
@@ -85,31 +102,30 @@ class Node:
         return ret
 
 
-def generate_text(prompt, pipe, seq_length, prev_entities, depth):
+def generate_text(prompt, pipe, seq_length, prev_entities, knowledge, depth):
     """
     Given a prompt, generate some text
     """
     if depth == 0:
         return None
-    knowledge, prompt, entities = prepare_prompt(prompt, 15, 15, prev_entities)
     generated_text = pipe(
         prompt,
         prefix=knowledge,
         max_length=seq_length,
         num_return_sequences=1,
         return_full_text=False,
-        return_tensors=True,
+        return_tensors=False,
     )
     node = Node(
         generated_text[0]["generated_text"],
         prompt,
         knowledge,
-        entities,
+        prev_entities,
     )
-    for entity in entities:
-        child_node = generate_text(
-            node.text, pipe, seq_length, node.entities, depth - 1
-        )
+    knowledge, prompt, entities = prepare_prompt(node.text, 15, 15, prev_entities)
+
+    for k in knowledge:
+        child_node = generate_text(prompt, pipe, seq_length, entities, k, depth - 1)
         if child_node:
             node.children.append(child_node)
 
@@ -131,10 +147,15 @@ def score(lines):
     attention_mask = tok_res["attention_mask"]
     lines_len = torch.sum(tok_res["attention_mask"], dim=1)
 
-    outputs = model(
-        input_ids=input_ids, attention_mask=attention_mask, labels=input_ids
-    )
-    loss, logits = outputs[:2]
+    logits = []
+    for i, ids in enumerate(input_ids):
+        outputs = model(
+            input_ids=ids,
+            attention_mask=attention_mask[i],
+            labels=ids,
+        )
+        logits.append(outputs.logits)
+    logits = torch.stack(logits)
 
     for line_ind in range(len(lines)):
         line_log_prob = 0.0
@@ -161,12 +182,11 @@ def build_sequences(node):
     return sequences
 
 
-__import__("pudb").set_trace()
 rp = RunParams(
     pretrained=True,
 )
-model = KnowledgeModel(rp)
-pipe = pipeline("text-generation", model=model.model, tokenizer="gpt2")
+model = GPT2LMHeadModel.from_pretrained("gpt2")
+pipe = pipeline("text-generation", model="gpt2")
 tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
 tokenizer.pad_token = tokenizer.eos_token
 
@@ -184,14 +204,14 @@ prompts = [
     "I heard Steve Jobs invented the iPhone. ",
 ]
 depth = 3
-seq_length = 120
+seq_length = 90
 prompt_length = 30
-entities = None
 f = open("results.txt", "w")
 
 for prompt in prompts:
+    knowledge, prompt, entities = prepare_prompt(prompt, 15, 15, None)
     print(f"Prompt: {prompt}", file=f)
-    root_node = generate_text(prompt, pipe, seq_length, entities, depth)
+    root_node = generate_text(prompt, pipe, seq_length, entities, knowledge[0], depth)
     sequences = build_sequences(root_node)
     sequences = score(sequences)
     # Print median sequence
@@ -213,8 +233,8 @@ for prompt in prompts:
             return_full_text=False,
             return_tensors=True,
         )
-        prompt_tokens = generated_text[0]["generated_token_ids"]
-        prompt = tokenizer.decode(prompt_tokens)[-seq_length:]
+        prompt_tokens = tokenizer(generated_text[0]["generated_text"])
+        prompt = tokenizer.decode(prompt_tokens["input_ids"])[-seq_length:]
         output += generated_text[0]["generated_text"]
     print(output, file=f)
 f.close()

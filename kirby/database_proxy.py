@@ -1,5 +1,6 @@
 __all__ = ["WikiDatabase"]
-
+import copy
+import json
 import sqlite3
 
 import pandas as pd
@@ -53,8 +54,46 @@ class WikiDatabase:
 
         return knowledge_dict
 
+    def get_associated_entities(self, entity_string):
+        self.conn = sqlite3.connect(self.run_params.db)
+        # Get entity
+        entity = self.get_entity_by_label(entity_string)
+        if entity is None:
+            return None
+
+        # Get associated entities
+        sql = f"""
+                SELECT relations.entity_label, relations.description, relations.property_label, Entities.label as related_entity_label
+                FROM Entities
+                JOIN (
+                SELECT e.entity_id, e.label AS entity_label, e.description AS description, p.property_id, p.label AS property_label, pr.related_entity_id
+                FROM Properties_relations as pr
+                LEFT JOIN Entities as e
+                ON pr.entity_id = e.entity_id
+                LEFT JOIN Properties as p
+                ON pr.property_id = p.property_id
+                WHERE pr.related_entity_id = "{entity[0]}"
+                )
+                AS relations
+                ON relations.related_entity_id = Entities.entity_id
+                LIMIT 10;
+        """
+        associations = pd.read_sql_query(sql, self.conn)
+        knowledge_dict = {
+            "_id": entity[0],
+            "label": entity[1],
+            "description": entity[2],
+            "associated_entities": [],
+        }
+        # Add associations
+        for row in associations.itertuples(index=False):
+            associated_entity = {"label": row[0], "description": row[1]}
+            associated_entity[row[2]] = row[3]
+            knowledge_dict["associated_entities"].append(associated_entity)
+
+        return knowledge_dict
+
     def get_knowledge_by_id(self, entity_id):
-        __import__("pudb").set_trace()
         entity = self.get_entity_by_id(entity_id, all_knowledge=True)
         associations = self.get_entity_associations(entity_id)
         knowledge_dict = self.format_associations(entity, associations)

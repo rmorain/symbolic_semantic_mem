@@ -186,6 +186,12 @@ class TestWikiDatabase(unittest.TestCase):
         print(f"Redis is {first_time / second_time:.2f}x faster")
         self.assertTrue(second_time < first_time)
 
+    def test_get_associated_entites(self):
+        entity_label = self.test_entity[1]
+        result = self.db.get_associated_entities(entity_label)
+        self.assertIsNotNone(result)
+        __import__("pudb").set_trace()
+
 
 if __name__ == "__main__":
     unittest.main()

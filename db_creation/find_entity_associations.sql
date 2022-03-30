@@ -8,8 +8,9 @@ LEFT JOIN Entities as e
 ON pr.entity_id = e.entity_id
 LEFT JOIN Properties as p
 ON pr.property_id = p.property_id
-WHERE pr.related_entity_id = "Q31"
+WHERE pr.related_entity_id = "Q342240"
 )
 AS relations
 ON relations.related_entity_id = Entities.entity_id
-LIMIT 100;
+LIMIT 100
+;

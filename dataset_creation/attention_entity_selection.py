@@ -27,20 +27,30 @@ def sort_attentions(attentions, tokens, entities, tokenizer):
     t = tokens.tolist()
     scores = []
     for e in entities:
-        scores.append((e, calculate_attention_scores(t, e, tokenizer, a)))
+        score, entity_index = calculate_attention_scores(t, e, tokenizer, a)
+        scores.append((e, score, entity_index))
     sorted_scores = sorted(scores, key=lambda x: x[1])
     sorted_scores.reverse()
     return sorted_scores
 
 
 def calculate_attention_scores(tokens, entity, tokenizer, attentions):
+    # Check if at the beginning of sentence
+    entity_tokens = tokenizer(entity)["input_ids"]
+    entity_indices = subfinder(tokens, entity_tokens)
+    if len(entity_indices) > 0:
+        try:
+            score = mean(attentions[entity_indices[0] : entity_indices[-1] + 1])
+        except Exception:
+            score = 0
+        return score, entity_indices[-1]
     entity_tokens = tokenizer(" " + entity)["input_ids"]
     entity_indices = subfinder(tokens, entity_tokens)
     try:
         score = mean(attentions[entity_indices[0] : entity_indices[-1] + 1])
     except Exception:
         score = 0
-    return score
+    return score, entity_indices[-1]
 
 
 def subfinder(word_list, pattern):
@@ -64,10 +74,8 @@ def process_row(row, tokenizer):
     return sorted_attentions
 
 
-def process_data(data_file, tokenizer, debug=True):
+def process_data(df, save_file, tokenizer, debug=True):
     # Load data
-    df = pd.read_pickle(data_file)
-
     if debug:
         df = df.iloc[:10]
 
@@ -76,7 +84,7 @@ def process_data(data_file, tokenizer, debug=True):
             row["entities"] = process_row(row, tokenizer)
             pbar.update(1)
     if not debug:
-        df.to_pickle("data/augmented_datasets/pickle/sorted_attentions_valid.pkl")
+        df.to_pickle(save_file)
     print("Finished")
     return df
 

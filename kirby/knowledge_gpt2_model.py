@@ -4,6 +4,8 @@ from transformers.models.gpt2.modeling_gpt2 import (GPT2MLP, GPT2Attention,
                                                     GPT2Block, GPT2LMHeadModel,
                                                     GPT2Model)
 
+from kirby.run_params import RunParams
+
 
 class KnowledgeAttention(GPT2Attention):
     def __init__(self, config, is_cross_attention=False, knowledge_buffer_length=64):
@@ -105,10 +107,10 @@ class KnowledgeGPT2LMHeadModel(GPT2LMHeadModel):
         r"lm_head.weight",
     ]
 
-    def __init__(self, config, knowledge_buffer_length=64):
+    def __init__(self, config, run_params=RunParams()):
         super().__init__(config)
         self.transformer = KnowledgeGPT2Model(
-            config, knowledge_buffer_length=knowledge_buffer_length
+            config, knowledge_buffer_length=run_params.knowledge_buffer
         )
         self.lm_head = nn.Linear(config.n_embd, config.vocab_size, bias=False)
 
