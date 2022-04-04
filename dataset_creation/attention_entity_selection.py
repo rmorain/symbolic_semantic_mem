@@ -79,6 +79,7 @@ def process_data(df, save_file, tokenizer, debug=True):
     if debug:
         df = df.iloc[:10]
 
+    __import__("pudb").set_trace()
     with tqdm(total=df.shape[0]) as pbar:
         for index, row in df.iterrows():
             row["entities"] = process_row(row, tokenizer)

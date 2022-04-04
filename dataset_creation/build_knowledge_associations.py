@@ -33,11 +33,18 @@ def add_knowledge(example, db=None):
         ]
     """
     knowledge_list = []
-    for entity in example["entities"]:
+    for i, entity in enumerate(example["entities"]):
         k = db.get_knowledge(entity)
         k = filter_knowledge(k)
         knowledge_list.append(k)
-    example["knowledge"] = knowledge_list
+    example["entities"] = [
+        example["entities"][i]
+        for i in range(len(example["entities"]))
+        if knowledge_list[i]
+    ]
+    example["knowledge"] = [
+        knowledge_list[i] for i in range(len(knowledge_list)) if knowledge_list[i]
+    ]
     return example
 
 
