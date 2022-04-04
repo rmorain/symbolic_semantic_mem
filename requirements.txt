@@ -67,7 +67,6 @@ jupyterlab-pygments==0.1.2
 jupyterlab-server==2.6.0
 jupyterlab-widgets==1.0.0
 Keras-Preprocessing==1.1.2
--e git+git@github.com:rmorain/kirby.git@10e8423ec1983aa5758c38d3240677afdbdcfff0#egg=kirby
 Markdown==3.3.4
 MarkupSafe==2.0.1
 matplotlib-inline==0.1.2
