@@ -50,7 +50,7 @@ def add_knowledge(example, db=None):
 
 # Load dataset
 def process_knowledge(data_path, save_path, debug=True):
-    ds = pd.DataFrame.from_dict(Dataset.load_from_disk(data_path))
+    ds = pd.read_pickle(data_path)
     if debug:
         ds = ds[:10]
 
@@ -65,5 +65,5 @@ def process_knowledge(data_path, save_path, debug=True):
             pbar.update(1)
 
     if not debug:
-        ds.to_pickle("data/augmented_datasets/pickle/augmented_valid.pkl")
+        ds.to_pickle(save_path)
     return ds

@@ -1,6 +1,6 @@
 .DS_Store
 .vscode/
-.pyc
+*.pyc
 kirby.egg-info/
 __pycache__/
 build
@@ -13,3 +13,5 @@ db/
 *.db
 wandb/
 *.ckpt
+.vim/
+temp.py

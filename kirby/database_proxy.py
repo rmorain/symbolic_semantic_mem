@@ -19,7 +19,7 @@ class WikiDatabase:
             self.properties_dict = properties()
             self.conn = sqlite3.connect(self.run_params.db)
             self.redis_connection = redis.Redis(
-                host="localhost",
+                host="morain_redis",
                 port=6379,
                 charset="utf-8",
                 decode_responses=True,

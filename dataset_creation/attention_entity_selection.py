@@ -65,7 +65,7 @@ def subfinder(word_list, pattern):
 
 def process_row(row, tokenizer):
     text = row["text"]
-    tokens = tokenizer(text)["input_ids"]
+    tokens = tokenizer(text)["input_ids"][:model.config.n_positions]
     tokens = torch.LongTensor(tokens)
     attentions = get_attention(tokens)
     attentions = process_attentions(attentions)
@@ -79,7 +79,6 @@ def process_data(df, save_file, tokenizer, debug=True):
     if debug:
         df = df.iloc[:10]
 
-    __import__("pudb").set_trace()
     with tqdm(total=df.shape[0]) as pbar:
         for index, row in df.iterrows():
             row["entities"] = process_row(row, tokenizer)
