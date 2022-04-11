@@ -1,11 +1,13 @@
-Jinja2>=3.1.1
-transformers
-pandas
-datasets
-redis
-pytorch-lightning
-tqdm==4.64.0
-spacy
+datasets==1.7.0
 en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.0.0/en_core_web_sm-3.0.0-py3-none-any.whl
-torch
-wandb
+GitPython==3.1.17
+huggingface-hub==0.1.0
+pandas==1.2.4
+pudb==2021.1
+redis==4.1.2
+regex==2021.4.4
+spacy==3.0.6
+torch==1.10.2
+tqdm==4.49.0
+transformers==4.16.2
+wandb==0.10.31
