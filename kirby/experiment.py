@@ -29,7 +29,7 @@ class Experiment:
             callbacks=[
                 EarlyStopping(monitor="val_loss", patience=self.run_params.patience),
                 ModelCheckpoint(
-                    dirpath=os.getcwd() + "/checkpoints",
+                    dirpath=os.getcwd() + "volume/checkpoints",
                     filename="{epoch}-{val_loss:.2f}-" + self.run_params.run_name,
                     monitor="val_loss",
                     save_top_k=1,

@@ -9,7 +9,7 @@ from max_attention import process_max_attention
 from median_attention import process_median_attention
 from min_attention import process_min_attention
 
-DEBUG = False
+DEBUG = True
 PREFIX = "volume/"
 # Process knowledge
 #DATA_PATH = PREFIX + "data/augmented_datasets/entities/train/"
