@@ -1,6 +1,6 @@
 from copy import deepcopy
-import pandas as pd
 
+import pandas as pd
 from transformers import GPT2Tokenizer
 
 from attention_entity_selection import process_data
@@ -10,15 +10,15 @@ from median_attention import process_median_attention
 from min_attention import process_min_attention
 
 DEBUG = True
-PREFIX = "volume/"
+PREFIX = ""
 # Process knowledge
-#DATA_PATH = PREFIX + "data/augmented_datasets/entities/train/"
-#SAVE_PATH = PREFIX + "data/augmented_datasets/pickle/augmented_train_sealed.pkl"
-#df = process_knowledge(DATA_PATH, SAVE_PATH, debug=DEBUG)
+DATA_PATH = PREFIX + "data/augmented_datasets/pickle/entities_train.pkl"
+SAVE_PATH = PREFIX + "data/augmented_datasets/pickle/augmented_train_sealed.pkl"
+df = process_knowledge(DATA_PATH, SAVE_PATH, debug=DEBUG)
 
 # Generate attention scores
-DATA_PATH = PREFIX + "data/augmented_datasets/pickle/augmented_train_sealed.pkl"
-df = pd.read_pickle(DATA_PATH)
+# DATA_PATH = PREFIX + "data/augmented_datasets/pickle/augmented_train_sealed.pkl"
+# df = pd.read_pickle(DATA_PATH)
 SAVE_PATH = PREFIX + "data/augmented_datasets/pickle/sorted_attentions_train_sealed.pkl"
 tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
 main_df = process_data(df, SAVE_PATH, tokenizer, debug=DEBUG)

@@ -1,4 +1,4 @@
-FROM pytorch/pytorch
+FROM huggingface/transformers-pytorch-gpu
 
 WORKDIR /kirby
 
@@ -17,6 +17,6 @@ RUN apt update && apt -y install ${PACKAGES}
 
 RUN pip install -r requirements.txt
 
-RUN python setup.py develop
+RUN python3 setup.py develop
 
 ENV NAME kirby 
