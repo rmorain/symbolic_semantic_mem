@@ -15,6 +15,7 @@ class KnowledgeAttention(GPT2Attention):
 
     def _attn(self, query, key, value, attention_mask=None, head_mask=None):
         attn_weights = torch.matmul(query, key.transpose(-1, -2))
+        leti = head_mask.squeeze().long()
 
         if self.scale_attn_weights:
             attn_weights = attn_weights / (float(value.size(-1)) ** 0.5)
@@ -22,6 +23,7 @@ class KnowledgeAttention(GPT2Attention):
         if not self.is_cross_attention:
             # if only "normal" attention layer implements causal mask
             query_length, key_length = query.size(-2), key.size(-2)
+            batch_size = query.size(0)
             causal_mask = self.bias[
                 :,
                 :,
@@ -29,7 +31,13 @@ class KnowledgeAttention(GPT2Attention):
                 :key_length,
             ].bool()
             # Expand causal mask to always look at knowledge buffer
-            causal_mask[:, :, :, -self.knowledge_buffer :] = True
+            causal_mask = causal_mask.repeat(batch_size, 1, 1, 1)
+            if leti is not None:
+                for i in range(batch_size):
+                    causal_mask[i, :, leti[i].item() :, -self.knowledge_buffer :] = True
+            else:
+                causal_mask[i, :, :, -self.knowledge_buffer :] = True
+
             # Don't attend knowledge to text ids
             causal_mask[:, :, -self.knowledge_buffer :, :] = False
             attn_weights = torch.where(
@@ -44,8 +52,8 @@ class KnowledgeAttention(GPT2Attention):
         attn_weights = self.attn_dropout(attn_weights)
 
         # Mask heads if we want to
-        if head_mask is not None:
-            attn_weights = attn_weights * head_mask
+        # if head_mask is not None:
+        # attn_weights = attn_weights * head_mask
 
         attn_output = torch.matmul(attn_weights, value)
 

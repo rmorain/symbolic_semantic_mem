@@ -26,7 +26,8 @@ class DataManager:
         df = pd.read_pickle(self.run_params.data_files[split][0])
 
         if self.run_params.debug:
-            df = df.iloc[: self.run_params.batch_size * 3 * torch.cuda.device_count()]
+            # df = df.iloc[: self.run_params.batch_size * 3 * torch.cuda.device_count()]
+            df = df.iloc[: self.run_params.batch_size * 3 * 1]
 
         ds = Dataset.from_pandas(df)
         ds = ds.filter(function=self.criteria)
@@ -50,6 +51,7 @@ class DataManager:
 
     def get_remove_columns(self, ds):
         keys = [x for x in ds.features.keys()]
+        keys.remove("entity_index")
         return keys
 
     def get_num_rows(self, num_rows):
@@ -99,11 +101,12 @@ class DataManager:
         else:
             input_ids, attention_mask, labels = None, None, None
             keys = [i for i in x.keys()]
-            end = keys[-1]
-            beginning = keys[0]
-            keys[0] = end
-            keys[-1] = beginning
+            text_index = keys.index("text")
+            if text_index != 0:
+                keys[0], keys[text_index] = keys[text_index], keys[0]
             for key in keys:
+                if type(x[key]) != str:
+                    continue
                 if input_ids is None:
                     tokens = tokenizer(
                         x[key],

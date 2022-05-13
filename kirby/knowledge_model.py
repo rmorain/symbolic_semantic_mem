@@ -28,11 +28,13 @@ class KnowledgeModel(BasicModel, LightningModule):
         input_ids = x["input_ids"][0]
         attention_mask = x["attention_mask"][0]
         labels = x["labels"][0]
+        leti = x["entity_index"]
         outputs = self.model(
             input_ids,
             attention_mask=attention_mask,
             labels=labels,
             output_attentions=self.run_params.output_attentions,
+            head_mask=leti,
         )
         loss = outputs[0]
         if self.run_params.output_attentions:

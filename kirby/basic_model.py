@@ -2,7 +2,7 @@ __all__ = ["BasicModel"]
 
 import pytorch_lightning as pl
 import torch
-from transformers import AutoConfig, AutoModelWithLMHead
+from transformers import AutoModelWithLMHead, GPT2Config, GPT2LMHeadModel
 
 from .data_manager import DataManager
 

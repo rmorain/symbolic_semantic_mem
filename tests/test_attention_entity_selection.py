@@ -1,5 +1,6 @@
 import unittest
 
+import pandas as pd
 import torch
 from dataset_creation.attention_entity_selection import (get_attention,
                                                          process_attentions,
@@ -38,8 +39,9 @@ class TestAttentionEntitySelection(unittest.TestCase):
         self.assertIsNotNone(sorted_attentions)
 
     def test_process_data(self):
-        data = "data/augmented_datasets/pickle/wikiknowledge.pkl"
-        processed_data = process_data(data, self.tokenizer, debug=True)
+        data = "data/augmented_datasets/pickle/augmented_train_sealed.pkl"
+        df = pd.read_pickle(data)
+        processed_data = process_data(df, None, self.tokenizer, debug=True)
         self.assertIsNotNone(processed_data)
 
 

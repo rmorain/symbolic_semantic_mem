@@ -50,6 +50,8 @@ def calculate_attention_scores(tokens, entity, tokenizer, attentions):
         score = mean(attentions[entity_indices[0] : entity_indices[-1] + 1])
     except Exception:
         score = 0
+    if len(entity_indices) == 0:
+        entity_indices = [0]
     return score, entity_indices[-1]
 
 
@@ -63,26 +65,26 @@ def subfinder(word_list, pattern):
     return word_indices
 
 
-def process_row(row, tokenizer):
+def process_row(row, tokenizer=None):
     text = row["text"]
-    tokens = tokenizer(text)["input_ids"][:model.config.n_positions]
+    tokens = tokenizer(text)["input_ids"][: model.config.n_positions]
     tokens = torch.LongTensor(tokens)
     attentions = get_attention(tokens)
     attentions = process_attentions(attentions)
     sorted_attentions = sort_attentions(attentions, tokens, row["entities"], tokenizer)
+    row["entities"] = sorted_attentions
 
-    return sorted_attentions
+    return row
 
 
-def process_data(df, save_file, tokenizer, debug=True):
+def process_data(df, save_file, tokenizer=None, debug=True):
     # Load data
     if debug:
         df = df.iloc[:10]
 
-    with tqdm(total=df.shape[0]) as pbar:
-        for index, row in df.iterrows():
-            row["entities"] = process_row(row, tokenizer)
-            pbar.update(1)
+    tqdm.pandas(desc="Entity attention score selection: ")
+    df.progress_apply(process_row, tokenizer=tokenizer, axis=1)
+
     if not debug:
         df.to_pickle(save_file)
     print("Finished")
@@ -90,6 +92,8 @@ def process_data(df, save_file, tokenizer, debug=True):
 
 
 if __name__ == "__main__":
-    data = "data/augmented_datasets/pickle/augmented_valid.pkl"
+    data = "data/augmented_datasets/pickle/augmented_train_sealed.pkl"
+    save_file = "data/augmented_datasets/pickle/sorted_attentions_sealed.pkl"
+    df = pd.read_pickle(data)
     tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
-    process_data(data, tokenizer, debug=False)
+    process_data(df, save_file, tokenizer, debug=False)
