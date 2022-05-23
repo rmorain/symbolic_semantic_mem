@@ -1,10 +1,37 @@
-import torch
-from pytorch_lightning import LightningModule
-from transformers import GPT2Config, GPT2Tokenizer
+import inspect
+import warnings
+from dataclasses import dataclass
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
 
-from .basic_model import BasicModel
-from .knowledge_gpt2_model import KnowledgeGPT2LMHeadModel
-from .run_params import RunParams
+import torch
+import torch.distributed as dist
+from pytorch_lightning import LightningModule
+from torch import nn
+from transformers import GPT2Config, GPT2Tokenizer
+from transformers.generation_beam_constraints import (Constraint,
+                                                      DisjunctiveConstraint,
+                                                      PhrasalConstraint)
+from transformers.generation_beam_search import (BeamScorer, BeamSearchScorer,
+                                                 ConstrainedBeamSearchScorer)
+from transformers.generation_logits_process import (
+    EncoderNoRepeatNGramLogitsProcessor, ForcedBOSTokenLogitsProcessor,
+    ForcedEOSTokenLogitsProcessor, HammingDiversityLogitsProcessor,
+    InfNanRemoveLogitsProcessor, LogitsProcessorList, MinLengthLogitsProcessor,
+    NoBadWordsLogitsProcessor, NoRepeatNGramLogitsProcessor,
+    PrefixConstrainedLogitsProcessor, RepetitionPenaltyLogitsProcessor,
+    TemperatureLogitsWarper, TopKLogitsWarper, TopPLogitsWarper)
+from transformers.generation_stopping_criteria import (
+    MaxLengthCriteria, MaxTimeCriteria, StoppingCriteria, StoppingCriteriaList,
+    validate_stopping_criteria)
+from transformers.generation_utils import (BeamSampleOutput, BeamSearchOutput,
+                                           GreedySearchOutput, SampleOutput)
+from transformers.utils import logging
+
+from kirby.basic_model import BasicModel
+from kirby.knowledge_gpt2_model import KnowledgeGPT2LMHeadModel
+from kirby.run_params import RunParams
+
+logger = logging.get_logger(__name__)
 
 
 class KnowledgeModel(BasicModel, LightningModule):
@@ -41,9 +68,11 @@ class KnowledgeModel(BasicModel, LightningModule):
             return outputs.attentions
         return loss
 
-    def generate(self, prompt, max_new_tokens):
-        input_ids = self.tokenizer(prompt, return_tensors="pt").input_ids
-        outputs = self.model.generate(
-            input_ids=input_ids, max_new_tokens=max_new_tokens
-        )
-        return self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
+    # @torch.no_grad()
+    # def generate(self, prompt, max_new_tokens):
+    # __import__("pudb").set_trace()
+    # input_ids = self.tokenizer(prompt, return_tensors="pt").input_ids
+    # outputs = self.model.generate(
+    # input_ids=input_ids, max_new_tokens=max_new_tokens
+    # )
+    # return self.tokenizer.batch_decode(outputs, skip_special_tokens=True)

@@ -101,6 +101,8 @@ class DataManager:
         else:
             input_ids, attention_mask, labels = None, None, None
             keys = [i for i in x.keys()]
+            if "entity_index" in keys:
+                keys.remove("entity_index")
             text_index = keys.index("text")
             if text_index != 0:
                 keys[0], keys[text_index] = keys[text_index], keys[0]
@@ -113,6 +115,7 @@ class DataManager:
                         return_tensors="pt",
                         truncation=True,
                         max_length=self.run_params.seq_length,
+                        padding="max_length",
                     )
                     input_ids = tokens["input_ids"]
                     attention_mask = tokens["attention_mask"]

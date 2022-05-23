@@ -1,3 +1,4 @@
+from kirby.data_manager import DataManager
 from transformers import TextGenerationPipeline
 from transformers.pipelines.text_generation import ReturnType
 
@@ -8,6 +9,7 @@ class KnowledgeTextGenerationPipeline(TextGenerationPipeline):
     def __init__(self, run_params, model, tokenizer):
         super().__init__(model=model, tokenizer=tokenizer)
         self.run_params = run_params
+        self.data_manager = DataManager(run_params)
 
     def _sanitize_parameters(
         self,
@@ -69,18 +71,9 @@ class KnowledgeTextGenerationPipeline(TextGenerationPipeline):
 
         return preprocess_params, forward_params, postprocess_params
 
-    def preprocess(
-        self, prompt_text, knowledge="", handle_long_generation=None, **generate_kwargs
-    ):
-        __import__("pudb").set_trace()
-        inputs = self.tokenizer(
-            prompt_text + knowledge,
-            padding=False,
-            add_special_tokens=False,
-            return_tensors=self.framework,
-        )
-        inputs["prompt_text"] = prompt_text
-
+    def preprocess(self, x, handle_long_generation=None, **generate_kwargs):
+        inputs = self.data_manager.tokenize_knowledge(x, self.tokenizer)
+        inputs["prompt_text"] = x["text"]
         if handle_long_generation == "hole":
             cur_len = inputs["input_ids"].shape[-1]
             if "max_new_tokens" in generate_kwargs:
